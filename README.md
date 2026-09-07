@@ -1,17 +1,15 @@
-# 10x Astro Starter
+# WatchBldrs
 
-![](./public/template.png)
-
-A modern, opinionated starter template for building fast, accessible web applications.
+A structured showcase for custom watch builds. Astro 7 SSR on Cloudflare Workers, React 19 islands, Supabase Auth/Postgres/Storage.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+- [Astro](https://astro.build/) v7 — server-first rendering (`output: "server"`)
+- [React](https://react.dev/) v19 — interactive islands only
+- [TypeScript](https://www.typescriptlang.org/) v5
+- [Tailwind CSS](https://tailwindcss.com/) v4
+- [Supabase](https://supabase.com/) — Auth, PostgreSQL, Storage
+- [Cloudflare Workers](https://workers.cloudflare.com/) — SSR runtime (not Pages)
 
 ## Prerequisites
 
@@ -23,8 +21,8 @@ A modern, opinionated starter template for building fast, accessible web applica
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
+git clone https://github.com/tofucode-dev/watch-bldrs.git
+cd watch-bldrs
 ```
 
 2. Install dependencies:
@@ -35,13 +33,13 @@ npm install
 
 3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
+4. Create a `.dev.vars` file for local Cloudflare Worker secrets:
 
 ```bash
 cp .env.example .dev.vars
 ```
 
-5. Run the development server:
+5. Run the development server (`workerd`, not Node):
 
 ```bash
 npm run dev
@@ -49,12 +47,14 @@ npm run dev
 
 ## Available Scripts
 
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
+- `npm run dev` — development server (Cloudflare `workerd`)
+- `npm run build` — production build
+- `npm run preview` — production-like preview (`workerd`)
+- `npm run deploy` — `astro build && wrangler deploy` to Cloudflare Workers
+- `npm run lint` — ESLint with type-checked rules
+- `npm run lint:fix` — auto-fix ESLint issues
+- `npm run format` — Prettier
+- `npm run test` — Vitest
 
 ## Project Structure
 
@@ -68,54 +68,55 @@ npm run dev
 │ └── assets/ # Static assets
 ├── public/ # Public assets
 ├── wrangler.jsonc # Cloudflare Workers config
+├── supabase/ # Local Supabase config (already initialized)
 ```
 
 ## Supabase Configuration
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+Environment variables are declared via Astro's `astro:env` schema and are **server-only secrets** — they are never exposed to the client. Use the **anon / publishable** key only, never `service_role`.
 
-### First-time setup (local, no cloud project needed)
+`supabase/` already exists. Do **not** run `npx supabase init`.
 
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
+### Local stack (optional, Docker required)
 
-1. Create your `.env` file:
+Requires [Docker](https://www.docker.com/) and ~7 GB RAM on first pull.
+
+1. Copy env files:
 
 ```bash
 cp .env.example .env
+cp .env.example .dev.vars
 ```
 
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
+2. Start the local stack:
 
 ```bash
 npx supabase start
 ```
 
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+3. Copy the printed **anon** key (not `service_role`) into `.env` and `.dev.vars`:
 
 ```
 SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
 ```
 
-5. To stop the stack when done:
+4. Stop with `npx supabase stop`. Studio: `http://localhost:54323`.
+
+Local Auth in `supabase/config.toml` uses `http://127.0.0.1:4321` and has email confirmations off. That file does not change a hosted project's Auth settings.
+
+No product tables or migrations are required yet — Auth uses `auth.users` only.
+
+### Hosted project (required for Workers)
+
+Create the project in the [Supabase dashboard](https://supabase.com/dashboard), then from the repo:
 
 ```bash
-npx supabase stop
+npx supabase login
+npx supabase link --project-ref <project-ref>
 ```
 
-The local Studio UI is available at `http://localhost:54323`.
-
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
+Put the **Project URL** and **anon public** key into `.env` and `.dev.vars`:
 
 | Variable       | Description                                                |
 | -------------- | ---------------------------------------------------------- |
@@ -127,15 +128,11 @@ SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_KEY=<anon-key>
 ```
 
-### Email confirmation in local development
+Hosted Auth URL Configuration is dashboard-only (`config.toml` does not push it):
 
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
-
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
-
-Users can then sign in immediately after sign-up without clicking a confirmation link.
+- Site URL = the live `https://watch-bldrs.<subdomain>.workers.dev` origin (no trailing slash)
+- Redirect URLs: that origin `/**` plus `http://127.0.0.1:4321/**`
+- Email confirmations: **on** for production
 
 ### Auth routes
 
@@ -150,25 +147,19 @@ Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_
 
 ## Deployment
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+Full command cookbook, secret stores, rollback, and first-deploy bootstrap: [docs/deployment.md](docs/deployment.md).
 
-1. Build the project:
-
-```bash
-npm run build
-```
-
-2. Deploy with Wrangler:
+This app deploys to Cloudflare **Workers**. Never `wrangler pages deploy`.
 
 ```bash
-npx wrangler deploy
+npm run deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+Worker runtime secrets (`npx wrangler secret put`) are separate from GitHub Actions build secrets. Both must be the hosted `SUPABASE_URL` and **anon** `SUPABASE_KEY`.
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `main`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions runs lint, test, and build on every push and PR to `main`. Configure repository secrets `SUPABASE_URL` and `SUPABASE_KEY` for the **build** step only — they do not reach the Worker. Auto-deploy on merge is added after the first successful manual deploy.
 
 ## License
 

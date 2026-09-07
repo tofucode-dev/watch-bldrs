@@ -16,7 +16,7 @@ tech_stack:
 
 WatchBldrs is already an Astro 7 SSR app (`output: "server"`, `@astrojs/cloudflare@^14.3.0`, `wrangler@^4.90.0`). That adapter targets Workers, not Pages. Interview constraints were request/response only, minimize cost, global latency, and external data (Supabase) — Workers is the only candidate that is already wired, edge-native, and free or $5/month at 10k–100k requests. Netlify is the runner-up if `workerd` CPU or Node compatibility becomes a blocker.
 
-The starter hint `deployment_target: cloudflare-pages` is stale for this stack. Do not use `wrangler pages deploy`.
+`context/foundation/tech-stack.md` records `deployment_target: cloudflare-workers`. Do not use `wrangler pages deploy`.
 
 ## Platform Comparison
 
@@ -63,7 +63,7 @@ Cheapest always-on Node path (~$2–6/month) and the cleanest way to leave `work
 
 1. **Free Workers cap CPU at 10 ms per invocation.** Astro SSR plus a Supabase Auth/DB round-trip will often exceed that. The “free” path can error or force the **$5/month Paid** plan — still cheap, but not free.
 2. **`workerd` is not Node.** `@supabase/ssr`, cookies, and some Node APIs are only partially compatible. This repo already sets `nodejs_compat` because `compatibility_date` is `2026-05-08` (the flag became default only for dates ≥ 2026-08-04). Remaining gaps show up as production-only failures.
-3. **The tech-stack hint still says Cloudflare Pages.** `@astrojs/cloudflare` v14 deploys to Workers. `wrangler pages deploy` is the wrong command.
+3. **Pages vs Workers confusion.** `@astrojs/cloudflare` v14 deploys to Workers. `wrangler pages deploy` is the wrong command. The tech-stack hint is `cloudflare-workers`.
 4. **Workers allow 6 concurrent outbound connections per request.** One SSR page that fans out to Supabase Auth, Postgres, and Storage can hit that limit and look like flaky auth.
 5. **Hard limits:** 128 MB memory, 64 MiB Worker bundle, 25 MiB / 20k files on Free static assets, 1 s startup. React 19 + `supabase-js` can pressure the bundle. Cloudflare dashboard Auto Minify can break React hydration.
 
@@ -77,10 +77,10 @@ Once that was fixed, every listing request from Europe still waited on a single-
 
 - **`npm run dev` and `npm run preview` already use `workerd`** on Astro 6+ / `@astrojs/cloudflare` v13+. A parallel `wrangler dev` loop is redundant and can disagree with `astro:env`.
 - **`wrangler deploy --env` is the wrong environment switch for this adapter.** Astro 6+ wants `CLOUDFLARE_ENV=<env> astro build && wrangler deploy`.
-- **`wrangler deploy --temporary` needs Wrangler ≥ 4.102.0.** This repo pins `wrangler@^4.90.0`.
+- **`wrangler deploy --temporary` needs Wrangler ≥ 4.102.0.** This repo pins `wrangler@^4.129.1`.
 - **Preview URLs are opt-in** on Wrangler 4.34+. This `wrangler.jsonc` does not set `preview_urls`, so branch previews stay off until enabled.
-- **Worker name is still `10x-astro-starter`.** First deploy publishes that name on `workers.dev` unless renamed.
-- **CI does not auto-deploy.** `.github/workflows/ci.yml` runs lint, test, and build only. The tech-stack hint `auto-deploy-on-merge` is not implemented.
+- **Worker name is `watch-bldrs`.** First deploy publishes that name on `workers.dev`.
+- **CI does not auto-deploy yet.** `.github/workflows/ci.yml` runs lint, test, and build only. The tech-stack hint `auto-deploy-on-merge` lands after the first successful manual deploy.
 
 ## Operational Story
 
@@ -102,7 +102,7 @@ Once that was fixed, every listing request from Europe still waited on a single-
 | Edge Worker vs single-region Supabase latency | Pre-mortem | H | M | Place the Supabase project close to the primary audience; keep catalog queries small; do not assume edge HTML implies edge DB |
 | Build secrets ≠ runtime secrets | Pre-mortem | H | H | After first deploy, `wrangler secret put` both `SUPABASE_*` keys; confirm login works on the `workers.dev` URL |
 | Preview URLs off / public by default | Unknown unknowns | H | L | Enable `preview_urls` only when needed; put Access in front of previews if they show drafts |
-| Worker still named `10x-astro-starter` | Unknown unknowns | H | L | Rename `name` in `wrangler.jsonc` before the first production deploy |
+| Worker name mismatch on first publish | Unknown unknowns | L | L | `wrangler.jsonc` `name` is already `watch-bldrs` |
 | `wrangler deploy --env` misused with Astro 6+ | Unknown unknowns | M | M | Use `CLOUDFLARE_ENV=<env> npx astro build && npx wrangler deploy` if adding environments |
 | Image-binding quota (adapter default `cloudflare-binding`, 5k unique transforms/mo free) | Research finding | L | L | WatchBldrs stores the main photo in Supabase Storage; avoid routing every catalog image through Cloudflare Images unless needed |
 
@@ -111,10 +111,9 @@ Once that was fixed, every listing request from Europe still waited on a single-
 This repo is already a Workers app. Do not run `wrangler init` or `npx astro add cloudflare`.
 
 1. Log in: `npx wrangler login` (uses the project Wrangler 4.x).
-2. Rename the Worker in `wrangler.jsonc` from `10x-astro-starter` to `watch-bldrs` before the first deploy.
-3. Set runtime secrets (not GitHub Actions secrets): `npx wrangler secret put SUPABASE_URL` then `npx wrangler secret put SUPABASE_KEY`.
-4. Develop with `npm run dev` — Astro 7 + this adapter already runs `workerd`. Do not add a separate `wrangler dev` as the primary loop. Production-like check: `npm run build && npm run preview`.
-5. Deploy: `npm run build && npx wrangler deploy`. Confirm the printed `*.workers.dev` URL, then disable Cloudflare Auto Minify if React islands hydrate incorrectly. If SSR CPU exceeds 10 ms, move the Worker to the Paid plan ($5/month).
+2. Set runtime secrets (not GitHub Actions secrets): `npx wrangler secret put SUPABASE_URL` then `npx wrangler secret put SUPABASE_KEY`.
+3. Develop with `npm run dev` — Astro 7 + this adapter already runs `workerd`. Do not add a separate `wrangler dev` as the primary loop. Production-like check: `npm run build && npm run preview`.
+4. Deploy: `npm run deploy` (`astro build && wrangler deploy`). Confirm the printed `*.workers.dev` URL. Cookbook: `docs/deployment.md`. If SSR CPU exceeds 10 ms, move the Worker to the Paid plan ($5/month).
 
 ## Out of Scope
 

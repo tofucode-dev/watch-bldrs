@@ -8,6 +8,7 @@ Read before making material changes:
 
 - Product requirements and MVP scope: @prd.md
 - Setup and operational details: @README.md
+- Deployment (Workers, secrets, rollback): @docs/deployment.md
 - Foundation documentation: @context/foundation/README.md
 - Security (RLS, publication, Storage, Actions, auth): @docs/architecture/security.md
 - Modules (boundaries, layers, imports, layout): @docs/architecture/modules.md
@@ -164,7 +165,7 @@ Error categories and logging rules: @docs/architecture/runtime.md.
 
 ## Build, Test, and Development Commands
 
-Run scripts from @package.json (`dev`, `build`, `preview`, `lint`, `lint:fix`, `format`, `test`). Environment, local Supabase, and deployment: @README.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
+Run scripts from @package.json (`dev`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`). Environment and local Supabase: @README.md. Workers deploy cookbook: @docs/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
 
 ## Testing Guidelines
 
