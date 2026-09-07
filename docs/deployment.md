@@ -130,7 +130,14 @@ Cache: never apply “Cache Everything” on cookie routes (`docs/OPERATIONAL_SA
 
 ## CI
 
-`.github/workflows/ci.yml` currently runs lint, test, and build on PRs and `main`. Auto-deploy on merge is a later step: GitHub `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, then a `deploy` job gated to `push` on `main`. Fork pull requests must not receive deploy tokens. Do not publish preview URLs for this MVP (`preview_urls: false` in `wrangler.jsonc`, because Wrangler 4.129 enables them by default when the key is omitted).
+`.github/workflows/ci.yml` runs lint, test, and build on PRs and `main`. Pushes to `main` then run a `deploy` job (`needs: ci`) with `cloudflare/wrangler-action@v4`.
+
+GitHub secrets:
+
+- `SUPABASE_URL` / `SUPABASE_KEY` — `astro build` only. They do not become Worker runtime secrets.
+- `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — deploy job only. Fork pull requests never receive these tokens because deploy is gated to `push` on `main`.
+
+Do not publish preview URLs for this MVP (`preview_urls: false` in `wrangler.jsonc`, because Wrangler 4.129 enables them by default when the key is omitted).
 
 ## Adapter defaults this app turns off
 

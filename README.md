@@ -159,7 +159,7 @@ Worker runtime secrets (`npx wrangler secret put`) are separate from GitHub Acti
 
 ## CI
 
-GitHub Actions runs lint, test, and build on every push and PR to `main`. Configure repository secrets `SUPABASE_URL` and `SUPABASE_KEY` for the **build** step only — they do not reach the Worker. Auto-deploy on merge is added after the first successful manual deploy.
+GitHub Actions runs lint, test, and build on every push and PR to `main`. Pushes to `main` also deploy with Wrangler after CI passes. Configure repository secrets `SUPABASE_URL` and `SUPABASE_KEY` for the **build** step, plus `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for deploy. Build secrets do not reach the Worker.
 
 ## License
 

@@ -17,7 +17,7 @@ WatchBldrs is already a Cloudflare **Workers** app (`output: "server"`, `@astroj
 
 **Correct the stale foundation hint.** In `context/foundation/tech-stack.md` change `deployment_target: cloudflare-pages` to `deployment_target: cloudflare-workers`, and rewrite the “Why this stack” sentence that still says Pages is the deploy target. Keep `ci_provider: github-actions` and `ci_default_flow: auto-deploy-on-merge`. `context/foundation/infrastructure.md` already records the Pages hint as stale; after this edit, tech-stack and infrastructure agree.
 
-Target for MVP: `https://watch-bldrs.<account-subdomain>.workers.dev`. Custom domain is optional later. GitHub Actions stays the CI provider; auto-deploy-on-merge is added only after a successful manual deploy (tech-stack hint, not the first production cut).
+Target for MVP: `https://watch-bldrs.contact-tofucode.workers.dev`. Custom domain is optional later. GitHub Actions stays the CI provider; auto-deploy-on-merge runs after CI on push to `main`.
 
 ```mermaid
 flowchart LR
@@ -43,7 +43,7 @@ Do **not** enable Cloudflare dashboard “Workers Builds” (Git-connected) in p
 - [x] Phase 2 — Human: accounts, login, secrets
 - [x] Phase 3 — Agent + human: first production deploy and verify
 - [x] Phase 4 — Agent: docs and ops cookbook (committed)
-- [ ] Phase 5 — Agent: auto-deploy on merge to `main`
+- [x] Phase 5 — Agent: auto-deploy on merge to `main`
 
 ## Manual accounts and services
 
@@ -288,8 +288,8 @@ Wrong: `npx wrangler deploy --env <env>` ([withastro/astro#16040](https://github
 
 Only after Phase 3 works. Matches tech-stack `ci_provider: github-actions` + `ci_default_flow: auto-deploy-on-merge`.
 
-- [ ] Human adds `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub.
-- [ ] Agent extends `.github/workflows/ci.yml`:
+- [x] Human adds `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub.
+- [x] Agent extends `.github/workflows/ci.yml`:
   - Keep lint / test / build on PRs and `main`.
   - Add a `deploy` job: `needs: ci`, `if: github.ref == 'refs/heads/main' && github.event_name == 'push'`.
   - Build with the existing `SUPABASE_*` GitHub secrets, then `cloudflare/wrangler-action@v4` (or `npx wrangler deploy` with the same env). Do not pass production Worker secrets as GitHub env expecting them to appear on the Worker — they already live in Cloudflare.

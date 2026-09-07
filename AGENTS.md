@@ -190,7 +190,7 @@ Minimum critical scenarios before merging data-access or auth changes:
 - Do not mix unrelated refactors into a feature or bug fix.
 - Explain architectural exceptions and security-sensitive changes in the PR description.
 
-CI gate: @.github/workflows/ci.yml (`npm ci`, `npx astro sync`, lint, test, build with `SUPABASE_URL` and `SUPABASE_KEY` secrets).
+CI gate: @.github/workflows/ci.yml (`npm ci`, `npx astro sync`, lint, test, build with `SUPABASE_URL` and `SUPABASE_KEY` secrets). Pushes to `main` also run a `deploy` job (`needs: ci`) via `cloudflare/wrangler-action@v4` using `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Pull requests do not deploy.
 
 ## Agent Workflow
 
