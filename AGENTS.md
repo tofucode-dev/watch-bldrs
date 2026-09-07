@@ -165,7 +165,7 @@ Error categories and logging rules: @docs/architecture/runtime.md.
 
 ## Build, Test, and Development Commands
 
-Run scripts from @package.json (`dev`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`). Environment and local Supabase: @README.md. Workers deploy cookbook: @docs/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
+Run scripts from @package.json (`dev`, `dev:hosted`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`). Environment and local Supabase: @README.md. Workers deploy cookbook: @docs/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
 
 ## Testing Guidelines
 

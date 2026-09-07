@@ -22,6 +22,7 @@ pnpm-debug.log*
 
 # cloudflare
 .dev.vars
+.dev.vars.*
 .wrangler/
 
 # supabase CLI link

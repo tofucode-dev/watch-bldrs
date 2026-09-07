@@ -47,7 +47,8 @@ npm run dev
 
 ## Available Scripts
 
-- `npm run dev` — development server (Cloudflare `workerd`)
+- `npm run dev` — local Docker Supabase (`.dev.vars.local`)
+- `npm run dev:hosted` — hosted WatchBldrs (`.dev.vars`)
 - `npm run build` — production build
 - `npm run preview` — production-like preview (`workerd`)
 - `npm run deploy` — `astro build && wrangler deploy` to Cloudflare Workers
@@ -101,11 +102,31 @@ SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
 ```
 
-4. Stop with `npx supabase stop`. Studio: `http://localhost:54323`.
+4. Stop with `npx supabase stop`.
 
 Local Auth in `supabase/config.toml` uses `http://127.0.0.1:4321` and has email confirmations off. That file does not change a hosted project's Auth settings.
 
 No product tables or migrations are required yet — Auth uses `auth.users` only.
+
+### Inspect the local database
+
+A VS Code plugin is optional. After `npx supabase start`:
+
+- **Studio (easiest):** [http://127.0.0.1:54323](http://127.0.0.1:54323) — table editor, SQL, Auth users.
+- **Any Postgres client** (psql, DBeaver, TablePlus, or a VS Code SQL extension):
+
+| | |
+| --- | --- |
+| Host | `127.0.0.1` |
+| Port | `54322` (the API is `54321`) |
+| Database | `postgres` |
+| User / password | `postgres` / `postgres` |
+
+```
+postgresql://postgres:postgres@127.0.0.1:54322/postgres
+```
+
+Auth users are in `auth.users`. App tables appear under `public` once migrations exist.
 
 ### Hosted project (required for Workers)
 

@@ -14,7 +14,7 @@ Mixing these is the usual production-auth failure (empty catalog + silent login 
 
 | Store | Secrets | Purpose |
 | --- | --- | --- |
-| Local (gitignored `.dev.vars` and `.env`) | `SUPABASE_URL`, `SUPABASE_KEY` | `npm run dev` / `preview` |
+| Local (gitignored) | `.dev.vars.local` + `.env.local` = Docker; `.dev.vars` + `.env` = hosted | `npm run dev` loads `.dev.vars.local`; `npm run dev:hosted` loads `.dev.vars`. Never set `CLOUDFLARE_ENV` on `npm run deploy`. |
 | GitHub Actions | `SUPABASE_URL`, `SUPABASE_KEY` | `astro build` only. Never reach the Worker |
 | Cloudflare Worker runtime | `SUPABASE_URL`, `SUPABASE_KEY` | Live SSR, cookies, Auth |
 
