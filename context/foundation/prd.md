@@ -1,8 +1,9 @@
 ---
 project: WatchBldrs
-context_type: greenfield
+version: 1
+status: draft
 created: 2026-09-07
-updated: 2026-09-07
+context_type: greenfield
 product_type: web-app
 target_scale:
   users: small
@@ -12,41 +13,13 @@ timeline_budget:
   mvp_weeks: 1
   hard_deadline: 2026-09-14
   after_hours_only: false
-checkpoint:
-  current_phase: 8
-  phases_completed: [1, 2, 3, 4, 5, 6, 7]
-  gray_areas_resolved:
-    - topic: pain category
-      decision: Builds already exist (e.g. Reddit) but are hard to find and filter; details like which parts were used and what they cost are often missing.
-    - topic: insight
-      decision: Structured attributes beat threads; dedicated discovery is a better way to browse builds than a general forum that also mixes Q&A (building watches, finding parts).
-    - topic: primary persona scope
-      decision: Hobbyist niche — individuals modifying/assembling watches, across many communities, not inside one org.
-    - topic: auth strategy
-      decision: Sign-in is simple and preferably passwordless — magic link or Google/Reddit SSO. Visitor vs logged-in plus ownership; no admin role in MVP. No extra profile fields required before publish.
-    - topic: mvp scope
-      decision: Scoped proving flow keeps likes, parts list, and filters; defers gallery photos, ranking (Hot/Best/Popular/Build of the Week), related builds, and search. Like is the save — no separate favourite action or favourites listing in the MVP.
-    - topic: listing filters
-      decision: Watch style (primary), then movement, dial colour, strap type, case size. Other attributes (e.g. hands style) are not filters.
-    - topic: product framing
-      decision: Full-stack web app; handful of users; day-job work; hard deadline 2026-09-14; mvp_weeks set to 1 to match that deadline. At 100x scale, five AND filters without ranking would hide good builds.
-  frs_drafted: 8
-  quality_check_status: accepted
 ---
-
-# Seed idea (verbatim from IDEA.md)
-
-People building custom watches mainly share their projects on forums and social media. Information about the parts they used, their inspiration, and problems encountered during the build is scattered, inconsistent, and difficult to find later.
-
-WatchBldrs provides a dedicated place where watch-modification enthusiasts can present their builds in a structured format and discover projects created by other community members.
 
 ## Vision & Problem Statement
 
 Custom-watch builds already exist on forums and Reddit, but they are hard to find and filter, and details like which parts were used and what they cost are often missing. Watch-modification enthusiasts who want to present a finished build, or scan other people’s builds for parts, prices, and inspiration, instead land in mixed threads that also include questions about building watches and finding parts.
 
-Structured attributes beat threads. Dedicated discovery (filters and ranking) is a better way to browse builds than a general forum that mixes build showcases with Q&A.
-
-At 100x this user scale, five AND filters and no ranking would hide good builds — ranking would start to matter.
+Structured attributes beat threads. Dedicated discovery (filters and ranking) is a better way to browse builds than a general forum that mixes build showcases with Q&A. At 100x this user scale, five AND filters and no ranking would hide good builds — ranking would start to matter.
 
 ## User & Persona
 
@@ -139,8 +112,4 @@ Sign-in: magic link or Google/Reddit SSO, preferably with no password. Logout is
 
 ## Open Questions
 
-(none captured — `target_scale.qps: low` and `target_scale.data_volume: small` resolved 2026-09-07)
-
-## Quality cross-check
-
-All six greenfield elements present. `quality_check_status: accepted`. No gaps to mirror into PRD Open Questions.
+(none)
