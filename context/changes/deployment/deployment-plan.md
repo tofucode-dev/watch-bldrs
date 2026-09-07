@@ -60,7 +60,7 @@ A human must complete these before the agent can deploy. Do not let the agent de
 - **Supabase email confirm** — leave confirmation **on** for production; confirmation links use Site URL. If they still point at localhost, signup “works” locally and fails in production.
 - **Supabase Storage CORS** (when browser uploads land): allow the `workers.dev` origin (and later the custom domain). Not required for the first HTML-only deploy.
 - **GitHub repository** — Settings → Secrets and variables → Actions, for CI build + later deploy tokens.
-- **Optional later:** custom domain on a Cloudflare zone; Google/Reddit OAuth (PRD); Cloudflare Turnstile (`docs/OPERATIONAL_SAFETY.md` §7); Paid Workers.
+- **Optional later:** custom domain on a Cloudflare zone; Google/Reddit OAuth (PRD); Cloudflare Turnstile (`context/foundation/OPERATIONAL_SAFETY.md` §7); Paid Workers.
 
 Do **not** create: Cloudflare Pages project, D1, R2, Hyperdrive, Cloudflare Images pipeline, or a second Git deploy integration.
 
@@ -307,7 +307,7 @@ Only after Phase 3 works. Matches tech-stack `ci_provider: github-actions` + `ci
 
 Auth is cookie-based `src/lib/supabase.ts` + `src/middleware.ts`. Production origin must be HTTPS (`workers.dev` is). When PRD magic-link / OAuth is added, extend Supabase Redirect URLs and keep Site URL on the live origin.
 
-Cache: never “Cache Everything” on cookie routes (`docs/OPERATIONAL_SAFETY.md` §5).
+Cache: never “Cache Everything” on cookie routes (`context/foundation/OPERATIONAL_SAFETY.md` §5).
 
 ## Edge-case playbook (extra support)
 

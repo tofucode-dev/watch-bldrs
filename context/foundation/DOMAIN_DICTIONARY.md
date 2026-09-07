@@ -1,5 +1,7 @@
 ## Domain Dictionary
 
+Product language for WatchBldrs. MVP scope (what to build now) is `prd.md`. Several terms below — Favourite, Search, Gallery Photo, Hot, Best, Build of the Week — are defined here and deferred in the PRD.
+
 ### Users and Access
 
 | Term | Definition |

@@ -113,7 +113,7 @@ This repo is already a Workers app. Do not run `wrangler init` or `npx astro add
 1. Log in: `npx wrangler login` (uses the project Wrangler 4.x).
 2. Set runtime secrets (not GitHub Actions secrets): `npx wrangler secret put SUPABASE_URL` then `npx wrangler secret put SUPABASE_KEY`.
 3. Develop with `npm run dev` — Astro 7 + this adapter already runs `workerd`. Do not add a separate `wrangler dev` as the primary loop. Production-like check: `npm run build && npm run preview`.
-4. Deploy: `npm run deploy` (`astro build && wrangler deploy`). Confirm the printed `*.workers.dev` URL. Cookbook: `docs/deployment.md`. If SSR CPU exceeds 10 ms, move the Worker to the Paid plan ($5/month).
+4. Deploy: `npm run deploy` (`astro build && wrangler deploy`). Confirm the printed `*.workers.dev` URL. Cookbook: `deployment.md`. If SSR CPU exceeds 10 ms, move the Worker to the Paid plan ($5/month).
 
 ## Out of Scope
 

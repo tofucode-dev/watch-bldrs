@@ -1,6 +1,6 @@
 # Runtime, Rendering, and Application Flow
 
-Module layout: @docs/architecture/modules.md. Operational rules: @AGENTS.md.
+Module layout: @context/foundation/architecture/modules.md. Operational rules: @AGENTS.md.
 
 ## Technology and Runtime
 
@@ -41,7 +41,7 @@ Use server rendering by default.
 
 Do not hydrate read-only content. Keep filter values in the URL query string so filtered catalog states are linkable, refresh-safe, and available to SSR.
 
-All catalog reads and build mutations must go through Astro SSR or Actions. Direct browser Supabase calls are forbidden except Storage upload, and only with RLS/Storage policies verified (@docs/architecture/security.md).
+All catalog reads and build mutations must go through Astro SSR or Actions. Direct browser Supabase calls are forbidden except Storage upload, and only with RLS/Storage policies verified (@context/foundation/architecture/security.md).
 
 ## Suggested Route Map
 

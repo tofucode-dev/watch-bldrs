@@ -40,7 +40,7 @@ Owns public read behavior:
 - watch style, movement, dial colour, strap type, and case size filters;
 - empty filter results.
 
-`catalog` is intentionally read-oriented. It may query projections from the same PostgreSQL schema but must always apply published visibility. It does not own build mutation rules. Read-model rules: @docs/architecture/data-model.md#catalog-query-model.
+`catalog` is intentionally read-oriented. It may query projections from the same PostgreSQL schema but must always apply published visibility. It does not own build mutation rules. Read-model rules: @context/foundation/architecture/data-model.md#catalog-query-model.
 
 ### `likes`
 
@@ -141,7 +141,7 @@ Generated database types and raw Supabase response shapes stay at this boundary.
 
 ### Presentation
 
-Presentation owns UI state and formatting only; authorization lives in application code and RLS (@docs/architecture/security.md). Shared, domain-free primitives remain in `src/components/ui`; feature components remain in their module.
+Presentation owns UI state and formatting only; authorization lives in application code and RLS (@context/foundation/architecture/security.md). Shared, domain-free primitives remain in `src/components/ui`; feature components remain in their module.
 
 ### Server
 

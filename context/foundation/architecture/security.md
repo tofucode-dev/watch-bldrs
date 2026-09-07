@@ -27,7 +27,7 @@ Test policies with at least three identities:
 - author A;
 - different authenticated user B.
 
-Tests must call the data boundary as those identities. Testing only application code does not prove RLS correctness. See @docs/architecture/testing.md.
+Tests must call the data boundary as those identities. Testing only application code does not prove RLS correctness. See @context/foundation/architecture/testing.md.
 
 ## Publication State Machine
 

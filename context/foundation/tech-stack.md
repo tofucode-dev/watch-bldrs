@@ -21,4 +21,37 @@ hints:
 
 ## Why this stack
 
-WatchBldrs is a small, 1-week JavaScript/TypeScript web app with login and a main photo. The recommended Astro + React + TypeScript starter already includes a database, auth, and file storage, which matches those needs without adding payments, realtime, AI, or background jobs. Cloudflare Workers is the deploy target (`npx wrangler deploy`, never Pages). CI is GitHub Actions with auto-deploy on merge to main. Scaffolding support is first-class rather than fully battle-tested, which is acceptable for a short solo MVP that stays on the recommended path.
+WatchBldrs is a small, 1-week TypeScript web app with login, PostgreSQL, and private-then-public image storage. The Astro starter already includes those pieces without payments, realtime, AI, or background jobs. The app is Astro 7 SSR (`output: "server"`) on Cloudflare Workers (`npx wrangler deploy`, never Pages), with React 19 islands only where interaction is required. CI is GitHub Actions with auto-deploy on merge to `main`.
+
+This file is the living stack inventory. Module boundaries, RLS, schema, runtime rules, and tests live in `architecture/` — do not duplicate them here.
+
+## Current stack
+
+Versions: `package.json`. Runtime config: `astro.config.mjs`, `wrangler.jsonc`. Deploy: `deployment.md`. Platform choice: `infrastructure.md`.
+
+| Layer | Choice |
+| --- | --- |
+| Language | TypeScript 5 |
+| App framework | Astro 7, `output: "server"` |
+| UI | React 19 islands, Tailwind CSS 4, shadcn/ui (`new-york`) |
+| Auth / data / files | Supabase Auth, PostgreSQL, Storage (`@supabase/ssr`) |
+| Runtime | Cloudflare Workers (`workerd` via `@astrojs/cloudflare`) |
+| Package manager | npm |
+| Tests | Vitest (Node; standalone `vitest.config.ts`) |
+| CI | GitHub Actions, auto-deploy on merge to `main` |
+
+Feature flags from the original selection still hold: auth yes; payments, realtime, AI, and background jobs no.
+
+## Architecture map
+
+How this stack is used. Canonical rules stay in the linked docs.
+
+| Concern | Doc |
+| --- | --- |
+| Modules (`auth`, `builds`, `catalog`, `likes`), layers, imports | `architecture/modules.md` |
+| SSR vs islands, Actions vs endpoints, routes, state, validation | `architecture/runtime.md` |
+| RLS, publication state machine, Storage, actor resolution | `architecture/security.md` |
+| Tables, catalog read model, AND filters | `architecture/data-model.md` |
+| Unit, integration, component, E2E | `architecture/testing.md` |
+
+Operational rules for agents: `AGENTS.md`. Product scope: `prd.md`. Inventory: `README.md`.

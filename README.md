@@ -168,7 +168,7 @@ Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_
 
 ## Deployment
 
-Full command cookbook, secret stores, rollback, and first-deploy bootstrap: [docs/deployment.md](docs/deployment.md).
+Full command cookbook, secret stores, rollback, and first-deploy bootstrap: [context/foundation/deployment.md](context/foundation/deployment.md).
 
 This app deploys to Cloudflare **Workers**. Never `wrangler pages deploy`.
 

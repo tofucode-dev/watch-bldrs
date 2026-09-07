@@ -1,6 +1,6 @@
 # Data Model and Catalog Queries
 
-RLS matrix: @docs/architecture/security.md. Schema migration rules: @AGENTS.md.
+RLS matrix: @context/foundation/architecture/security.md. Schema migration rules: @AGENTS.md.
 
 ## Proposed Relational Model
 

@@ -126,7 +126,7 @@ There is no `supabase/migrations/` yet. Do not invent a `db push`. When migratio
 
 If invocations exceed ~10 ms CPU, enable Workers Paid. Do not treat Free as a guarantee for SSR + Auth + DB.
 
-Cache: never apply “Cache Everything” on cookie routes (`docs/OPERATIONAL_SAFETY.md` §5).
+Cache: never apply “Cache Everything” on cookie routes (`OPERATIONAL_SAFETY.md` §5).
 
 ## CI
 

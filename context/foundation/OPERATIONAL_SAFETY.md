@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines operational and security rules for WatchBldrs that complement @AGENTS.md and @docs/architecture/security.md.
+This document defines operational and security rules for WatchBldrs that complement @AGENTS.md and @context/foundation/architecture/security.md.
 
 Contributors and coding agents must read this document before changing:
 

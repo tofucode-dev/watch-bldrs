@@ -8,18 +8,18 @@ Read before making material changes:
 
 - Product requirements and MVP scope: @prd.md
 - Setup and operational details: @README.md
-- Deployment (Workers, secrets, rollback): @docs/deployment.md
+- Deployment (Workers, secrets, rollback): @context/foundation/deployment.md
 - Foundation documentation: @context/foundation/README.md
-- Security (RLS, publication, Storage, Actions, auth): @docs/architecture/security.md
-- Modules (boundaries, layers, imports, layout): @docs/architecture/modules.md
-- Data model (schema, catalog read models): @docs/architecture/data-model.md
-- Runtime (Workers, SSR, routes, state, validation): @docs/architecture/runtime.md
-- Testing (unit, integration, component, E2E): @docs/architecture/testing.md
-- Operational and security rules: @docs/OPERATIONAL_SAFETY.md
+- Security (RLS, publication, Storage, Actions, auth): @context/foundation/architecture/security.md
+- Modules (boundaries, layers, imports, layout): @context/foundation/architecture/modules.md
+- Data model (schema, catalog read models): @context/foundation/architecture/data-model.md
+- Runtime (Workers, SSR, routes, state, validation): @context/foundation/architecture/runtime.md
+- Testing (unit, integration, component, E2E): @context/foundation/architecture/testing.md
+- Operational and security rules: @context/foundation/OPERATIONAL_SAFETY.md
 
 The product is a structured showcase for custom watch builds. Proving flow and deferred non-goals: @prd.md.
 
-Keep the MVP deadline and scope in mind. Do not add modules, layers, or ports beyond what @docs/architecture/modules.md requires for the current feature.
+Keep the MVP deadline and scope in mind. Do not add modules, layers, or ports beyond what @context/foundation/architecture/modules.md requires for the current feature.
 
 ## Non-Negotiable Repository Rules
 
@@ -69,10 +69,10 @@ Vertical slice by business capability; layers live inside each module.
 
 When adding code:
 
-1. Pick the owning module (`auth`, `builds`, `catalog`, `likes`) per @docs/architecture/modules.md.
+1. Pick the owning module (`auth`, `builds`, `catalog`, `likes`) per @context/foundation/architecture/modules.md.
 2. Place files in the correct layer and follow the source layout in the same document.
 3. Import only through `@/modules/<name>` or `@/modules/<name>/server`.
-4. Enforce RLS and publication rules per @docs/architecture/security.md before merging.
+4. Enforce RLS and publication rules per @context/foundation/architecture/security.md before merging.
 
 Do not create layers, interfaces, or empty directories to match a diagram. Create a layer subdirectory (`domain/`, `application/ports/`, etc.) only after the module has ≥2 files in that layer.
 
@@ -86,7 +86,7 @@ Do not create layers, interfaces, or empty directories to match a diagram. Creat
 - Add a `client:*` directive only when the component requires browser execution.
 - Do not turn an entire page into a React island without a concrete interaction requirement.
 - Keep client state close to the component that owns it.
-- Add a client store only when ≥2 React islands on the same page must share form state (@docs/architecture/runtime.md).
+- Add a client store only when ≥2 React islands on the same page must share form state (@context/foundation/architecture/runtime.md).
 - Cookies and Supabase Auth are the source of truth for the session; a React store is not an authorization mechanism.
 
 ## Actions, Endpoints, and Middleware
@@ -95,7 +95,7 @@ Do not create layers, interfaces, or empty directories to match a diagram. Creat
 
 Prefer Actions for new UI-only mutations such as build creation, editing, publishing, deletion, and like/unlike. Existing auth endpoints may remain endpoint-based.
 
-Keep @src/actions/index.ts as a registry that imports grouped actions from module server entrypoints. Pipeline and trust rules: @docs/architecture/security.md.
+Keep @src/actions/index.ts as a registry that imports grouped actions from module server entrypoints. Pipeline and trust rules: @context/foundation/architecture/security.md.
 
 Every Action must:
 
@@ -126,13 +126,13 @@ Middleware may:
 - place request-scoped identity data in `Astro.locals`;
 - implement cross-cutting redirects, logging, and correlation IDs.
 
-Middleware must not own feature-specific business rules. `Astro.locals` exists for one request and is not persistent storage. Details: @docs/architecture/security.md.
+Middleware must not own feature-specific business rules. `Astro.locals` exists for one request and is not persistent storage. Details: @context/foundation/architecture/security.md.
 
 ## Supabase Data and Security Rules
 
-RLS, publication state, Storage access, and the authorization matrix: @docs/architecture/security.md. Schema shape: @docs/architecture/data-model.md.
+RLS, publication state, Storage access, and the authorization matrix: @context/foundation/architecture/security.md. Schema shape: @context/foundation/architecture/data-model.md.
 
-Every exposed table needs migrations, RLS, and integration tests with anonymous, author A, and user B identities (@docs/architecture/testing.md).
+Every exposed table needs migrations, RLS, and integration tests with anonymous, author A, and user B identities (@context/foundation/architecture/testing.md).
 
 General rules:
 
@@ -152,7 +152,7 @@ General rules:
 - Every user-facing form, list, and mutation flow must implement loading, empty, success, validation-error, authorization-error, and unexpected-error states.
 - Preserve submitted form values after recoverable validation failures.
 
-Error categories and logging rules: @docs/architecture/runtime.md.
+Error categories and logging rules: @context/foundation/architecture/runtime.md.
 
 ## Styling and Responsive UI
 
@@ -165,11 +165,11 @@ Error categories and logging rules: @docs/architecture/runtime.md.
 
 ## Build, Test, and Development Commands
 
-Run scripts from @package.json (`dev`, `dev:hosted`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`). Environment and local Supabase: @README.md. Workers deploy cookbook: @docs/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
+Run scripts from @package.json (`dev`, `dev:hosted`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`). Environment and local Supabase: @README.md. Workers deploy cookbook: @context/foundation/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
 
 ## Testing Guidelines
 
-Vitest matches `src/**/*.{test,spec}.{ts,tsx}` per @vitest.config.ts. Co-locate unit tests beside source. Full test matrix: @docs/architecture/testing.md.
+Vitest matches `src/**/*.{test,spec}.{ts,tsx}` per @vitest.config.ts. Co-locate unit tests beside source. Full test matrix: @context/foundation/architecture/testing.md.
 
 When testing auth helpers, follow @src/lib/supabase.test.ts. Mock `astro:env/server` and `@supabase/ssr`; unit tests must not require a live Supabase instance.
 
@@ -201,7 +201,7 @@ Before implementation:
 3. Identify the owning business module and target layer.
 4. Inspect the module's existing public API and patterns.
 5. Identify authorization, RLS, validation, and mobile UI implications.
-6. Pick the owning module and layer per @docs/architecture/modules.md; do not add abstractions not required by the acceptance criteria in @prd.md.
+6. Pick the owning module and layer per @context/foundation/architecture/modules.md; do not add abstractions not required by the acceptance criteria in @prd.md.
 
 After implementation:
 
@@ -225,6 +225,6 @@ A change is complete when:
 - ownership, publication visibility, RLS, and Storage access are correct;
 - relevant loading, empty, and error states are implemented;
 - responsive and accessible behavior is preserved;
-- data-access or RLS changes include integration tests; UI-only changes include component or E2E tests per @docs/architecture/testing.md;
+- data-access or RLS changes include integration tests; UI-only changes include component or E2E tests per @context/foundation/architecture/testing.md;
 - lint, tests, and the Cloudflare Workers build pass;
 - affected documentation and contracts are updated.

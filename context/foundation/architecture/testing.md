@@ -1,6 +1,6 @@
 # Testing Strategy
 
-RLS test identities: @docs/architecture/security.md. Commands and workflow: @AGENTS.md.
+RLS test identities: @context/foundation/architecture/security.md. Commands and workflow: @AGENTS.md.
 
 ## Unit
 

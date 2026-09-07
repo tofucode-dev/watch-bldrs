@@ -1,5 +1,7 @@
 # WatchBldrs — MVP
 
+> Original product sketch. Canonical MVP scope is `prd.md` — where they disagree, the PRD wins (Favourites, gallery photos, search, and ranking are PRD non-goals). Glossary: `DOMAIN_DICTIONARY.md`.
+
 ## Main Problem
 
 People building custom watches mainly share their projects on forums and social media. Information about the parts they used, their inspiration, and problems encountered during the build is scattered, inconsistent, and difficult to find later.
