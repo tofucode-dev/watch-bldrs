@@ -34,6 +34,12 @@ const baseConfig = tseslint.config({
     ],
     "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
     "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto",
+      },
+    ],
   },
 });
 

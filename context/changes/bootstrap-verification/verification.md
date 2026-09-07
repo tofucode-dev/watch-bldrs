@@ -109,6 +109,17 @@ INFO: 0
 
 `npm audit` exit code was non-zero (vulnerabilities present). Bootstrapper did not halt and did not run `npm audit fix`.
 
+## Remediation (2026-09-07)
+
+Addressed the post-scaffold audit after bootstrap. `npm audit` is now **0 vulnerabilities**.
+
+| Action | What changed |
+| ------ | ------------ |
+| `npm audit fix` | Patched transitive and compatible direct deps (including `tar`/`supabase`, `wrangler`, `vite`, `brace-expansion`, `undici`, `ws`, and related HIGH/MODERATE/LOW advisories). |
+| Astro 6 → 7 | Remaining HIGH XSS in `astro` (`<=7.0.9`) has no 6.x patch. Upgraded `astro` to `^7.3.1`, `@astrojs/cloudflare` to `^14.3.0`, `@astrojs/react` to `^6.0.5`, `@astrojs/check` to `^0.9.10`. Removed the Vite 7 override so Astro 7 can use Vite 8. |
+
+Verified: `npm audit` reports 0 findings; `npm run build` succeeds.
+
 ## Hints recorded but not acted on
 
 | Hint                       | Value                |
@@ -134,4 +145,4 @@ Next: a future skill will set up agent context (CLAUDE.md, AGENTS.md). For now, 
 Useful manual steps in the meantime:
 - `git init` (if you have not already) to start your own repo history.
 - Review any `.scaffold` siblings the conflict policy created and decide which version of each file to keep.
-- Address audit findings per your project's risk tolerance — the full breakdown is in this log.
+- Audit findings from this log were remediated (see **Remediation** above); re-run `npm audit` after future dependency updates.
