@@ -1,126 +1,214 @@
 ---
-import Topbar from "@/components/Topbar.astro";
+const styles = [
+  { name: "Diver", count: 0, color: "bg-olive text-primary-foreground", icon: "waves" },
+  { name: "Field", count: 0, color: "bg-field text-primary-foreground", icon: "tree" },
+  { name: "Dress", count: 0, color: "bg-muted text-foreground", icon: "bowtie" },
+  { name: "GMT", count: 0, color: "bg-primary text-primary-foreground", icon: "gmt" },
+  { name: "Pilot", count: 0, color: "bg-pilot text-foreground", icon: "plane" },
+  { name: "Integrated", count: 0, color: "bg-accent text-foreground", icon: "case" },
+] as const;
 ---
 
-<div class="bg-cosmic relative min-h-screen w-full overflow-hidden">
-  <!-- Cosmic orbs -->
-  <div
-    class="pointer-events-none absolute top-1/4 -left-24 h-[350px] w-[350px] rounded-full bg-purple-500/20 blur-[120px]"
-  >
-  </div>
-  <div
-    class="pointer-events-none absolute top-2/3 -right-16 h-[250px] w-[250px] rounded-full bg-blue-500/15 blur-[100px]"
-  >
-  </div>
-  <div
-    class="pointer-events-none absolute top-0 left-1/2 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-indigo-400/10 blur-[140px]"
-  >
-  </div>
-
-  <!-- Star field -->
-  <div
-    class="pointer-events-none absolute inset-0"
-    style="background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 200px 200px, 150px 150px, 100px 100px; background-position: 0 0, 40px 60px, 80px 30px;"
-  >
-  </div>
-
-  <div class="relative z-10 p-4 sm:p-8">
-    <Topbar />
-
-    <!-- Hero section -->
-    <div class="mx-auto flex max-w-4xl flex-col items-center justify-center px-4 py-24 text-center sm:py-32 lg:py-40">
+<main>
+  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-12 lg:py-14">
+    <div class="lg:col-span-4">
       <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 bg-clip-text text-5xl leading-tight font-bold text-transparent sm:text-6xl lg:text-7xl"
+        class="font-heading text-foreground text-5xl leading-[0.9] font-extrabold tracking-tight uppercase sm:text-6xl"
       >
-        10x Astro Starter
+        Built by hand.<br />Shared with the community.
       </h1>
-      <p class="mb-10 max-w-2xl text-lg text-blue-100/70 sm:text-xl">
-        A production-ready starter with authentication, modern tooling, and a cosmic developer experience.
+      <a
+        href="#from-the-bench"
+        class="bg-secondary font-heading text-secondary-foreground hover:bg-secondary/90 mt-8 inline-flex items-center px-5 py-3 text-sm font-bold tracking-[0.16em] uppercase transition-colors"
+      >
+        Browse builds →
+      </a>
+    </div>
+
+    <div class="relative mx-auto w-full max-w-md lg:col-span-5">
+      <div class="torn-paper bg-mustard absolute -inset-1 rotate-3 sm:inset-x-2 sm:inset-y-0"></div>
+      <div class="bg-card shadow-paper relative mx-auto mt-4 mb-4 w-[72%] -rotate-2 p-2 sm:p-3">
+        <svg viewBox="0 0 240 280" role="img" aria-label="A field watch on a green NATO strap" class="h-auto w-full">
+          <rect width="240" height="280" fill="#faf7f0"></rect>
+          <rect x="92" y="18" width="56" height="244" rx="6" fill="#3d4a2a"></rect>
+          <rect x="98" y="24" width="18" height="232" fill="#2c3324" opacity="0.35"></rect>
+          <rect x="124" y="24" width="18" height="232" fill="#2c3324" opacity="0.35"></rect>
+          <circle cx="120" cy="132" r="78" fill="#1c1a16"></circle>
+          <circle cx="120" cy="132" r="70" fill="#e8e0d4"></circle>
+          <circle cx="120" cy="132" r="64" fill="#f3eee4"></circle>
+          {
+            Array.from({ length: 12 }, (_, i) => {
+              const angle = ((i * 30 - 90) * Math.PI) / 180;
+              const x1 = 120 + Math.cos(angle) * 52;
+              const y1 = 132 + Math.sin(angle) * 52;
+              const x2 = 120 + Math.cos(angle) * 58;
+              const y2 = 132 + Math.sin(angle) * 58;
+              return (
+                <line
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  stroke="#1c1a16"
+                  stroke-width={i % 3 === 0 ? 3 : 1.5}
+                  stroke-linecap="square"
+                />
+              );
+            })
+          }
+          <polygon points="120,88 124,132 116,132" fill="#1c1a16"></polygon>
+          <polygon points="148,148 120,128 120,136" fill="#c1462e"></polygon>
+          <circle cx="120" cy="132" r="5" fill="#1c1a16"></circle>
+          <rect x="112" y="52" width="16" height="10" rx="1" fill="#1c1a16"></rect>
+        </svg>
+      </div>
+      <div
+        class="stamp text-pilot pointer-events-none absolute top-2 right-0 size-24 rotate-12 p-3 text-[0.65rem] sm:right-4"
+        aria-hidden="true"
+      >
+        Build it your way
+      </div>
+    </div>
+
+    <div class="flex flex-col items-start gap-4 lg:col-span-3">
+      <aside class="bg-sticky shadow-paper w-full max-w-xs rotate-2 p-4">
+        <p class="font-heading text-sm font-bold tracking-widest uppercase">Today's check</p>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li class="flex items-center gap-2"><span class="border-foreground size-3 border"></span> Coffee</li>
+          <li class="flex items-center gap-2">
+            <span class="border-foreground bg-foreground size-3 border"></span> Design
+          </li>
+          <li class="flex items-center gap-2"><span class="border-foreground size-3 border"></span> Build</li>
+          <li class="flex items-center gap-2"><span class="border-foreground size-3 border"></span> Wear</li>
+          <li class="flex items-center gap-2"><span class="border-foreground size-3 border"></span> Repeat</li>
+        </ul>
+      </aside>
+      <p
+        class="bg-secondary font-heading text-secondary-foreground px-4 py-2 text-xs font-bold tracking-[0.2em] uppercase"
+      >
+        Mechanical not magical
       </p>
-      <div class="flex flex-col gap-4 sm:flex-row">
-        <a
-          href="/auth/signin"
-          class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-purple-500"
-        >
-          Sign In
-        </a>
+    </div>
+  </section>
+
+  <section id="styles" class="border-border border-y" aria-label="Watch styles">
+    <div class="mx-auto flex max-w-6xl items-stretch overflow-x-auto px-4 sm:px-6">
+      {
+        styles.map((style) => (
+          <a
+            href="#from-the-bench"
+            class:list={["flex min-w-[8.5rem] flex-1 flex-col gap-3 px-4 py-5 no-underline", style.color]}
+          >
+            <span class="opacity-90" aria-hidden="true">
+              {style.icon === "waves" && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M2 12c2 2 4 2 6 0s4-2 6 0 4 2 6 0" />
+                  <path d="M2 17c2 2 4 2 6 0s4-2 6 0 4 2 6 0" />
+                </svg>
+              )}
+              {style.icon === "tree" && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 22V10" />
+                  <path d="M12 10 7 16h10l-5-6Z" />
+                  <path d="M12 7 8 12h8L12 7Z" />
+                </svg>
+              )}
+              {style.icon === "bowtie" && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M8 8 3 6v12l5-2 4-4-4-4Z" />
+                  <path d="m16 8 5-2v12l-5-2-4-4 4-4Z" />
+                  <rect x="10" y="10" width="4" height="4" />
+                </svg>
+              )}
+              {style.icon === "gmt" && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M12 8v4l3 2" />
+                </svg>
+              )}
+              {style.icon === "plane" && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M2 16 22 8l-7 14-3-6-6-2Z" />
+                </svg>
+              )}
+              {style.icon === "case" && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="5" y="5" width="14" height="14" rx="3" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+            </span>
+            <span>
+              <span class="font-heading block text-lg font-bold tracking-wide uppercase">{style.name}</span>
+              <span class="text-xs opacity-80">{style.count} builds</span>
+            </span>
+          </a>
+        ))
+      }
+      <a
+        href="#from-the-bench"
+        class="bg-card font-heading text-foreground hover:bg-muted flex min-w-[6.5rem] items-center justify-center px-4 py-5 text-xs font-bold tracking-widest uppercase no-underline"
+      >
+        View all →
+      </a>
+    </div>
+  </section>
+
+  <section id="from-the-bench" class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-12">
+    <div class="bg-card shadow-paper relative p-6 lg:col-span-8">
+      <p class="font-heading text-muted-foreground text-sm font-bold tracking-[0.22em] uppercase">From the bench</p>
+      <h2 class="font-heading mt-2 text-3xl font-extrabold tracking-tight uppercase">Recently published builds</h2>
+      <p class="text-muted-foreground mt-3 max-w-xl">
+        Finished watches land here once they are published. Drafts stay private on the bench until you share them with
+        the club.
+      </p>
+      <div class="border-border bg-background/60 mt-8 border border-dashed px-6 py-16 text-center">
+        <p class="font-heading text-xl font-bold tracking-wide uppercase">The logbook is empty</p>
+        <p class="text-muted-foreground mt-2 text-sm">Be the first to publish a build and start the catalog.</p>
         <a
           href="/auth/signup"
-          class="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
+          class="bg-primary font-heading text-primary-foreground hover:bg-primary/90 mt-6 inline-flex px-5 py-2.5 text-sm font-bold tracking-[0.14em] uppercase"
         >
-          Sign Up
+          Join and publish →
         </a>
       </div>
-    </div>
-
-    <!-- Feature cards -->
-    <div class="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-4 pb-24 sm:grid-cols-3">
-      <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-4 text-purple-300"
-        >
-          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-        <h3 class="mb-2 text-lg font-semibold text-white">Authentication Ready</h3>
-        <p class="text-sm leading-relaxed text-blue-100/60">
-          Built-in Supabase auth with sign in, sign up, and protected routes out of the box.
-        </p>
-      </div>
-
-      <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-4 text-purple-300"
-        >
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </svg>
-        <h3 class="mb-2 text-lg font-semibold text-white">Modern Stack</h3>
-        <p class="text-sm leading-relaxed text-blue-100/60">
-          Astro 7, React 19, Tailwind 4, and TypeScript — the latest tools, ready to go.
-        </p>
-      </div>
-
-      <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-4 text-purple-300"
-        >
-          <polyline points="16 18 22 12 16 6"></polyline>
-          <polyline points="8 6 2 12 8 18"></polyline>
-        </svg>
-        <h3 class="mb-2 text-lg font-semibold text-white">Developer Experience</h3>
-        <p class="text-sm leading-relaxed text-blue-100/60">
-          ESLint, Prettier, and pre-commit hooks keep your codebase clean from day one.
-        </p>
+      <div
+        class="stamp text-primary pointer-events-none absolute -right-2 -bottom-4 size-24 rotate-[-14deg] p-3 text-[0.6rem]"
+        aria-hidden="true"
+      >
+        Hand built not bought
       </div>
     </div>
-  </div>
-</div>
+
+    <aside class="flex flex-col gap-6 lg:col-span-4">
+      <div class="border-border bg-card shadow-paper border p-5">
+        <p class="font-heading text-sm font-bold tracking-[0.22em] uppercase">Find what you need</p>
+        <ul class="mt-4 space-y-3 text-sm">
+          <li>
+            <a href="#styles" class="hover:text-primary">Browse by watch style</a>
+          </li>
+          <li>
+            <a href="#from-the-bench" class="hover:text-primary">See recent builds</a>
+          </li>
+          <li>
+            <a href="/auth/signin" class="hover:text-primary">Sign in to your bench</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="bg-secondary text-secondary-foreground shadow-paper relative overflow-hidden p-5">
+        <p class="font-heading text-sm font-bold tracking-[0.22em] uppercase">Join the club</p>
+        <p class="font-script text-mustard mt-2 text-2xl">Building better watches. Together.</p>
+        <p class="text-secondary-foreground/80 mt-3 text-sm">
+          Create an account, log a draft from your bench, and publish when the watch is ready to share.
+        </p>
+        <a
+          href="/auth/signup"
+          class="bg-primary font-heading text-primary-foreground hover:bg-primary/90 mt-5 inline-flex px-4 py-2 text-sm font-bold tracking-[0.14em] uppercase"
+        >
+          Sign up free
+        </a>
+      </div>
+    </aside>
+  </section>
+</main>

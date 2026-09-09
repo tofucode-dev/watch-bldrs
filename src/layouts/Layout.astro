@@ -1,13 +1,16 @@
 ---
 import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import Topbar from "@/components/Topbar.astro";
 import { missingConfigs } from "@/lib/config-status";
 
 interface Props {
   title?: string;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "WatchBldrs" } = Astro.props;
+const pageTitle = title === "WatchBldrs" ? title : `${title} · WatchBldrs`;
 ---
 
 <!doctype html>
@@ -16,18 +19,24 @@ const { title = "10x Astro Starter" } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Caveat:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <title>{pageTitle}</title>
   </head>
   <body>
     {
       missingConfigs.map((cfg) => (
         <Banner variant="error">
-          <strong>Uwaga:</strong> {cfg.message}
+          <strong>Notice:</strong> {cfg.message}
           {cfg.docsUrl && (
             <>
               {" "}
               <a href={cfg.docsUrl} target="_blank" rel="noopener noreferrer">
-                {cfg.docsLabel ?? "Dokumentacja"}
+                {cfg.docsLabel ?? "Documentation"}
               </a>
               .
             </>
@@ -35,15 +44,12 @@ const { title = "10x Astro Starter" } = Astro.props;
         </Banner>
       ))
     }
-    <slot />
+    <div class="flex min-h-screen flex-col">
+      <Topbar />
+      <div class="flex flex-1 flex-col">
+        <slot />
+      </div>
+      <SiteFooter />
+    </div>
   </body>
 </html>
-
-<style>
-  html,
-  body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-  }
-</style>

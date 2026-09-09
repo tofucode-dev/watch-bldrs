@@ -1,37 +1,114 @@
 ---
 const { user } = Astro.locals;
+const path = Astro.url.pathname;
+const isHome = path === "/";
+const isDashboard = path === "/dashboard";
+
+const navItems = [
+  { href: "/", label: "Home", active: isHome },
+  { href: "/#from-the-bench", label: "Builds", active: false },
+  { href: user ? "/dashboard" : "/auth/signin", label: "Account", active: isDashboard },
+];
 ---
 
-<div
-  class="mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
->
-  {
-    user ? (
-      <>
-        <span class="text-blue-100/70">{user.email}</span>
-        <div class="flex items-center gap-3">
-          <a href="/dashboard" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Dashboard
+<header class="border-border border-b">
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <a href="/" class="min-w-0 no-underline">
+      <p class="font-heading text-primary text-3xl leading-none font-extrabold tracking-tight sm:text-4xl">
+        WATCHBLDRS
+      </p>
+      <p class="text-foreground mt-1 text-[10px] font-semibold tracking-[0.28em] uppercase">
+        The mechanical watch club
+      </p>
+    </a>
+
+    <p class="font-script text-primary hidden text-xl sm:block">Make it yours</p>
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      {
+        user ? (
+          <>
+            <span class="text-muted-foreground hidden max-w-[12rem] truncate text-sm md:inline">{user.email}</span>
+            <form method="POST" action="/api/auth/signout">
+              <button
+                type="submit"
+                class="border-border bg-card font-heading text-foreground hover:bg-muted border px-3 py-1.5 text-xs font-bold tracking-widest uppercase transition-colors"
+              >
+                Sign out
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <a
+              href="/auth/signin"
+              class="font-heading text-foreground hover:bg-muted px-3 py-1.5 text-xs font-bold tracking-widest uppercase transition-colors"
+            >
+              Sign in
+            </a>
+            <a
+              href="/auth/signup"
+              class="bg-primary font-heading text-primary-foreground hover:bg-primary/90 px-3 py-1.5 text-xs font-bold tracking-widest uppercase transition-colors"
+            >
+              Sign up
+            </a>
+          </>
+        )
+      }
+
+      <details class="relative md:hidden">
+        <summary
+          class="border-border bg-card font-heading cursor-pointer list-none border px-3 py-1.5 text-xs font-bold tracking-widest uppercase"
+          aria-label="Open menu"
+        >
+          Menu
+        </summary>
+        <nav
+          class="border-border bg-card shadow-paper absolute right-0 z-20 mt-1 flex w-44 flex-col border p-1"
+          aria-label="Mobile"
+        >
+          {
+            navItems.map((item) => (
+              <a
+                href={item.href}
+                class:list={[
+                  "font-heading px-3 py-2 text-xs font-bold tracking-widest uppercase",
+                  item.active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted",
+                ]}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+    </div>
+  </div>
+
+  <nav class="border-border hidden border-t md:block" aria-label="Primary">
+    <div class="mx-auto flex max-w-6xl items-center gap-1 px-4 py-2 sm:px-6">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "font-heading px-3 py-1.5 text-xs font-bold tracking-[0.18em] uppercase",
+              item.active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted",
+            ]}
+          >
+            {item.label}
           </a>
-          <form method="POST" action="/api/auth/signout">
-            <button type="submit" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-              Sign out
-            </button>
-          </form>
-        </div>
-      </>
-    ) : (
-      <>
-        <span class="text-blue-100/70">Not signed in</span>
-        <div class="flex gap-3">
-          <a href="/auth/signin" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Sign in
-          </a>
-          <a href="/auth/signup" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
-            Sign up
-          </a>
-        </div>
-      </>
-    )
+        ))
+      }
+    </div>
+  </nav>
+</header>
+
+<style>
+  summary {
+    list-style: none;
   }
-</div>
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
