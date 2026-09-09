@@ -3,7 +3,7 @@ project: WatchBldrs
 version: 1
 status: draft
 created: 2026-09-08
-updated: 2026-09-08
+updated: 2026-09-09
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -41,7 +41,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 | ----- | ---------------------- | --------------------------------- | ---------------- | -------------- | -------- |
-| F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, one-way publish, author-only drafts, and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | ready |
+| F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, one-way publish, author-only drafts, and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | planning |
 | S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | — | US-01, FR-001 | ready |
 | S-02 | publish-structured-build | user can create a draft with watch attributes, parts list, and main photo, publish it, and see it on the public listing and details page; drafts stay hidden from others | F-01, S-01 | US-02, US-04, FR-002, FR-003, FR-004, FR-005, FR-010 | proposed |
 | S-03 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics | S-02 | US-03, FR-002, FR-006 | proposed |
@@ -85,7 +85,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced first because draft privacy and ownership cannot be bolted on after a public listing exists; this is the minimum persistence contract, not a finished data platform — S-02 still has to create, upload, and publish through a real user flow.
-- **Status:** ready
+- **Status:** planning
 
 ## Slices
 
