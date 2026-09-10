@@ -15,7 +15,7 @@ RLS test identities: @context/foundation/architecture/security.md. Commands and 
 - migrations apply from a clean local Supabase state;
 - RLS matrix for anonymous, author A, and user B;
 - one-like uniqueness;
-- published-to-draft transition rejection;
+- author UPDATE `published → draft` succeeds and re-hides the row and object from anonymous and user B;
 - Storage access for draft and published images;
 - catalog queries never return drafts.
 

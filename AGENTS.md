@@ -45,7 +45,7 @@ The architecture must enforce:
 
 - drafts are private to their author;
 - only the author can create, edit, publish, or delete their build;
-- publication is one-way for the MVP: `draft -> published`;
+- the MVP UI does not expose unpublish; the database allows `published -> draft` for the author only;
 - only published builds appear in catalog queries and public details;
 - all active catalog filters combine with AND semantics;
 - a user can like a published build at most once;
@@ -226,5 +226,6 @@ A change is complete when:
 - relevant loading, empty, and error states are implemented;
 - responsive and accessible behavior is preserved;
 - data-access or RLS changes include integration tests; UI-only changes include component or E2E tests per @context/foundation/architecture/testing.md;
+- schema, RLS, or Storage policy changes: `npm run db:types` is committed and `npm run test:integration` passes against local Supabase (GitHub Actions does not run these — @context/foundation/architecture/security.md#ci-verification-exception);
 - lint, tests, and the Cloudflare Workers build pass;
 - affected documentation and contracts are updated.

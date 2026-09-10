@@ -23,7 +23,7 @@ Owns the authoring lifecycle and Build aggregate:
 
 - draft creation;
 - author-only editing and deletion;
-- the one-way publish transition;
+- the publish transition (`draft → published`); unpublish is allowed in SQL and is not MVP UI;
 - watch attributes;
 - main image reference;
 - story;

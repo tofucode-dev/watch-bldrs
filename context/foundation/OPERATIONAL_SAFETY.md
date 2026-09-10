@@ -198,6 +198,8 @@ Additionally verify for in-scope changes:
 
 A security-sensitive change is not complete when it is tested only through the UI.
 
+Exception (CI typegen drift + RLS identity-matrix tests on GitHub Actions): recorded in @context/foundation/architecture/security.md#ci-verification-exception. Local `npm run test:integration` and `npm run db:types` are the merge gates until CI can start local Supabase without a production service-role secret.
+
 ## 16. Exception Process
 
 An exception to this document must:

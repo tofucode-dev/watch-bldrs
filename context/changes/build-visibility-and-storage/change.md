@@ -1,6 +1,6 @@
 ---
 change_id: build-visibility-and-storage
-title: Persist builds with ownership, one-way publish, and private main image
+title: Persist builds with ownership, private main image, and SQL-allowed unpublish
 status: plan_reviewed
 created: 2026-09-09
 updated: 2026-09-10

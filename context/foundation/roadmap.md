@@ -3,7 +3,7 @@ project: WatchBldrs
 version: 1
 status: draft
 created: 2026-09-08
-updated: 2026-09-09
+updated: 2026-09-10
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -41,7 +41,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 | ----- | ---------------------- | --------------------------------- | ---------------- | -------------- | -------- |
-| F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, one-way publish, author-only drafts, and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | planning |
+| F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI), and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | planning |
 | S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | — | US-01, FR-001 | ready |
 | S-02 | publish-structured-build | user can create a draft with watch attributes, parts list, and main photo, publish it, and see it on the public listing and details page; drafts stay hidden from others | F-01, S-01 | US-02, US-04, FR-002, FR-003, FR-004, FR-005, FR-010 | proposed |
 | S-03 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics | S-02 | US-03, FR-002, FR-006 | proposed |
@@ -76,7 +76,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### F-01: Build visibility and private main-image storage
 
-- **Outcome:** (foundation) builds and parts persist with author ownership, one-way publish, author-only drafts, and private main-image storage.
+- **Outcome:** (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage.
 - **Change ID:** build-visibility-and-storage
 - **PRD refs:** Access Control; Success Criteria guardrails; FR-003, FR-004
 - **Unlocks:** S-02 (and therefore S-03, S-04, S-05, S-06); the draft-privacy guardrail that catalog slices must not violate
@@ -166,7 +166,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 | ---------- | ---------------------- | ----------------------------- | --------------------- | ----- |
-| F-01 | build-visibility-and-storage | Persist builds with ownership, one-way publish, and private main image | yes | Unlocks the north star S-02 |
+| F-01 | build-visibility-and-storage | Persist builds with ownership, private main image, and SQL-allowed unpublish | yes | Unlocks the north star S-02 |
 | S-01 | sign-in-and-session | Register, log in, and log out without extra profile fields | yes | Parallel with F-01; sign-in method is a non-blocking unknown |
 | S-02 | publish-structured-build | Create a draft, publish a structured build, and show it publicly | no | Needs F-01 and S-01 |
 | S-03 | filter-published-listing | Filter published builds with five AND filters | no | Needs S-02 |

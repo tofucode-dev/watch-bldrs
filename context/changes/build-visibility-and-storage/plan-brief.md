@@ -26,7 +26,7 @@ A clean local `db reset` yields `builds` / `build_parts` and private `build-imag
 | Part prices | Integer minor units + ISO `char(3)` | Avoid JS float; OPERATIONAL_SAFETY | Plan |
 | `build_likes` | Omit | Roadmap S-04 | Research |
 | Images | Private `build-images`, 5 MiB, jpeg/png/webp; published SELECT + signed URLs | Draft photos stay private; no new secret | Plan |
-| Unpublish in DB | Allowed; no UI | You wanted the door open without shipping the control | Plan |
+| Unpublish in DB | Allowed in SQL; no MVP UI control | Product contract: technically possible, not exposed to the user yet | Plan / PRD |
 | CI | Lint/unit/build only; `test:integration` local | No Docker-in-CI or service-role secret | Plan |
 | User delete | `author_id ON DELETE CASCADE`; no Storage hook | No orphan rows; file cleanup waits for S-02 | Plan |
 
@@ -54,7 +54,7 @@ One migration is the source of truth for schema, RLS, and Storage. Tests mint us
 ## Open Risks & Assumptions
 
 - Hosted `db push` is a separate operator step from Worker deploy; this plan does not apply SQL in CI.
-- Allowing `published → draft` in SQL means a user with the Data API and their own JWT could unpublish until S-02/product forbids it in the Action layer.
+- Allowing `published → draft` in SQL means an author with the Data API and their own JWT can unpublish without a UI control. That is intended until a later slice ships the control; S-02 must not add an unpublish button.
 - Local-only RLS tests can be skipped; Definition of Done still requires them before merge.
 
 ## Success Criteria (Summary)

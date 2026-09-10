@@ -15,7 +15,7 @@ From a clean `npx supabase db reset`, three identities (anonymous, author A, use
 - A draft build and its parts are visible and mutable only to A.
 - After A sets `status` to `published`, anonymous and B can select the build row, its parts, and the main image (via SELECT / signed URL). They still cannot mutate.
 - Object paths are `{author_id}/{build_id}/main.{ext}` in private bucket `build-images`. `builds.main_image_path` stores that path, never a signed URL.
-- The database **allows** `published → draft` (product/UI must not expose unpublish until a later slice). `published_at` is set on first publish and is not overwritten.
+- The database **allows** `published → draft`. The MVP UI must not expose unpublish (PRD non-goal is the control, not the SQL path). `published_at` is set on first publish and is not overwritten.
 - `npm run test:integration` proves the matrix locally. GitHub Actions stays lint + unit + build.
 
 ### Key Discoveries:
@@ -41,7 +41,7 @@ From a clean `npx supabase db reset`, three identities (anonymous, author A, use
 
 ## Implementation Approach
 
-One timestamped migration created with `npx supabase migration new` holds enums, tables, constraints, grants, RLS, triggers for `updated_at` / first `published_at`, the private bucket row, and Storage policies. A synthetic-or-empty `supabase/seed.sql` unblocks reset. Types are generated into `src/lib/database.types.ts`. Integration tests live under `tests/integration/` and run only via `npm run test:integration` against local Docker Supabase. Docs record the two architectural exceptions (unpublish allowed in SQL; CI does not run RLS/typegen).
+One timestamped migration created with `npx supabase migration new` holds enums, tables, constraints, grants, RLS, triggers for `updated_at` / first `published_at`, the private bucket row, and Storage policies. A synthetic-or-empty `supabase/seed.sql` unblocks reset. Types are generated into `src/lib/database.types.ts`. Integration tests live under `tests/integration/` and run only via `npm run test:integration` against local Docker Supabase. Docs record the product contract (SQL allows unpublish; MVP UI does not) and the CI exception (GitHub Actions does not run RLS tests or typegen).
 
 ## Critical Implementation Details
 
@@ -98,10 +98,10 @@ Postgres enums (labels are lowercase snake_case; S-02 maps display copy). Every 
 - `id uuid pk default gen_random_uuid()`
 - `author_id uuid not null references auth.users(id) on delete cascade`
 - `status build_status not null default 'draft'`
-- optional `name text` (length cap), `story text` (length cap)
+- optional `name text` (max 120), `story text` (max 4000)
 - optional `watch_style`, `movement`, `dial_colour`, `strap_type`, `hands_style` (those enums)
 - optional `case_size_mm integer` with a sane positive check (e.g. 20–70)
-- optional `main_image_path text` (length cap; object key, not URL)
+- optional `main_image_path text` (max 512; object key, not URL)
 - `published_at timestamptz null`
 - `created_at timestamptz not null default now()`
 - `updated_at timestamptz not null default now()`
@@ -109,11 +109,11 @@ Postgres enums (labels are lowercase snake_case; S-02 maps display copy). Every 
 
 `build_parts`:
 
-- `id uuid pk`
+- `id uuid pk default gen_random_uuid()`
 - `build_id uuid not null references builds(id) on delete cascade`
 - `category part_category not null`
-- `name text not null` (length cap)
-- optional `product_url text` (length cap; no fetch)
+- `name text not null` (max 120)
+- optional `product_url text` (max 2048; no fetch)
 - optional `price_amount_minor integer check (>= 0)`
 - optional `currency char(3)` check `~ '^[A-Z]{3}$'`
 - `CHECK ((price_amount_minor is null) = (currency is null))`
@@ -121,7 +121,7 @@ Postgres enums (labels are lowercase snake_case; S-02 maps display copy). Every 
 - unique `(build_id, position)`
 - index on `build_id`
 
-Enable RLS on both tables. Grant `select/insert/update/delete` to `authenticated` and `select` to `anon` as required by the policies below — no extra grants to `public`.
+Enable RLS on both tables. `REVOKE ALL` on both tables from `public`. Grant `select/insert/update/delete` to `authenticated` and `select` to `anon` as required by the policies below. `GRANT USAGE ON TYPE` for every new enum (`build_status`, `watch_style`, `movement`, `dial_colour`, `strap_type`, `hands_style`, `part_category`) to `anon` and `authenticated`.
 
 `updated_at` maintained by a trigger. First-publish trigger: if NEW.status is `published` and NEW.published_at is null, set `published_at = now()`. Do not block status reversals.
 
@@ -235,14 +235,15 @@ Commit generated types, add local scripts, and update operator docs so the next 
 
 #### 5. Architecture contract sync
 
-**File**: `context/foundation/architecture/data-model.md`, `context/foundation/architecture/security.md`
+**File**: `context/foundation/architecture/data-model.md`, `context/foundation/architecture/security.md`, `context/foundation/architecture/testing.md`, `context/foundation/architecture/modules.md`, `context/foundation/prd.md`, `context/foundation/roadmap.md`, `context/foundation/OPERATIONAL_SAFETY.md`, `AGENTS.md`
 
-**Intent**: Prevent S-02 from following stale schema (missing `hands_style`, `numeric` prices, forbidden unpublish in SQL).
+**Intent**: Prevent S-02 from following a stale “one-way in SQL” contract or a stale schema (missing `hands_style`, `numeric` prices). Unpublish is a product split: technically possible in the database, not offered in the MVP UI.
 
 **Contract**:
 
-- data-model: add `hands_style`; price as `price_amount_minor` + `currency`; list enum labels; note `build_likes` waits for S-04.
-- security.md: product still does not expose unpublish; **database allows** `published → draft`. Keep private-bucket + signed URL + published SELECT. Record OPERATIONAL_SAFETY §16 exceptions: (1) no DB forbid on unpublish; (2) CI does not run RLS tests or typegen drift — local `test:integration` and `db:types` are the gate.
+- data-model: add `hands_style`; price as `price_amount_minor` + `currency`; list enum labels; note `build_likes` waits for S-04; record text max lengths (`name` 120, `story` 4000, `main_image_path` 512, part `name` 120, `product_url` 2048).
+- Product vs SQL (already aligned in plan-review, do not revert): PRD Access Control / FR-003 / Non-Goals, roadmap F-01, `testing.md`, `AGENTS.md` invariants, `modules.md` builds ownership, and `security.md` state machine all say the database **allows** `published → draft` and the MVP UI does not expose unpublish. Keep private-bucket + signed URL + published SELECT.
+- CI exception (already recorded in plan-review, do not revert): `security.md` “CI verification exception” is the OPERATIONAL_SAFETY §16 write-up for skipping typegen-drift and RLS jobs on GitHub Actions. `OPERATIONAL_SAFETY.md` §15 points at it. `AGENTS.md` Definition of Done requires local `npm run db:types` and `npm run test:integration` for schema/RLS/Storage changes. SQL unpublish is the product contract, not an exception.
 
 ### Success Criteria:
 
@@ -254,7 +255,9 @@ Commit generated types, add local scripts, and update operator docs so the next 
 
 #### Manual Verification:
 
-- README steps for `supabase start` → `db reset` → `db:types` → `test:integration` are accurate when followed once
+- README steps for `supabase start` → `db reset` → `db:types` are accurate when followed once
+- PRD, roadmap, testing.md, AGENTS.md, modules.md, and security.md still state SQL-allowed unpublish with no MVP UI control
+- security.md CI exception, OPERATIONAL_SAFETY §15, and AGENTS.md DoD still name local `test:integration` and `db:types` as merge gates
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
 
@@ -300,8 +303,11 @@ Prove the RLS and Storage matrix with anonymous, author A, and user B against li
 **Contract**: Cover at least:
 
 - A uploads under `A_id/build_id/main.webp` after the build row exists
+- Upload fails if the build row does not exist yet (second path segment is not an owned `builds.id`)
 - A cannot upload under B’s prefix or a build B owns
 - Anon and B cannot download A’s object while the build is draft
+- Anon and B cannot `list()` A’s prefix or the whole `build-images` bucket
+- B cannot UPDATE or DELETE A’s object
 - After publish + `main_image_path` set, anon can create a signed URL or download; B can too
 - Unpublish (status back to draft) removes anon/B read access to the object
 
@@ -315,6 +321,7 @@ Prove the RLS and Storage matrix with anonymous, author A, and user B against li
 
 #### Manual Verification:
 
+- README `npm run test:integration` steps written in Phase 2 succeed after `db reset` (Phase 2 pause does not run this command)
 - One pass of the matrix in Studio (optional sanity): as A’s session vs logged-out, draft row hidden from Table Editor using anon key is not required if tests passed — confirm signed URL for a published object opens in a private window, and the draft object URL does not
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
@@ -384,7 +391,9 @@ Empty local DB: reset from committed migration + seed. Hosted project has no pro
 
 #### Manual
 
-- [ ] 2.4 README steps for `supabase start` → `db reset` → `db:types` → `test:integration` are accurate when followed once
+- [ ] 2.4 README steps for `supabase start` → `db reset` → `db:types` are accurate when followed once
+- [ ] 2.5 PRD, roadmap, testing.md, AGENTS.md, modules.md, and security.md state SQL-allowed unpublish with no MVP UI control
+- [ ] 2.6 security.md CI exception, OPERATIONAL_SAFETY §15, and AGENTS.md DoD name local `test:integration` and `db:types` as merge gates
 
 ### Phase 3: Local identity-matrix tests
 
@@ -397,3 +406,4 @@ Empty local DB: reset from committed migration + seed. Hosted project has no pro
 #### Manual
 
 - [ ] 3.4 Confirm signed URL for a published object opens in a private window, and the draft object URL does not
+- [ ] 3.5 README `npm run test:integration` steps written in Phase 2 succeed after `db reset`

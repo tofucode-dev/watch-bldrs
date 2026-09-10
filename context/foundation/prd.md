@@ -130,7 +130,7 @@ They reach for WatchBldrs when they want to publish a structured record of a bui
 
 ### Builds
 - FR-003: Authenticated User can create, edit, and delete only their own builds. Priority: must-have
-  > Socrates: Counter-argument considered: "Unpublish/republish is extra surface — publish-once-or-delete is enough for MVP." Resolution: revised; unpublish/republish removed from the MVP. Draft vs published remains for first publish (FR-004).
+  > Socrates: Counter-argument considered: "Unpublish/republish is extra surface — publish-once-or-delete is enough for MVP." Resolution: revised; the MVP UI does not expose unpublish/republish (publish or delete). The database allows `published → draft` so a later slice can add the control without a schema change. Draft vs published remains for first publish (FR-004).
 - FR-004: Build Author can set name, story, watch attributes (including hands style), main photo, and draft vs published. Not every field is required. Priority: must-have
   > Socrates: Counter-argument considered: "Too many required fields would stop the user from adding a build, but putting everything in one bulk description would limit later filtering." Resolution: kept structured attributes; they are not all required, so the form does not block posting.
 - FR-005: Build Author can add a parts list with category, name, optional product link, and optional manual price and currency. Priority: must-have
@@ -167,7 +167,7 @@ A like is both public appreciation and the user's only save in this MVP; unlike 
 
 ## Access Control
 
-Sign-in: magic link or Google/Reddit SSO, preferably with no password. Logout is required. No extra profile fields are required before publishing a first build. Visitors can open the home page, browse published builds, and open published details without an account. Authenticated users can create and like. Only the Build Author can edit, publish, or delete their own builds. Unpublish/republish is out of the MVP. Draft builds are visible only to their author. No admin role in the MVP. Like is the save in the MVP — there is no separate favourite action.
+Sign-in: magic link or Google/Reddit SSO, preferably with no password. Logout is required. No extra profile fields are required before publishing a first build. Visitors can open the home page, browse published builds, and open published details without an account. Authenticated users can create and like. Only the Build Author can edit, publish, or delete their own builds. The MVP UI does not offer unpublish/republish; the database allows `published → draft` for the author. Draft builds are visible only to their author. No admin role in the MVP. Like is the save in the MVP — there is no separate favourite action.
 
 ## Non-Goals
 
@@ -176,7 +176,7 @@ Sign-in: magic link or Google/Reddit SSO, preferably with no password. Logout is
 - Similar/related-build recommendations — next phase, not this MVP.
 - Comments, notifications, following users, private messages, forums, articles, events, and a marketplace — community extras outside the proving flow.
 - Store integrations, live product prices, automatic build-cost totals, a visual watch configurator, and automatic part-compatibility checks — would replace author-entered parts/prices with a different product.
-- Unpublish/republish — publish-once-or-delete is enough (FR-003 Socrates).
+- Unpublish/republish UI — MVP does not show an unpublish control; authors publish or delete. The database allows `published → draft` (FR-003 Socrates).
 - A separate favourite action or favourites listing — like is the save (FR-007).
 - Hot / Best / Popular / Build of the Week ranking — deferred to a later phase after the proving flow. Home in this MVP is recent published builds plus listing entry points, not a ranked or recommended shelf.
 - An administration panel and manual Featured Builds — no admin role in the MVP.
