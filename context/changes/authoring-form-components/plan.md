@@ -30,6 +30,8 @@ Verification: component tests for label association, error/ARIA, Select unset, r
 - Button already has variants `default` / `outline` / `ghost` and `size="icon"` — enough for Save Draft, Discard, Add Part, and row delete (`size="icon"` plus `ghost` or `outline`, not `variant="icon"`).
 - Vitest 5 has no `environmentMatchGlobs`. Split `vitest.config.ts` with inline `test.projects` so `src/**/*.test.ts` stays Node (`supabase.test.ts`) and only `src/**/*.test.tsx` runs in jsdom.
 
+
+
 ## What We're NOT Doing
 
 - Photo upload, file input, or Storage attach (F-03)
@@ -44,6 +46,8 @@ Verification: component tests for label association, error/ARIA, Select unset, r
 - Playwright / E2E
 - A committed `/dev` preview route
 - Unpublish UI (PRD Non-Goal)
+
+
 
 ## Implementation Approach
 
@@ -61,11 +65,15 @@ Install jsdom + Testing Library in the same first increment as the primitives so
 
 ## Phase 1: Primitives, tokens, and component-test harness
 
+
+
 ### Overview
 
 Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Textarea, Field, Label, Select, and `OptionsSelect` with accessibility tests, plus only those token tweaks that are cheap.
 
 ### Changes Required:
+
+
 
 #### 1. shadcn Field kit
 
@@ -109,6 +117,8 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 
 ### Success Criteria:
 
+
+
 #### Automated Verification:
 
 - shadcn CLI has added Field, Input, Textarea, Label, and Select under `src/components/ui` (plus any required CLI deps)
@@ -121,6 +131,8 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 - `npm run test` passes
 - `npm run build` passes
 
+
+
 #### Manual Verification:
 
 - Input, Textarea, and OptionsSelect look token-faithful next to `build-form-reference.png` (cream field, charcoal border, burnt-orange focus) at ~390px width
@@ -131,13 +143,19 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 
 ---
 
+
+
 ## Phase 2: Parts row and sticky action bar
+
+
 
 ### Overview
 
 Add the two composites the design system assigned to F-02: a domain-free parts row that works on phone and desktop, and a presentational sticky save bar. Wire them to existing Button variants. Do not persist, discard, or total anything.
 
 ### Changes Required:
+
+
 
 #### 1. PartsRow (+ desktop header)
 
@@ -173,6 +191,8 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 
 ### Success Criteria:
 
+
+
 #### Automated Verification:
 
 - `PartsRow` renders caller-provided cells, index, and action with no hardcoded part categories, currencies, or field names
@@ -183,6 +203,8 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 - `npm run lint` passes
 - `npm run test` passes
 - `npm run build` passes
+
+
 
 #### Manual Verification:
 
@@ -195,7 +217,11 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 
 ---
 
+
+
 ## Testing Strategy
+
+
 
 ### Unit Tests:
 
@@ -205,9 +231,13 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 - PartsRow: slots, accessible names, both markup branches, independent rows; visual stack vs columns is manual
 - StickyActionBar: three slots render; no implicit submit
 
+
+
 ### Integration Tests:
 
 - None. No schema, RLS, or Storage changes.
+
+
 
 ### Manual Testing Steps:
 
@@ -216,6 +246,8 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 3. At desktop width: watch-spec style two-column FieldGroups still work (FieldGroup is stock shadcn); parts header + columns align; price and currency sit on one row as two controls.
 4. Keyboard: tab through a parts row, open Select, choose empty option, activate delete and both bar actions.
 5. Compare only those widgets to `context/changes/authoring-form-components/build-form-reference.png`. Skip photo well and preview card.
+
+
 
 ## Performance Considerations
 
@@ -236,31 +268,43 @@ No data migration. Auth screens stay on `FormField`. Generated shadcn files are 
 - Tokens: `src/styles/global.css`
 - Test harness baseline: `vitest.config.ts`
 
+
+
 ## Progress
 
-> Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.
+> Convention: `- [ ]` pending, `- [x]` done. Append  `— <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.
+
+
 
 ### Phase 1: Primitives, tokens, and component-test harness
 
+
+
 #### Automated
 
-- [ ] 1.1 shadcn CLI has added Field, Input, Textarea, Label, and Select under `src/components/ui` (plus any required CLI deps)
-- [ ] 1.2 `OptionsSelect` mapping helper treats `""` as unset, never emits `value=""` for a Radix `Select.Item`, and maps the sentinel back to `""`
-- [ ] 1.3 Field error/hint composition uses `data-invalid` / `aria-invalid` and visible `FieldError` / `FieldDescription`
-- [ ] 1.4 `vitest.config.ts` uses `test.projects`: Node for `src/**/*.test.ts`, jsdom for `src/**/*.test.tsx`
-- [ ] 1.5 Component tests cover Field label association, error/ARIA, and OptionsSelect labels plus `id` / `aria-invalid` / disabled passthrough
-- [ ] 1.6 `src/lib/supabase.test.ts` still passes under Node as part of `npm run test`
-- [ ] 1.7 `npm run lint` passes
-- [ ] 1.8 `npm run test` passes
-- [ ] 1.9 `npm run build` passes
+- [x] 1.1 shadcn CLI has added Field, Input, Textarea, Label, and Select under `src/components/ui` (plus any required CLI deps)
+- [x] 1.2 `OptionsSelect` mapping helper treats `""` as unset, never emits `value=""` for a Radix `Select.Item`, and maps the sentinel back to `""`
+- [x] 1.3 Field error/hint composition uses `data-invalid` / `aria-invalid` and visible `FieldError` / `FieldDescription`
+- [x] 1.4 `vitest.config.ts` uses `test.projects`: Node for `src/**/*.test.ts`, jsdom for `src/**/*.test.tsx`
+- [x] 1.5 Component tests cover Field label association, error/ARIA, and OptionsSelect labels plus `id` / `aria-invalid` / disabled passthrough
+- [x] 1.6 `src/lib/supabase.test.ts` still passes under Node as part of `npm run test`
+- [x] 1.7 `npm run lint` passes
+- [x] 1.8 `npm run test` passes
+- [x] 1.9 `npm run build` passes
+
+
 
 #### Manual
 
-- [ ] 1.10 Input, Textarea, and OptionsSelect look token-faithful next to `build-form-reference.png` (cream field, charcoal border, burnt-orange focus) at ~390px width
-- [ ] 1.11 An optional Select can start unset, take a value, and return to unset via the empty option
-- [ ] 1.12 Any mockup details skipped as too expensive (exact type scale, extra inner shadows, non-token colors) are listed as accepted drawbacks
+- [x] 1.10 Input, Textarea, and OptionsSelect look token-faithful next to `build-form-reference.png` (cream field, charcoal border, burnt-orange focus) at ~390px width
+- [x] 1.11 An optional Select can start unset, take a value, and return to unset via the empty option
+- [x] 1.12 Any mockup details skipped as too expensive (exact type scale, extra inner shadows, non-token colors) are listed as accepted drawbacks — stock Field typography/spacing; no torn-paper panels; `shadow-xs` only on inputs; stock Select popover chrome; stock FieldGroup `@container` layout
+
+
 
 ### Phase 2: Parts row and sticky action bar
+
+
 
 #### Automated
 
@@ -272,6 +316,8 @@ No data migration. Auth screens stay on `FormField`. Generated shadcn files are 
 - [ ] 2.6 `npm run lint` passes
 - [ ] 2.7 `npm run test` passes
 - [ ] 2.8 `npm run build` passes
+
+
 
 #### Manual
 

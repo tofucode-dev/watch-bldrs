@@ -22,37 +22,37 @@ Do **not** put change-scoped docs here. Anything tied to a single change (its pl
 
 ### Product and planning
 
-| File | What it is | Canonical for |
-| --- | --- | --- |
-| `prd.md` | Schema-conformant product requirements | MVP scope, FRs, non-goals, access control |
-| `shape-notes.md` | Structured discovery that fed the PRD | How the PRD was decided |
-| `IDEA.md` | Original MVP sketch | Historical feature list only — `prd.md` wins on conflict |
-| `DOMAIN_DICTIONARY.md` | Product glossary | Names of domain terms (Build, Like, Filter, …) |
-| `roadmap.md` | Open milestone and vertical slices | What to build next |
-| `tasks-linear.md` | Linear issue identifiers for those slices | Tracker IDs, not sequencing |
+| File                   | What it is                                | Canonical for                                            |
+| ---------------------- | ----------------------------------------- | -------------------------------------------------------- |
+| `prd.md`               | Schema-conformant product requirements    | MVP scope, FRs, non-goals, access control                |
+| `shape-notes.md`       | Structured discovery that fed the PRD     | How the PRD was decided                                  |
+| `IDEA.md`              | Original MVP sketch                       | Historical feature list only — `prd.md` wins on conflict |
+| `DOMAIN_DICTIONARY.md` | Product glossary                          | Names of domain terms (Build, Like, Filter, …)           |
+| `roadmap.md`           | Open milestone and vertical slices        | What to build next                                       |
+| `tasks-linear.md`      | Linear issue identifiers for those slices | Tracker IDs, not sequencing                              |
 
 ### Stack and platform
 
-| File | What it is | Canonical for |
-| --- | --- | --- |
-| `tech-stack.md` | Chosen starter and stack inventory | Language, framework, runtime, CI |
-| `design-system.md` | Paper-and-ink visual board (`design-system.png`) | Look-and-feel for UI-kit slices; not product scope |
-| `infrastructure.md` | Platform research and deploy-target choice | Why Workers, not Pages |
-| `deployment.md` | Workers cookbook | Secrets stores, rollback, first deploy |
-| `health-check.md` | Point-in-time health audit | Snapshot; re-run rather than treat as current architecture |
+| File                | What it is                                                               | Canonical for                                                                       |
+| ------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `tech-stack.md`     | Chosen starter and stack inventory                                       | Language, framework, runtime, CI                                                    |
+| `design-system.md`  | Paper-and-ink visual board (`design-system.png`) plus Storybook workshop | Look-and-feel for UI-kit slices; how to view `src/components/ui`; not product scope |
+| `infrastructure.md` | Platform research and deploy-target choice                               | Why Workers, not Pages                                                              |
+| `deployment.md`     | Workers cookbook                                                         | Secrets stores, rollback, first deploy                                              |
+| `health-check.md`   | Point-in-time health audit                                               | Snapshot; re-run rather than treat as current architecture                          |
 
 ### Architecture and operations
 
 How the stack is used. `tech-stack.md` lists the choices; these files are the rules.
 
-| File | Implements | Canonical for |
-| --- | --- | --- |
-| `architecture/modules.md` | `tech-stack.md` + `prd.md` capabilities | Module boundaries (`auth`, `builds`, `catalog`, `likes`), layers, imports |
-| `architecture/runtime.md` | `tech-stack.md` + `infrastructure.md` | SSR vs islands, Actions vs endpoints, routes, state, validation |
-| `architecture/security.md` | `prd.md` Access Control | RLS matrix, publication state machine, Storage, actor resolution |
-| `architecture/data-model.md` | `prd.md` + `DOMAIN_DICTIONARY.md` | Tables, catalog read model, AND filters |
-| `architecture/testing.md` | `tech-stack.md` (Vitest) | Unit, integration, component, E2E matrix |
-| `OPERATIONAL_SAFETY.md` | Complements `AGENTS.md` and `architecture/security.md` | Migration, cache, logging, and production safety rules |
+| File                         | Implements                                             | Canonical for                                                             |
+| ---------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `architecture/modules.md`    | `tech-stack.md` + `prd.md` capabilities                | Module boundaries (`auth`, `builds`, `catalog`, `likes`), layers, imports |
+| `architecture/runtime.md`    | `tech-stack.md` + `infrastructure.md`                  | SSR vs islands, Actions vs endpoints, routes, state, validation           |
+| `architecture/security.md`   | `prd.md` Access Control                                | RLS matrix, publication state machine, Storage, actor resolution          |
+| `architecture/data-model.md` | `prd.md` + `DOMAIN_DICTIONARY.md`                      | Tables, catalog read model, AND filters                                   |
+| `architecture/testing.md`    | `tech-stack.md` (Vitest)                               | Unit, integration, component, E2E matrix                                  |
+| `OPERATIONAL_SAFETY.md`      | Complements `AGENTS.md` and `architecture/security.md` | Migration, cache, logging, and production safety rules                    |
 
 Agent entrypoint: `AGENTS.md` at the repo root. It points here.
 

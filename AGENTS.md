@@ -158,6 +158,7 @@ Error categories and logging rules: @context/foundation/architecture/runtime.md.
 
 - Use Tailwind CSS 4 and the existing design tokens.
 - Use shadcn/ui's `new-york` style from @src/components/ui. Add components with `npx shadcn@latest add [name]`.
+- After adding or changing a React primitive in @src/components/ui, add or update a co-located `*.stories.tsx` and view it with `npm run storybook`. Storybook is local Vite only — not Workers. Visual board and viewing notes: @context/foundation/design-system.md.
 - Use `cn()` for conditional class merging.
 - Build mobile-first and verify the proving flow at phone and desktop widths.
 - Prefer accessible semantic HTML before adding ARIA.
@@ -165,7 +166,7 @@ Error categories and logging rules: @context/foundation/architecture/runtime.md.
 
 ## Build, Test, and Development Commands
 
-Run scripts from @package.json (`dev`, `dev:hosted`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`). Environment and local Supabase: @README.md. Workers deploy cookbook: @context/foundation/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
+Run scripts from @package.json (`dev`, `dev:hosted`, `build`, `preview`, `deploy`, `lint`, `lint:fix`, `format`, `test`, `storybook`, `storybook:build`). Environment and local Supabase: @README.md. Workers deploy cookbook: @context/foundation/deployment.md. Node version: @.nvmrc. Pre-commit hooks: `lint-staged` config in @package.json.
 
 ## Testing Guidelines
 

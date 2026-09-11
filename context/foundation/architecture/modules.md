@@ -141,7 +141,7 @@ Generated database types and raw Supabase response shapes stay at this boundary.
 
 ### Presentation
 
-Presentation owns UI state and formatting only; authorization lives in application code and RLS (@context/foundation/architecture/security.md). Shared, domain-free primitives remain in `src/components/ui`; feature components remain in their module.
+Presentation owns UI state and formatting only; authorization lives in application code and RLS (@context/foundation/architecture/security.md). Shared, domain-free primitives remain in `src/components/ui`; feature components remain in their module. View those shared React primitives in Storybook (`design-system.md`); do not put Worker-only or module-server code in stories.
 
 ### Server
 

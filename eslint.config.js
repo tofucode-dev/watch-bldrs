@@ -6,6 +6,7 @@ import eslintPluginAstro from "eslint-plugin-astro";
 import pluginReact from "eslint-plugin-react";
 import reactCompiler from "eslint-plugin-react-compiler";
 import eslintPluginReactHooks from "eslint-plugin-react-hooks";
+import storybook from "eslint-plugin-storybook";
 import path from "node:path";
 import tseslint from "typescript-eslint";
 
@@ -83,4 +84,5 @@ export default tseslint.config(
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
   eslintPluginPrettier,
+  storybook.configs["flat/recommended"],
 );

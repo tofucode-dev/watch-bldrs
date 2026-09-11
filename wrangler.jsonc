@@ -17,4 +17,11 @@
   "secrets": {
     "required": ["SUPABASE_URL", "SUPABASE_KEY"],
   },
+  "env": {
+    "local": {
+      "secrets": {
+        "required": ["SUPABASE_URL", "SUPABASE_KEY"],
+      },
+    },
+  },
 }

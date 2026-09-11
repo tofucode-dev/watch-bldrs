@@ -8,6 +8,7 @@ A structured showcase for custom watch builds. Astro 7 SSR on Cloudflare Workers
 - [React](https://react.dev/) v19 — interactive islands only
 - [TypeScript](https://www.typescriptlang.org/) v5
 - [Tailwind CSS](https://tailwindcss.com/) v4
+- [Storybook](https://storybook.js.org/) v10 — local workshop for React UI in `src/components/ui` (not deployed)
 - [Supabase](https://supabase.com/) — Auth, PostgreSQL, Storage
 - [Cloudflare Workers](https://workers.cloudflare.com/) — SSR runtime (not Pages)
 
@@ -58,6 +59,8 @@ npm run dev
 - `npm run test` — Vitest unit tests (`src/**`)
 - `npm run test:integration` — RLS and Storage identity-matrix tests (local Docker Supabase required)
 - `npm run db:types` — regenerate `src/lib/database.types.ts` from local migrations
+- `npm run storybook` — Storybook for `src/components/ui` at [http://localhost:6006](http://localhost:6006)
+- `npm run storybook:build` — static Storybook output (`storybook-static/`, gitignored)
 
 ## Project Structure
 

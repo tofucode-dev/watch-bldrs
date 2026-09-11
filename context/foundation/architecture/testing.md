@@ -28,11 +28,15 @@ GitHub Actions does not run these tests. They are merge gates for schema/RLS/Sto
 
 ## Component
 
+Vitest (`src/**/*.test.tsx`, jsdom) is the component test runner. Storybook (`npm run storybook`) is a visual workshop for `src/components/ui`; it does not replace these assertions.
+
 - editor validation and preservation of submitted values;
 - list loading/empty/error/success states;
 - filter controls update the URL correctly;
 - like/unlike optimistic or pending behavior;
 - keyboard and focus behavior.
+
+Do not import `@/modules/*/server`, `astro:env/server`, or other Worker-only modules in stories. Co-locate `*.stories.tsx` next to the React primitive they show.
 
 ## E2E
 
