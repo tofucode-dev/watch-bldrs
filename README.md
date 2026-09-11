@@ -55,7 +55,9 @@ npm run dev
 - `npm run lint` — ESLint with type-checked rules
 - `npm run lint:fix` — auto-fix ESLint issues
 - `npm run format` — Prettier
-- `npm run test` — Vitest
+- `npm run test` — Vitest unit tests (`src/**`)
+- `npm run test:integration` — RLS and Storage identity-matrix tests (local Docker Supabase required)
+- `npm run db:types` — regenerate `src/lib/database.types.ts` from local migrations
 
 ## Project Structure
 
@@ -106,7 +108,20 @@ SUPABASE_KEY=<anon key from CLI output>
 
 Local Auth in `supabase/config.toml` uses `http://127.0.0.1:4321` and has email confirmations off. That file does not change a hosted project's Auth settings.
 
-No product tables or migrations are required yet — Auth uses `auth.users` only.
+5. Apply migrations and seed (required for product tables):
+
+```bash
+npx supabase db reset
+npm run db:types
+```
+
+6. Run integration tests before merging schema or RLS changes:
+
+```bash
+npm run test:integration
+```
+
+Product tables (`builds`, `build_parts`), enums, RLS policies, and the private `build-images` Storage bucket are defined in `supabase/migrations/`. GitHub Actions runs lint, unit tests, and build only — integration tests and typegen are local merge gates (see `context/foundation/architecture/security.md#ci-verification-exception`).
 
 ### Inspect the local database
 

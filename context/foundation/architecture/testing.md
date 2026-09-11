@@ -12,12 +12,19 @@ RLS test identities: @context/foundation/architecture/security.md. Commands and 
 
 ## Integration
 
+Run against local Docker Supabase after `npx supabase db reset`:
+
+```bash
+npm run test:integration
+```
+
 - migrations apply from a clean local Supabase state;
-- RLS matrix for anonymous, author A, and user B;
-- one-like uniqueness;
+- RLS matrix for anonymous, author A, and user B (`tests/integration/build-visibility.test.ts`);
 - author UPDATE `published → draft` succeeds and re-hides the row and object from anonymous and user B;
-- Storage access for draft and published images;
-- catalog queries never return drafts.
+- Storage access for draft and published images (`tests/integration/build-image-storage.test.ts`);
+- catalog queries never return drafts (covered when S-03 lands).
+
+GitHub Actions does not run these tests. They are merge gates for schema/RLS/Storage changes alongside `npm run db:types` (@AGENTS.md Definition of Done; exception in @context/foundation/architecture/security.md#ci-verification-exception).
 
 ## Component
 

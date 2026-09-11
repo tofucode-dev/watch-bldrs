@@ -115,7 +115,17 @@ npx wrangler secret put SUPABASE_KEY
 
 Local Auth uses `http://127.0.0.1:4321` (Astro’s default). Leave local confirmations off if you want sign-in without mail. Production hosted Auth must keep confirmations **on**. If confirmation links still point at localhost, signup “works” locally and fails in production.
 
-There is no `supabase/migrations/` yet. Do not invent a `db push`. When migrations exist, `npx supabase db push` (or dashboard SQL) is separate from Worker rollback.
+Product migrations live in `supabase/migrations/`. Apply them to the hosted project with `npx supabase db push` (or dashboard SQL). That step is separate from Worker rollback — rolling back a Worker version does not undo SQL or Storage changes.
+
+Before merging schema, RLS, or Storage policy changes, run locally:
+
+```bash
+npx supabase db reset
+npm run db:types
+npm run test:integration
+```
+
+GitHub Actions does not run Docker or integration tests; see `context/foundation/architecture/security.md#ci-verification-exception`.
 
 ## Smoke after first deploy
 

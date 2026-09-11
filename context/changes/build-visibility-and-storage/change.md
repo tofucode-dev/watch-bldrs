@@ -1,9 +1,9 @@
 ---
 change_id: build-visibility-and-storage
 title: Persist builds with ownership, private main image, and SQL-allowed unpublish
-status: plan_reviewed
+status: impl_reviewed
 created: 2026-09-09
-updated: 2026-09-10
+updated: 2026-09-11
 archived_at: null
 ---
 

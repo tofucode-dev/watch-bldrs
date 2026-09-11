@@ -1,0 +1,2 @@
+-- Synthetic seed data for local development.
+-- Integration tests create their own users and rows; no seed rows required for F-01.

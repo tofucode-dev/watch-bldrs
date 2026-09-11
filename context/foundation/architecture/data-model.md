@@ -4,51 +4,72 @@ RLS matrix: @context/foundation/architecture/security.md. Schema migration rules
 
 ## Proposed Relational Model
 
-The exact migration is implementation-specific, but the initial relational model should remain small.
+The schema is implemented in `supabase/migrations/20260910201541_build_visibility_and_storage.sql`. Generated TypeScript types live in `src/lib/database.types.ts` (`npm run db:types`).
+
+### Enums
+
+Postgres enum labels (lowercase snake_case; S-02 maps display copy):
+
+| Type | Labels |
+| --- | --- |
+| `build_status` | `draft`, `published` |
+| `watch_style` | `diver`, `field`, `dress`, `gmt`, `pilot`, `integrated`, `other` |
+| `movement` | `nh35`, `nh36`, `nh34`, `miyota_8215`, `other` |
+| `dial_colour` | `black`, `white`, `blue`, `green`, `silver`, `other` |
+| `strap_type` | `leather`, `nato`, `rubber`, `steel_bracelet`, `other` |
+| `hands_style` | `mercedes`, `sword`, `dauphine`, `baton`, `other` |
+| `part_category` | `movement`, `case`, `dial`, `hands`, `bezel`, `crystal`, `strap`, `bracelet`, `other` |
+
+Every attribute and part enum includes `other`. `build_status` does not.
 
 ### `builds`
 
-| Column | Suggested type | Notes |
+| Column | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` | Primary key |
 | `author_id` | `uuid` | References Supabase Auth user |
-| `status` | enum/text constraint | `draft` or `published` |
-| `name` | `text` | Nullable/optional according to final form rules |
-| `story` | `text` | Optional |
-| `watch_style` | enum/text | Optional, filterable |
-| `movement` | enum/text | Optional, filterable |
-| `dial_colour` | enum/text | Optional, filterable |
-| `strap_type` | enum/text | Optional, filterable |
-| `case_size_mm` | numeric/integer | Optional, filterable |
-| `main_image_path` | `text` | Storage object path, not a permanent signed URL |
-| `published_at` | timestamptz | Set once on publication |
-| `created_at` | timestamptz | Database default |
-| `updated_at` | timestamptz | Maintained on update |
+| `status` | `build_status` | `draft` or `published` |
+| `name` | `text` | Optional; max 120 chars |
+| `story` | `text` | Optional; max 4000 chars |
+| `watch_style` | `watch_style` | Optional, filterable |
+| `movement` | `movement` | Optional, filterable |
+| `dial_colour` | `dial_colour` | Optional, filterable |
+| `strap_type` | `strap_type` | Optional, filterable |
+| `hands_style` | `hands_style` | Optional |
+| `case_size_mm` | `integer` | Optional, filterable; 20–70 when set |
+| `main_image_path` | `text` | Storage object path, max 512; not a signed URL |
+| `published_at` | `timestamptz` | Set once on first publish; not cleared on unpublish |
+| `created_at` | `timestamptz` | Database default |
+| `updated_at` | `timestamptz` | Maintained on update |
 
-Filterable attributes should use normalized values. Do not encode all structured fields only inside a free-text story or unvalidated JSON object.
+Filterable attributes use normalized enum values. Do not encode structured fields only inside free text or unvalidated JSON.
+
+The database **allows** `published → draft` for the author. The MVP UI does not expose unpublish.
 
 ### `build_parts`
 
-| Column | Suggested type | Notes |
+| Column | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` | Primary key |
 | `build_id` | `uuid` | Parent build, delete cascades |
-| `category` | enum/text | Structured part category |
-| `name` | `text` | Part name |
-| `product_url` | `text` | Optional |
-| `price_amount` | numeric | Optional manual price |
-| `currency` | constrained text | Optional ISO-style currency code |
-| `position` | integer | Stable author-defined order |
+| `category` | `part_category` | Structured part category |
+| `name` | `text` | Part name; max 120 chars |
+| `product_url` | `text` | Optional; max 2048 |
+| `price_amount_minor` | `integer` | Optional manual price in minor units (≥ 0) |
+| `currency` | `char(3)` | Optional ISO 4217 uppercase code |
+| `position` | `integer` | Stable author-defined order (≥ 0); unique per `(build_id, position)` |
 
 Enforce that price and currency are either both present or both absent. Do not calculate an automatic build total in the MVP.
 
 ### `build_likes`
 
+Deferred to S-04 (`like-published-build`). Not created in F-01.
+
 | Column | Suggested type | Notes |
 | --- | --- | --- |
 | `build_id` | `uuid` | References build, delete cascades |
 | `user_id` | `uuid` | References Auth user |
-| `created_at` | timestamptz | Database default |
+| `created_at` | `timestamptz` | Database default |
 
 Use a composite primary key or unique constraint on `(build_id, user_id)`.
 

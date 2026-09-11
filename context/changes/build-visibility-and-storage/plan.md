@@ -373,37 +373,37 @@ Empty local DB: reset from committed migration + seed. Hosted project has no pro
 
 #### Automated
 
-- [ ] 1.1 `npx supabase db reset` exits 0 on the local stack
-- [ ] 1.2 After reset, `builds`, `build_parts`, the listed enum types, and bucket `build-images` (`public = false`) exist
+- [x] 1.1 `npx supabase db reset` exits 0 on the local stack
+- [x] 1.2 After reset, `builds`, `build_parts`, the listed enum types, and bucket `build-images` (`public = false`) exist
 
 #### Manual
 
-- [ ] 1.3 Studio shows RLS enabled on both tables and policies matching the matrix
-- [ ] 1.4 Studio shows bucket `build-images` private, 5 MiB, jpeg/png/webp
+- [x] 1.3 Studio shows RLS enabled on both tables and policies matching the matrix
+- [x] 1.4 Studio shows bucket `build-images` private, 5 MiB, jpeg/png/webp
 
 ### Phase 2: Types, scripts, and docs
 
 #### Automated
 
-- [ ] 2.1 `npm run db:types` produces a committed `src/lib/database.types.ts` that includes `builds` and `build_parts`
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run test` passes (existing unit tests only)
+- [x] 2.1 `npm run db:types` produces a committed `src/lib/database.types.ts` that includes `builds` and `build_parts`
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run test` passes (existing unit tests only)
 
 #### Manual
 
-- [ ] 2.4 README steps for `supabase start` → `db reset` → `db:types` are accurate when followed once
-- [ ] 2.5 PRD, roadmap, testing.md, AGENTS.md, modules.md, and security.md state SQL-allowed unpublish with no MVP UI control
-- [ ] 2.6 security.md CI exception, OPERATIONAL_SAFETY §15, and AGENTS.md DoD name local `test:integration` and `db:types` as merge gates
+- [x] 2.4 README steps for `supabase start` → `db reset` → `db:types` are accurate when followed once
+- [x] 2.5 PRD, roadmap, testing.md, AGENTS.md, modules.md, and security.md state SQL-allowed unpublish with no MVP UI control
+- [x] 2.6 security.md CI exception, OPERATIONAL_SAFETY §15, and AGENTS.md DoD name local `test:integration` and `db:types` as merge gates
 
 ### Phase 3: Local identity-matrix tests
 
 #### Automated
 
-- [ ] 3.1 `npm run test:integration` exits 0 against local Supabase after `db reset`
-- [ ] 3.2 `npm run test` still exits 0
-- [ ] 3.3 `npm run lint` still exits 0
+- [x] 3.1 `npm run test:integration` exits 0 against local Supabase after `db reset`
+- [x] 3.2 `npm run test` still exits 0
+- [x] 3.3 `npm run lint` still exits 0
 
 #### Manual
 
-- [ ] 3.4 Confirm signed URL for a published object opens in a private window, and the draft object URL does not
-- [ ] 3.5 README `npm run test:integration` steps written in Phase 2 succeed after `db reset`
+- [x] 3.4 Confirm signed URL for a published object opens in a private window, and the draft object URL does not
+- [x] 3.5 README `npm run test:integration` steps written in Phase 2 succeed after `db reset`
