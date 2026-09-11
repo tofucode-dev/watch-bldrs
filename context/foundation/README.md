@@ -36,6 +36,7 @@ Do **not** put change-scoped docs here. Anything tied to a single change (its pl
 | File | What it is | Canonical for |
 | --- | --- | --- |
 | `tech-stack.md` | Chosen starter and stack inventory | Language, framework, runtime, CI |
+| `design-system.md` | Paper-and-ink visual board (`design-system.png`) | Look-and-feel for UI-kit slices; not product scope |
 | `infrastructure.md` | Platform research and deploy-target choice | Why Workers, not Pages |
 | `deployment.md` | Workers cookbook | Secrets stores, rollback, first deploy |
 | `health-check.md` | Point-in-time health audit | Snapshot; re-run rather than treat as current architecture |
