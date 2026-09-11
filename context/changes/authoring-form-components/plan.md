@@ -141,6 +141,10 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding to the next phase. Phase blocks use plain bullets — the corresponding `- [ ]` checkboxes for these items live in the `## Progress` section at the bottom of the plan.
 
+**Addendum (impl review Phase 1)**: `wrangler.jsonc` `env.local` is supporting local `npm run dev` (`CLOUDFLARE_ENV=local` in `scripts/astro-dev.mjs`). It is not form-kit scope. Named environments remain out of MVP deploy; do not set `CLOUDFLARE_ENV` on production deploy.
+
+**Addendum (impl review Phase 1)**: Phase 1 visual checks (1.10 / 1.11) use co-located Storybook stories (`npm run storybook`) instead of an uncommitted scratch composition. Storybook is local Vite only — not the forbidden `/dev` route.
+
 ---
 
 
@@ -282,23 +286,23 @@ No data migration. Auth screens stay on `FormField`. Generated shadcn files are 
 
 #### Automated
 
-- [x] 1.1 shadcn CLI has added Field, Input, Textarea, Label, and Select under `src/components/ui` (plus any required CLI deps)
-- [x] 1.2 `OptionsSelect` mapping helper treats `""` as unset, never emits `value=""` for a Radix `Select.Item`, and maps the sentinel back to `""`
-- [x] 1.3 Field error/hint composition uses `data-invalid` / `aria-invalid` and visible `FieldError` / `FieldDescription`
-- [x] 1.4 `vitest.config.ts` uses `test.projects`: Node for `src/**/*.test.ts`, jsdom for `src/**/*.test.tsx`
-- [x] 1.5 Component tests cover Field label association, error/ARIA, and OptionsSelect labels plus `id` / `aria-invalid` / disabled passthrough
-- [x] 1.6 `src/lib/supabase.test.ts` still passes under Node as part of `npm run test`
-- [x] 1.7 `npm run lint` passes
-- [x] 1.8 `npm run test` passes
-- [x] 1.9 `npm run build` passes
+- [x] 1.1 shadcn CLI has added Field, Input, Textarea, Label, and Select under `src/components/ui` (plus any required CLI deps) — 98936fc
+- [x] 1.2 `OptionsSelect` mapping helper treats `""` as unset, never emits `value=""` for a Radix `Select.Item`, and maps the sentinel back to `""` — 98936fc
+- [x] 1.3 Field error/hint composition uses `data-invalid` / `aria-invalid` and visible `FieldError` / `FieldDescription` — 98936fc
+- [x] 1.4 `vitest.config.ts` uses `test.projects`: Node for `src/**/*.test.ts`, jsdom for `src/**/*.test.tsx` — 98936fc
+- [x] 1.5 Component tests cover Field label association, error/ARIA, and OptionsSelect labels plus `id` / `aria-invalid` / disabled passthrough — 98936fc
+- [x] 1.6 `src/lib/supabase.test.ts` still passes under Node as part of `npm run test` — 98936fc
+- [x] 1.7 `npm run lint` passes — 98936fc
+- [x] 1.8 `npm run test` passes — 98936fc
+- [x] 1.9 `npm run build` passes — 98936fc
 
 
 
 #### Manual
 
-- [x] 1.10 Input, Textarea, and OptionsSelect look token-faithful next to `build-form-reference.png` (cream field, charcoal border, burnt-orange focus) at ~390px width
-- [x] 1.11 An optional Select can start unset, take a value, and return to unset via the empty option
-- [x] 1.12 Any mockup details skipped as too expensive (exact type scale, extra inner shadows, non-token colors) are listed as accepted drawbacks — stock Field typography/spacing; no torn-paper panels; `shadow-xs` only on inputs; stock Select popover chrome; stock FieldGroup `@container` layout
+- [x] 1.10 Input, Textarea, and OptionsSelect look token-faithful next to `build-form-reference.png` (cream field, charcoal border, burnt-orange focus) at ~390px width — 98936fc
+- [x] 1.11 An optional Select can start unset, take a value, and return to unset via the empty option — 98936fc
+- [x] 1.12 Any mockup details skipped as too expensive (exact type scale, extra inner shadows, non-token colors) are listed as accepted drawbacks — stock Field typography/spacing; no torn-paper panels; `shadow-xs` only on inputs; stock Select popover chrome; stock FieldGroup `@container` layout — 98936fc
 
 
 

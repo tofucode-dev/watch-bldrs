@@ -14,10 +14,25 @@ afterEach(() => {
 });
 
 describe("OptionsSelect", () => {
-  it("renders option labels", () => {
-    render(<OptionsSelect options={options} value="" onValueChange={() => undefined} placeholder="Choose movement" />);
+  it("renders the placeholder when unset", () => {
+    render(
+      <OptionsSelect options={options} value="" onValueChange={() => undefined} placeholder="Choose movement" />,
+    );
 
-    expect(screen.getByText("Choose movement")).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toHaveTextContent("Choose movement");
+  });
+
+  it("renders the selected option label on the trigger", () => {
+    render(
+      <OptionsSelect
+        options={options}
+        value="automatic"
+        onValueChange={() => undefined}
+        placeholder="Choose movement"
+      />,
+    );
+
+    expect(screen.getByRole("combobox")).toHaveTextContent("Automatic");
   });
 
   it("passes id, aria-invalid, and disabled to the trigger", () => {

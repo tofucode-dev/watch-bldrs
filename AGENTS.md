@@ -170,7 +170,7 @@ Run scripts from @package.json (`dev`, `dev:hosted`, `build`, `preview`, `deploy
 
 ## Testing Guidelines
 
-Vitest matches `src/**/*.{test,spec}.{ts,tsx}` per @vitest.config.ts. Co-locate unit tests beside source. Full test matrix: @context/foundation/architecture/testing.md.
+Vitest uses inline `test.projects` in @vitest.config.ts: Node for `src/**/*.test.ts`, jsdom for `src/**/*.test.tsx`. Co-locate unit tests beside source. Full test matrix: @context/foundation/architecture/testing.md.
 
 When testing auth helpers, follow @src/lib/supabase.test.ts. Mock `astro:env/server` and `@supabase/ssr`; unit tests must not require a live Supabase instance.
 
