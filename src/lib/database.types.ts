@@ -134,7 +134,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      save_draft_build: {
+        Args: {
+          p_case_size_mm?: number
+          p_dial_colour?: Database["public"]["Enums"]["dial_colour"]
+          p_hands_style?: Database["public"]["Enums"]["hands_style"]
+          p_id?: string
+          p_movement?: Database["public"]["Enums"]["movement"]
+          p_name?: string
+          p_parts?: Json
+          p_story?: string
+          p_strap_type?: Database["public"]["Enums"]["strap_type"]
+          p_watch_style?: Database["public"]["Enums"]["watch_style"]
+        }
+        Returns: string
+      }
     }
     Enums: {
       build_status: "draft" | "published"
