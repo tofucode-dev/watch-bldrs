@@ -42,7 +42,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI), and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | done |
-| F-02 | authoring-form-components | (foundation) every UI component needed to implement the authoring form is in the shared UI library (photo upload is F-03) | — | FR-004, FR-005 | in-progress |
+| F-02 | authoring-form-components | (foundation) every UI component needed to implement the authoring form is in the shared UI library (photo upload is F-03) | — | FR-004, FR-005 | done |
 | F-03 | photo-upload-component | (foundation) a photo-upload component and its upload logic can attach one main photo to private storage | F-01 | FR-004 | ready |
 | S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | — | US-01, FR-001 | ready |
 | S-02 | create-draft-build | user can create a draft build with watch attributes, parts list, and main photo; the draft stays private | F-01, F-02, F-03, S-01 | US-02, FR-003, FR-004, FR-005 | proposed |
@@ -178,7 +178,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Scoped to the form only — listing cards, filters, and home chrome wait for later foundations. After this lands, S-02 still has to compose the actual draft form and persist a build.
-- **Status:** in-progress
+- **Status:** done
 
 ### F-03: Photo upload component
 
@@ -403,3 +403,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 ## Done
 
 - **F-01: (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage** — Archived 2026-09-11 → `context/archive/2026-09-09-build-visibility-and-storage/`. Lesson: —.
+- **F-02: (foundation) every UI component needed to implement the authoring form is in the shared UI library, so the create-draft slice can compose the form without inventing widgets. Photo upload is owned by F-03, not this foundation.** — Archived 2026-09-12 → `context/archive/2026-09-11-authoring-form-components/`. Lesson: —.

@@ -1,10 +1,10 @@
 ---
 change_id: authoring-form-components
 title: Authoring form components
-status: impl_reviewed
+status: archived
 created: 2026-09-11
 updated: 2026-09-12
-archived_at: null
+archived_at: 2026-09-12T10:27:16Z
 ---
 
 ## Notes
