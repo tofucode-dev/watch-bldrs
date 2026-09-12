@@ -268,18 +268,18 @@ No data migration. Auth screens stay on `FormField`. Generated shadcn files are 
 
 #### Automated
 
-- [x] 2.1 `PartsRow` renders caller-provided cells, index, and action with no hardcoded part categories, currencies, or field names
-- [x] 2.2 Parts row tests assert both markup branches and a11y labels (header/`sr-only` on `md+`, visible per-cell labels below `md`); stacked vs columns look is manual 2.9
-- [x] 2.3 `StickyActionBar` exposes status / secondary / primary slots and does not define save/discard handlers
-- [x] 2.4 Component tests cover PartsRow slots/accessible names and StickyActionBar slots
-- [x] 2.5 No `src/modules/builds`, no photo/file widget, no auth FormField migration, no `react-hook-form` dependency
-- [x] 2.6 `npm run lint` passes
-- [x] 2.7 `npm run test` passes
-- [x] 2.8 `npm run build` passes
+- [x] 2.1 `PartsRow` renders caller-provided cells, index, and action with no hardcoded part categories, currencies, or field names — d77c798
+- [x] 2.2 Parts row tests assert both markup branches and a11y labels (header/`sr-only` on `md+`, visible per-cell labels below `md`); stacked vs columns look is manual 2.9 — d77c798
+- [x] 2.3 `StickyActionBar` exposes status / secondary / primary slots and does not define save/discard handlers — d77c798
+- [x] 2.4 Component tests cover PartsRow slots/accessible names and StickyActionBar slots — d77c798
+- [x] 2.5 No `src/modules/builds`, no photo/file widget, no auth FormField migration, no `react-hook-form` dependency — d77c798
+- [x] 2.6 `npm run lint` passes — d77c798
+- [x] 2.7 `npm run test` passes — d77c798
+- [x] 2.8 `npm run build` passes — d77c798
 
 #### Manual
 
-- [x] 2.9 Dummy parts rows match the mockup simply: columns on desktop, stacked on ~390px, delete action reachable by keyboard
-- [x] 2.10 Sticky bar uses the yellow sticky token, shows status text, outline Discard, and primary Save Draft
-- [x] 2.11 Price and currency sit as two kit controls side by side on desktop (caller layout); they stack on phone with the rest of the row
-- [x] 2.12 Visual check is Field / Select / PartsRow / StickyActionBar only — photo well and “YOUR BUILD” preview are out; remaining look gaps vs the PNG are written down, not forced
+- [x] 2.9 Dummy parts rows match the mockup simply: columns on desktop, stacked on ~390px, delete action reachable by keyboard — d77c798
+- [x] 2.10 Sticky bar uses the yellow sticky token, shows status text, outline Discard, and primary Save Draft — d77c798
+- [x] 2.11 Price and currency sit as two kit controls side by side on desktop (caller layout); they stack on phone with the rest of the row — d77c798
+- [x] 2.12 Visual check is Field / Select / PartsRow / StickyActionBar only — photo well and “YOUR BUILD” preview are out; remaining look gaps vs the PNG are written down, not forced — d77c798
