@@ -43,7 +43,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 |---|---|---|---|---|---|
 | F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI), and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | done |
 | F-02 | authoring-form-components | (foundation) every UI component needed to implement the authoring form is in the shared UI library (photo upload is F-03) | — | FR-004, FR-005 | done |
-| F-03 | photo-upload-component | (foundation) a photo-upload component and its upload logic can attach one main photo to private storage | F-01 | FR-004 | ready |
+| F-03 | photo-upload-component | (foundation) a photo-upload component and its upload logic can attach one main photo to private storage | F-01 | FR-004 | in-progress |
 | S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | — | US-01, FR-001 | ready |
 | S-02 | create-draft-build | user can create a draft build with watch attributes, parts list, and main photo; the draft stays private | F-01, F-02, F-03, S-01 | US-02, FR-003, FR-004, FR-005 | proposed |
 | S-03 | publish-draft-build | user can publish a draft they own so it is eligible for the public listing | S-02 | US-02, FR-004 | proposed |
@@ -191,7 +191,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Extra gallery photos stay parked. This is the upload control and logic, not a finished build — S-02 still attaches the photo to a draft the author creates.
-- **Status:** ready
+- **Status:** in-progress
 
 ### F-04: Listing UI components
 

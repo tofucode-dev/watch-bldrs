@@ -254,24 +254,24 @@ No database migration. No `npm run db:types`. Operators will set `PUBLIC_SUPABAS
 
 #### Automated
 
-- [x] 1.1 `validateMainImageFile` accepts jpeg/png/webp fixtures and rejects empty, oversize, and MIME/signature mismatch
-- [x] 1.2 `buildMainImagePath` returns `{authorId}/{buildId}/main.{jpg|png|webp}`
-- [x] 1.3 `PhotoUpload` empty well exposes Choose image and a hidden file input with the image accept list
-- [x] 1.4 Valid File via change or drop calls `onFileChange`; invalid picks do not replace the current file
-- [x] 1.5 Selected state renders a preview image; Remove calls `onFileChange(null)`
-- [x] 1.6 `UI/PhotoUpload` stories exist for Empty, Selected, Invalid, and Phone
-- [x] 1.7 `PhotoUpload`, its stories, and `main-image-file` import neither Supabase nor `astro:env`
-- [x] 1.8 No `src/modules/builds`, no Actions, no `/dev` route, no `react-hook-form`
-- [x] 1.9 `npm run lint` passes
-- [x] 1.10 `npm run test` passes
-- [x] 1.11 `npm run build` passes
+- [x] 1.1 `validateMainImageFile` accepts jpeg/png/webp fixtures and rejects empty, oversize, and MIME/signature mismatch — e0cba8a
+- [x] 1.2 `buildMainImagePath` returns `{authorId}/{buildId}/main.{jpg|png|webp}` — e0cba8a
+- [x] 1.3 `PhotoUpload` empty well exposes Choose image and a hidden file input with the image accept list — e0cba8a
+- [x] 1.4 Valid File via change or drop calls `onFileChange`; invalid picks do not replace the current file — e0cba8a
+- [x] 1.5 Selected state renders a preview image; Remove calls `onFileChange(null)` — e0cba8a
+- [x] 1.6 `UI/PhotoUpload` stories exist for Empty, Selected, Invalid, and Phone — e0cba8a
+- [x] 1.7 `PhotoUpload`, its stories, and `main-image-file` import neither Supabase nor `astro:env` — e0cba8a
+- [x] 1.8 No `src/modules/builds`, no Actions, no `/dev` route, no `react-hook-form` — e0cba8a
+- [x] 1.9 `npm run lint` passes — e0cba8a
+- [x] 1.10 `npm run test` passes — e0cba8a
+- [x] 1.11 `npm run build` passes — e0cba8a
 
 #### Manual
 
-- [x] 1.12 Storybook Empty well matches the mockup simply: dashed well, camera, one-image copy, Choose image, drag hint — desktop and ~390px
-- [x] 1.13 Keyboard: tab to Choose image, activate the picker; Remove is reachable when a file is selected
-- [x] 1.14 Drag-and-drop of a valid image shows the local preview; an invalid drop leaves empty (or previous) and shows an alert
-- [x] 1.15 Remaining look gaps vs `build-form-reference.png` are written down, not forced
+- [x] 1.12 Storybook Empty well matches the mockup simply: dashed well, camera, one-image copy, Choose image, drag hint — desktop and ~390px — e0cba8a
+- [x] 1.13 Keyboard: tab to Choose image, activate the picker; Remove is reachable when a file is selected — e0cba8a
+- [x] 1.14 Drag-and-drop of a valid image shows the local preview; an invalid drop leaves empty (or previous) and shows an alert — e0cba8a
+- [x] 1.15 Remaining look gaps vs `build-form-reference.png` are written down, not forced — e0cba8a
 
 ### Phase 2: Browser client and upload helper
 
