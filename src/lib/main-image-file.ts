@@ -79,5 +79,13 @@ export async function validateMainImageFile(file: File): Promise<MainImageValida
 }
 
 export function buildMainImagePath(authorId: string, buildId: string, ext: MainImageExt): string {
+  assertStoragePathSegment(authorId);
+  assertStoragePathSegment(buildId);
   return `${authorId}/${buildId}/main.${ext}`;
+}
+
+function assertStoragePathSegment(value: string): void {
+  if (value === "" || value === "." || value === ".." || value.includes("/") || value.includes("\\")) {
+    throw new Error("Invalid main image path segment");
+  }
 }

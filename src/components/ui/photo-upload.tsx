@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { Camera } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,13 +29,22 @@ function firstDroppedFile(event: DragEvent<HTMLDivElement>): File | undefined {
 }
 
 function MainPhotoPreview({ file }: { file: File }) {
-  const previewUrl = useMemo(() => URL.createObjectURL(file), [file]);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    const objectUrl = URL.createObjectURL(file);
+    // Blob URLs are an external resource; this effect owns create + revoke.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing preview src to URL.createObjectURL
+    setPreviewUrl(objectUrl);
+
     return () => {
-      URL.revokeObjectURL(previewUrl);
+      URL.revokeObjectURL(objectUrl);
     };
-  }, [previewUrl]);
+  }, [file]);
+
+  if (!previewUrl) {
+    return null;
+  }
 
   return <img src={previewUrl} alt={PREVIEW_ALT} className="max-h-56 w-full object-contain" />;
 }
@@ -44,6 +53,7 @@ export function PhotoUpload({ file, onFileChange, id, error, disabled = false, c
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const inputRef = useRef<HTMLInputElement>(null);
+  const applyGenerationRef = useRef(0);
   const [dragOver, setDragOver] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -51,7 +61,14 @@ export function PhotoUpload({ file, onFileChange, id, error, disabled = false, c
   const isInvalid = parentInvalid || Boolean(validationError);
 
   async function applyCandidate(candidate: File): Promise<void> {
+    const generation = applyGenerationRef.current + 1;
+    applyGenerationRef.current = generation;
+
     const result = await validateMainImageFile(candidate);
+    if (generation !== applyGenerationRef.current) {
+      return;
+    }
+
     if (!result.ok) {
       setValidationError(VALIDATION_MESSAGES[result.reason]);
       return;
@@ -105,6 +122,7 @@ export function PhotoUpload({ file, onFileChange, id, error, disabled = false, c
   }
 
   function handleRemove(): void {
+    applyGenerationRef.current += 1;
     setValidationError(null);
     onFileChange(null);
   }

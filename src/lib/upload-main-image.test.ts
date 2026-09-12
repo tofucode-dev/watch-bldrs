@@ -75,6 +75,22 @@ describe("uploadMainImage", () => {
     expect(storage.from).not.toHaveBeenCalled();
   });
 
+  it("throws a validation error when ids would escape the storage folder", async () => {
+    const storage = createStorageMock();
+    const client = createClient(storage);
+
+    await expect(
+      uploadMainImage({
+        client,
+        file: webpFile,
+        authorId: "a/b",
+        buildId,
+      }),
+    ).rejects.toMatchObject({ name: "MainImageUploadError", code: "validation" });
+
+    expect(storage.from).not.toHaveBeenCalled();
+  });
+
   it("throws a storage error and does not delete the previous key", async () => {
     const storage = createStorageMock();
     storage.upload.mockResolvedValueOnce({ error: { message: "upload failed" } });
@@ -139,6 +155,40 @@ describe("uploadMainImage", () => {
         previousPath: "author-a/build-b/main.webp",
       }),
     ).resolves.toEqual({ path: "author-a/build-b/main.png" });
+  });
+
+  it("returns the new path even when deleting the previous key throws", async () => {
+    const storage = createStorageMock();
+    storage.remove.mockRejectedValueOnce(new Error("network"));
+    const client = createClient(storage);
+
+    await expect(
+      uploadMainImage({
+        client,
+        file: pngFile,
+        authorId,
+        buildId,
+        previousPath: "author-a/build-b/main.webp",
+      }),
+    ).resolves.toEqual({ path: "author-a/build-b/main.png" });
+  });
+
+  it("maps a thrown upload failure to a storage error and does not delete", async () => {
+    const storage = createStorageMock();
+    storage.upload.mockRejectedValueOnce(new Error("network"));
+    const client = createClient(storage);
+
+    await expect(
+      uploadMainImage({
+        client,
+        file: webpFile,
+        authorId,
+        buildId,
+        previousPath: "author-a/build-b/main.png",
+      }),
+    ).rejects.toMatchObject({ name: "MainImageUploadError", code: "storage" });
+
+    expect(storage.remove).not.toHaveBeenCalled();
   });
 });
 

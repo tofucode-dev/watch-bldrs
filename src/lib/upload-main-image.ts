@@ -32,19 +32,35 @@ export async function uploadMainImage({
     throw new MainImageUploadError("validation");
   }
 
-  const path = buildMainImagePath(authorId, buildId, MAIN_IMAGE_EXT_BY_MIME[validation.mime]);
+  let path: string;
+  try {
+    path = buildMainImagePath(authorId, buildId, MAIN_IMAGE_EXT_BY_MIME[validation.mime]);
+  } catch {
+    throw new MainImageUploadError("validation");
+  }
 
-  const { error: uploadError } = await client.storage.from("build-images").upload(path, file, {
-    contentType: validation.mime,
-    upsert: true,
-  });
+  try {
+    const { error: uploadError } = await client.storage.from("build-images").upload(path, file, {
+      contentType: validation.mime,
+      upsert: true,
+    });
 
-  if (uploadError) {
+    if (uploadError) {
+      throw new MainImageUploadError("storage");
+    }
+  } catch (error) {
+    if (error instanceof MainImageUploadError) {
+      throw error;
+    }
     throw new MainImageUploadError("storage");
   }
 
   if (previousPath !== undefined && previousPath !== path) {
-    await client.storage.from("build-images").remove([previousPath]);
+    try {
+      await client.storage.from("build-images").remove([previousPath]);
+    } catch {
+      // Previous-key cleanup must not discard the new path.
+    }
   }
 
   return { path };

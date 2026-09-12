@@ -77,4 +77,10 @@ describe("buildMainImagePath", () => {
     expect(buildMainImagePath("author-a", "build-b", "png")).toBe("author-a/build-b/main.png");
     expect(buildMainImagePath("author-a", "build-b", "webp")).toBe("author-a/build-b/main.webp");
   });
+
+  it("rejects ids that would escape the author/build folder", () => {
+    expect(() => buildMainImagePath("a/b", "build-b", "jpg")).toThrow("Invalid main image path segment");
+    expect(() => buildMainImagePath("author-a", "..", "jpg")).toThrow("Invalid main image path segment");
+    expect(() => buildMainImagePath("author-a", "b\\c", "png")).toThrow("Invalid main image path segment");
+  });
 });

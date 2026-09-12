@@ -170,4 +170,15 @@ describe("PhotoUpload", () => {
 
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:photo-upload-1");
   });
+
+  it("revokes the previous object URL when the file changes", () => {
+    const { rerender } = render(<PhotoUpload file={jpegFile("first.jpg")} onFileChange={vi.fn()} />);
+
+    expect(screen.getByRole("img", { name: "Main photo preview" })).toHaveAttribute("src", "blob:photo-upload-1");
+
+    rerender(<PhotoUpload file={jpegFile("second.jpg")} onFileChange={vi.fn()} />);
+
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:photo-upload-1");
+    expect(screen.getByRole("img", { name: "Main photo preview" })).toHaveAttribute("src", "blob:photo-upload-2");
+  });
 });
