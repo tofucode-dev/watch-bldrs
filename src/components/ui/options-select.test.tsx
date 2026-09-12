@@ -15,9 +15,7 @@ afterEach(() => {
 
 describe("OptionsSelect", () => {
   it("renders the placeholder when unset", () => {
-    render(
-      <OptionsSelect options={options} value="" onValueChange={() => undefined} placeholder="Choose movement" />,
-    );
+    render(<OptionsSelect options={options} value="" onValueChange={() => undefined} placeholder="Choose movement" />);
 
     expect(screen.getByRole("combobox")).toHaveTextContent("Choose movement");
   });

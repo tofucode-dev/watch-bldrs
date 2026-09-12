@@ -30,8 +30,6 @@ Verification: component tests for label association, error/ARIA, Select unset, r
 - Button already has variants `default` / `outline` / `ghost` and `size="icon"` — enough for Save Draft, Discard, Add Part, and row delete (`size="icon"` plus `ghost` or `outline`, not `variant="icon"`).
 - Vitest 5 has no `environmentMatchGlobs`. Split `vitest.config.ts` with inline `test.projects` so `src/**/*.test.ts` stays Node (`supabase.test.ts`) and only `src/**/*.test.tsx` runs in jsdom.
 
-
-
 ## What We're NOT Doing
 
 - Photo upload, file input, or Storage attach (F-03)
@@ -46,8 +44,6 @@ Verification: component tests for label association, error/ARIA, Select unset, r
 - Playwright / E2E
 - A committed `/dev` preview route
 - Unpublish UI (PRD Non-Goal)
-
-
 
 ## Implementation Approach
 
@@ -65,15 +61,11 @@ Install jsdom + Testing Library in the same first increment as the primitives so
 
 ## Phase 1: Primitives, tokens, and component-test harness
 
-
-
 ### Overview
 
 Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Textarea, Field, Label, Select, and `OptionsSelect` with accessibility tests, plus only those token tweaks that are cheap.
 
 ### Changes Required:
-
-
 
 #### 1. shadcn Field kit
 
@@ -117,8 +109,6 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 
 ### Success Criteria:
 
-
-
 #### Automated Verification:
 
 - shadcn CLI has added Field, Input, Textarea, Label, and Select under `src/components/ui` (plus any required CLI deps)
@@ -130,8 +120,6 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 - `npm run lint` passes
 - `npm run test` passes
 - `npm run build` passes
-
-
 
 #### Manual Verification:
 
@@ -147,19 +135,13 @@ Install the shadcn field kit and a jsdom Testing Library harness. Ship Input, Te
 
 ---
 
-
-
 ## Phase 2: Parts row and sticky action bar
-
-
 
 ### Overview
 
 Add the two composites the design system assigned to F-02: a domain-free parts row that works on phone and desktop, and a presentational sticky save bar. Wire them to existing Button variants. Do not persist, discard, or total anything.
 
 ### Changes Required:
-
-
 
 #### 1. PartsRow (+ desktop header)
 
@@ -195,8 +177,6 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 
 ### Success Criteria:
 
-
-
 #### Automated Verification:
 
 - `PartsRow` renders caller-provided cells, index, and action with no hardcoded part categories, currencies, or field names
@@ -207,8 +187,6 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 - `npm run lint` passes
 - `npm run test` passes
 - `npm run build` passes
-
-
 
 #### Manual Verification:
 
@@ -221,11 +199,7 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 
 ---
 
-
-
 ## Testing Strategy
-
-
 
 ### Unit Tests:
 
@@ -235,13 +209,9 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 - PartsRow: slots, accessible names, both markup branches, independent rows; visual stack vs columns is manual
 - StickyActionBar: three slots render; no implicit submit
 
-
-
 ### Integration Tests:
 
 - None. No schema, RLS, or Storage changes.
-
-
 
 ### Manual Testing Steps:
 
@@ -250,8 +220,6 @@ Add the two composites the design system assigned to F-02: a domain-free parts r
 3. At desktop width: watch-spec style two-column FieldGroups still work (FieldGroup is stock shadcn); parts header + columns align; price and currency sit on one row as two controls.
 4. Keyboard: tab through a parts row, open Select, choose empty option, activate delete and both bar actions.
 5. Compare only those widgets to `context/changes/authoring-form-components/build-form-reference.png`. Skip photo well and preview card.
-
-
 
 ## Performance Considerations
 
@@ -272,17 +240,11 @@ No data migration. Auth screens stay on `FormField`. Generated shadcn files are 
 - Tokens: `src/styles/global.css`
 - Test harness baseline: `vitest.config.ts`
 
-
-
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append  `— <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.
 
-
-
 ### Phase 1: Primitives, tokens, and component-test harness
-
-
 
 #### Automated
 
@@ -296,36 +258,28 @@ No data migration. Auth screens stay on `FormField`. Generated shadcn files are 
 - [x] 1.8 `npm run test` passes — 98936fc
 - [x] 1.9 `npm run build` passes — 98936fc
 
-
-
 #### Manual
 
 - [x] 1.10 Input, Textarea, and OptionsSelect look token-faithful next to `build-form-reference.png` (cream field, charcoal border, burnt-orange focus) at ~390px width — 98936fc
 - [x] 1.11 An optional Select can start unset, take a value, and return to unset via the empty option — 98936fc
 - [x] 1.12 Any mockup details skipped as too expensive (exact type scale, extra inner shadows, non-token colors) are listed as accepted drawbacks — stock Field typography/spacing; no torn-paper panels; `shadow-xs` only on inputs; stock Select popover chrome; stock FieldGroup `@container` layout — 98936fc
 
-
-
 ### Phase 2: Parts row and sticky action bar
-
-
 
 #### Automated
 
-- [ ] 2.1 `PartsRow` renders caller-provided cells, index, and action with no hardcoded part categories, currencies, or field names
-- [ ] 2.2 Parts row tests assert both markup branches and a11y labels (header/`sr-only` on `md+`, visible per-cell labels below `md`); stacked vs columns look is manual 2.9
-- [ ] 2.3 `StickyActionBar` exposes status / secondary / primary slots and does not define save/discard handlers
-- [ ] 2.4 Component tests cover PartsRow slots/accessible names and StickyActionBar slots
-- [ ] 2.5 No `src/modules/builds`, no photo/file widget, no auth FormField migration, no `react-hook-form` dependency
-- [ ] 2.6 `npm run lint` passes
-- [ ] 2.7 `npm run test` passes
-- [ ] 2.8 `npm run build` passes
-
-
+- [x] 2.1 `PartsRow` renders caller-provided cells, index, and action with no hardcoded part categories, currencies, or field names
+- [x] 2.2 Parts row tests assert both markup branches and a11y labels (header/`sr-only` on `md+`, visible per-cell labels below `md`); stacked vs columns look is manual 2.9
+- [x] 2.3 `StickyActionBar` exposes status / secondary / primary slots and does not define save/discard handlers
+- [x] 2.4 Component tests cover PartsRow slots/accessible names and StickyActionBar slots
+- [x] 2.5 No `src/modules/builds`, no photo/file widget, no auth FormField migration, no `react-hook-form` dependency
+- [x] 2.6 `npm run lint` passes
+- [x] 2.7 `npm run test` passes
+- [x] 2.8 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.9 Dummy parts rows match the mockup simply: columns on desktop, stacked on ~390px, delete action reachable by keyboard
-- [ ] 2.10 Sticky bar uses the yellow sticky token, shows status text, outline Discard, and primary Save Draft
-- [ ] 2.11 Price and currency sit as two kit controls side by side on desktop (caller layout); they stack on phone with the rest of the row
-- [ ] 2.12 Visual check is Field / Select / PartsRow / StickyActionBar only — photo well and “YOUR BUILD” preview are out; remaining look gaps vs the PNG are written down, not forced
+- [x] 2.9 Dummy parts rows match the mockup simply: columns on desktop, stacked on ~390px, delete action reachable by keyboard
+- [x] 2.10 Sticky bar uses the yellow sticky token, shows status text, outline Discard, and primary Save Draft
+- [x] 2.11 Price and currency sit as two kit controls side by side on desktop (caller layout); they stack on phone with the rest of the row
+- [x] 2.12 Visual check is Field / Select / PartsRow / StickyActionBar only — photo well and “YOUR BUILD” preview are out; remaining look gaps vs the PNG are written down, not forced
