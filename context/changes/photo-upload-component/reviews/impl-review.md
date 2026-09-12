@@ -38,7 +38,7 @@ P2 F1 Fix A (silent delete failure, no `console.*`) is still in force — not re
 - **Location**: working tree vs HEAD `280573d` (`src/lib/main-image-file.ts`, `src/lib/upload-main-image.ts`, `src/components/ui/photo-upload.tsx` and tests)
 - **Detail**: HEAD still interpolates `${authorId}/${buildId}/main.${ext}` with no segment check, still splits object-URL create/revoke, and still lets a thrown `remove()` discard the new path. The working tree has `assertStoragePathSegment`, the typed `MainImageUploadError("validation")` wrap, object-URL `useEffect` ownership, the generation token, and upload/remove try/catch. A merge or reset of HEAD-only would ship the first Storage caller without those guards. RLS still prevents cross-author overwrite.
 - **Fix**: Commit the working-tree review-triage files (helpers, PhotoUpload, tests, and the two `reviews/impl-review-phase-*.md` reports) before merge. Do not revert them to HEAD.
-- **Decision**: PENDING
+- **Decision**: FIXED via commit 77114b7
 
 ### F2 — GitHub `PUBLIC_*` secrets are documented as enough; CI never interpolates them
 
@@ -57,4 +57,4 @@ P2 F1 Fix A (silent delete failure, no `console.*`) is still in force — not re
   - Tradeoff: Easy to miss when S-02 wires the island.
   - Confidence: HIGH — matches the written Phase 2 contract.
   - Blind spot: S-02 authors may copy the README and assume secrets-only is sufficient.
-- **Decision**: PENDING
+- **Decision**: FIXED via Fix A
