@@ -277,20 +277,20 @@ No database migration. No `npm run db:types`. Operators will set `PUBLIC_SUPABAS
 
 #### Automated
 
-- [x] 2.1 `createBrowserSupabaseClient` returns null when public env is missing and constructs `createBrowserClient` with the public URL+key when present
-- [x] 2.2 Existing `src/lib/supabase.test.ts` still passes (server `astro:env/server` path unchanged)
-- [x] 2.3 `uploadMainImage` returns `{ path }` shaped `{authorId}/{buildId}/main.{ext}` and never a URL
-- [x] 2.4 Same-ext replace upserts only; ext change uploads then deletes the old key; failed upload does not delete
-- [x] 2.5 Helper awaits `validateMainImageFile` before Storage; `contentType` is the detected mime; validation/storage failures throw `MainImageUploadError`
-- [x] 2.6 No Actions, no draft insert, no `main_image_path` write, no new migrations or Storage policies
-- [x] 2.7 `PhotoUpload` still does not import the browser client
-- [x] 2.8 `npm run lint` passes
-- [x] 2.9 `npm run test` passes
-- [x] 2.10 `npm run build` passes
+- [x] 2.1 `createBrowserSupabaseClient` returns null when public env is missing and constructs `createBrowserClient` with the public URL+key when present — beaa11e
+- [x] 2.2 Existing `src/lib/supabase.test.ts` still passes (server `astro:env/server` path unchanged) — beaa11e
+- [x] 2.3 `uploadMainImage` returns `{ path }` shaped `{authorId}/{buildId}/main.{ext}` and never a URL — beaa11e
+- [x] 2.4 Same-ext replace upserts only; ext change uploads then deletes the old key; failed upload does not delete — beaa11e
+- [x] 2.5 Helper awaits `validateMainImageFile` before Storage; `contentType` is the detected mime; validation/storage failures throw `MainImageUploadError` — beaa11e
+- [x] 2.6 No Actions, no draft insert, no `main_image_path` write, no new migrations or Storage policies — beaa11e
+- [x] 2.7 `PhotoUpload` still does not import the browser client — beaa11e
+- [x] 2.8 `npm run lint` passes — beaa11e
+- [x] 2.9 `npm run test` passes — beaa11e
+- [x] 2.10 `npm run build` passes — beaa11e
 
 #### Manual
 
-- [x] 2.11 `deployment.md` names Storage CORS origins for `workers.dev` and `http://127.0.0.1:4321`, and documents `PUBLIC_SUPABASE_*` as GitHub Actions / `.env` build-time values (not Worker secrets)
-- [x] 2.12 `AGENTS.md` env-schema sentence names the optional `PUBLIC_SUPABASE_*` aliases
-- [x] 2.13 `npm run storybook` still loads `UI/PhotoUpload` without PUBLIC_ Supabase env
-- [x] 2.14 Optional: if local Supabase is up, `npm run test:integration` still passes — F-01 RLS matrix is unchanged
+- [x] 2.11 `deployment.md` names Storage CORS origins for `workers.dev` and `http://127.0.0.1:4321`, and documents `PUBLIC_SUPABASE_*` as GitHub Actions / `.env` build-time values (not Worker secrets) — beaa11e
+- [x] 2.12 `AGENTS.md` env-schema sentence names the optional `PUBLIC_SUPABASE_*` aliases — beaa11e
+- [x] 2.13 `npm run storybook` still loads `UI/PhotoUpload` without PUBLIC_ Supabase env — beaa11e
+- [x] 2.14 Optional: if local Supabase is up, `npm run test:integration` still passes — F-01 RLS matrix is unchanged — beaa11e

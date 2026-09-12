@@ -1,7 +1,7 @@
 ---
 change_id: photo-upload-component
 title: Photo upload component
-status: implementing
+status: implemented
 created: 2026-09-12
 updated: 2026-09-12
 archived_at: null
