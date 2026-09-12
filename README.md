@@ -79,7 +79,7 @@ npm run dev
 
 ## Supabase Configuration
 
-Environment variables are declared via Astro's `astro:env` schema and are **server-only secrets** — they are never exposed to the client. Use the **anon / publishable** key only, never `service_role`.
+Environment variables are declared via Astro's `astro:env` schema. `SUPABASE_URL` and `SUPABASE_KEY` are **server-only secrets** for SSR and Auth. Optional `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_KEY` are client-public aliases of the same anon pair for browser Storage uploads — set them to the same values as `SUPABASE_*`. Use the **anon / publishable** key only, never `service_role`.
 
 `supabase/` already exists. Do **not** run `npx supabase init`.
 
@@ -105,6 +105,8 @@ npx supabase start
 ```
 SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
+PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+PUBLIC_SUPABASE_KEY=<same anon key>
 ```
 
 4. Stop with `npx supabase stop`.
@@ -157,14 +159,18 @@ npx supabase link --project-ref <project-ref>
 
 Put the **Project URL** and **anon public** key into `.env` and `.dev.vars`:
 
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
+| Variable               | Description                                                |
+| ---------------------- | ---------------------------------------------------------- |
+| `SUPABASE_URL`         | Project URL from Supabase dashboard → Settings → API       |
+| `SUPABASE_KEY`         | `anon` public key from Supabase dashboard → Settings → API |
+| `PUBLIC_SUPABASE_URL`  | Same as `SUPABASE_URL` — inlined at build for browser Storage |
+| `PUBLIC_SUPABASE_KEY`  | Same as `SUPABASE_KEY` — inlined at build for browser Storage |
 
 ```
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_KEY=<anon-key>
+PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+PUBLIC_SUPABASE_KEY=<anon-key>
 ```
 
 Hosted Auth URL Configuration is dashboard-only (`config.toml` does not push it):
@@ -198,7 +204,7 @@ Worker runtime secrets (`npx wrangler secret put`) are separate from GitHub Acti
 
 ## CI
 
-GitHub Actions runs lint, test, and build on every push and PR to `main`. Pushes to `main` also deploy with Wrangler after CI passes. Configure repository secrets `SUPABASE_URL` and `SUPABASE_KEY` for the **build** step, plus `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for deploy. Build secrets do not reach the Worker.
+GitHub Actions runs lint, test, and build on every push and PR to `main`. Pushes to `main` also deploy with Wrangler after CI passes. Configure repository secrets `SUPABASE_URL` and `SUPABASE_KEY` for the **build** step, plus `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for deploy. Before browser uploads work in production, also set `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_KEY` (same anon pair) as GitHub Actions build secrets. Build secrets do not reach the Worker runtime.
 
 ## License
 

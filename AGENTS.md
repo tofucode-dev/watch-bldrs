@@ -26,7 +26,7 @@ Keep the MVP deadline and scope in mind. Do not add modules, layers, or ports be
 - Use full SSR through `output: "server"` in @astro.config.mjs.
 - Cloudflare Workers is the deployment runtime. Do not configure Cloudflare Pages for SSR/BFF behavior.
 - API routes export uppercase `GET`, `POST`, `PATCH`, `PUT`, or `DELETE` handlers and explicitly declare `export const prerender = false`.
-- Supabase server values use `astro:env/server`. The existing environment schema exposes `SUPABASE_URL` and `SUPABASE_KEY` in @astro.config.mjs.
+- Supabase server values use `astro:env/server`. The environment schema in @astro.config.mjs exposes `SUPABASE_URL` and `SUPABASE_KEY` (server secrets) and optional `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_KEY` (client-public aliases of the anon pair for browser Storage).
 - Use the auth client in @src/lib/supabase.ts and the session middleware in @src/middleware.ts unless an intentional refactor replaces both consistently.
 - Every new database table is introduced through `supabase/migrations/YYYYMMDDHHmmss_short_description.sql`.
 - Enable RLS and define explicit per-operation policies for every exposed table.
