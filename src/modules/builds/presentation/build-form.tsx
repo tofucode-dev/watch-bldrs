@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { actions } from "astro:actions";
 
@@ -259,23 +259,17 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialDraft?.mainImageUrl ?? null);
   const [photoCleared, setPhotoCleared] = useState(false);
   const [publishConfirming, setPublishConfirming] = useState(false);
+  const [savedFormSnapshot, setSavedFormSnapshot] = useState<BuildFormState>(() => cloneFormState(initialState));
+  const [savedPhotoSnapshot, setSavedPhotoSnapshot] = useState<PhotoSnapshot>(() => initialPhotoSnapshot(initialDraft));
 
-  const savedSnapshot = useRef<BuildFormState>(cloneFormState(initialState));
-  const savedPhoto = useRef<PhotoSnapshot>(initialPhotoSnapshot(initialDraft));
   const inFlight = useRef(false);
   const draftIdRef = useRef<string | null>(initialDraft?.id ?? null);
 
   const hasSavedDraft = draftId !== null;
   const isDirty =
-    !formStatesEqual(formState, savedSnapshot.current) ||
-    isPhotoDirty(mainImageFile, photoCleared, savedPhoto.current);
+    !formStatesEqual(formState, savedFormSnapshot) || isPhotoDirty(mainImageFile, photoCleared, savedPhotoSnapshot);
   const publishEnabled = hasSavedDraft && !isPending && !isDirty;
-
-  useEffect(() => {
-    if (isDirty) {
-      setPublishConfirming(false);
-    }
-  }, [isDirty]);
+  const showPublishConfirmation = publishConfirming && !isDirty;
 
   const updateField = useCallback(<K extends keyof BuildFormState>(key: K, value: BuildFormState[K]) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
@@ -340,40 +334,43 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     });
   }, []);
 
-  const handlePhotoChange = useCallback((next: File | null) => {
-    setMainImageFile(next);
-    setFieldErrors((prev) => {
-      if (!("mainImage" in prev)) {
-        return prev;
+  const handlePhotoChange = useCallback(
+    (next: File | null) => {
+      setMainImageFile(next);
+      setFieldErrors((prev) => {
+        if (!("mainImage" in prev)) {
+          return prev;
+        }
+        return Object.fromEntries(Object.entries(prev).filter(([entryKey]) => entryKey !== "mainImage"));
+      });
+      if (next === null) {
+        setPreviewUrl(null);
+        setPhotoCleared(savedPhotoSnapshot.savedPath !== null);
+        return;
       }
-      return Object.fromEntries(Object.entries(prev).filter(([entryKey]) => entryKey !== "mainImage"));
-    });
-    if (next === null) {
-      setPreviewUrl(null);
-      setPhotoCleared(savedPhoto.current.savedPath !== null);
-      return;
-    }
-    setPhotoCleared(false);
-  }, []);
+      setPhotoCleared(false);
+    },
+    [savedPhotoSnapshot.savedPath],
+  );
 
   const handleDiscard = useCallback(() => {
-    setFormState(cloneFormState(savedSnapshot.current));
-    setMainImageFile(savedPhoto.current.file);
-    setPreviewUrl(savedPhoto.current.previewUrl);
-    setPhotoCleared(savedPhoto.current.cleared);
+    setFormState(cloneFormState(savedFormSnapshot));
+    setMainImageFile(savedPhotoSnapshot.file);
+    setPreviewUrl(savedPhotoSnapshot.previewUrl);
+    setPhotoCleared(savedPhotoSnapshot.cleared);
     setFieldErrors({});
     setBarStatus("idle");
     setBarMessage(null);
     setPublishConfirming(false);
-  }, []);
+  }, [savedFormSnapshot, savedPhotoSnapshot]);
 
   const handlePublishClick = useCallback(() => {
-    if (!publishEnabled || isPending) {
+    if (!publishEnabled) {
       return;
     }
     setPublishConfirming(true);
     setBarMessage(null);
-  }, [isPending, publishEnabled]);
+  }, [publishEnabled]);
 
   const handleCancelPublish = useCallback(() => {
     if (isPending) {
@@ -458,12 +455,13 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
         window.history.replaceState(null, "", `/account/builds/${nextId}/edit`);
       }
 
-      savedSnapshot.current = cloneFormState(formState);
+      const nextSavedFormSnapshot = cloneFormState(formState);
+      setSavedFormSnapshot(nextSavedFormSnapshot);
 
       const photoResult = await persistMainImage({
         draftId: nextId,
         file: mainImageFile,
-        savedPath: savedPhoto.current.savedPath,
+        savedPath: savedPhotoSnapshot.savedPath,
         cleared: photoCleared,
       });
 
@@ -476,12 +474,13 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
 
       if (photoResult.path !== undefined) {
         setPhotoCleared(false);
-        savedPhoto.current = {
+        const nextSavedPhotoSnapshot: PhotoSnapshot = {
           file: photoResult.path === null ? null : mainImageFile,
           previewUrl: photoResult.path === null ? null : previewUrl,
           savedPath: photoResult.path,
           cleared: false,
         };
+        setSavedPhotoSnapshot(nextSavedPhotoSnapshot);
         if (photoResult.path === null) {
           setPreviewUrl(null);
           setMainImageFile(null);
@@ -497,7 +496,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       inFlight.current = false;
       setIsPending(false);
     }
-  }, [formState, mainImageFile, photoCleared, previewUrl]);
+  }, [formState, mainImageFile, photoCleared, previewUrl, savedPhotoSnapshot.savedPath]);
 
   const watchStyleOptions = withNotSet(WATCH_STYLE_OPTIONS);
   const movementOptions = withNotSet(MOVEMENT_OPTIONS);
@@ -805,9 +804,9 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       </div>
 
       <StickyActionBar
-        status={statusMessage(barStatus, barMessage, hasSavedDraft, isDirty, publishConfirming)}
+        status={statusMessage(barStatus, barMessage, hasSavedDraft, isDirty, showPublishConfirmation)}
         secondary={
-          publishConfirming ? (
+          showPublishConfirmation ? (
             <Button type="button" variant="outline" onClick={handleCancelPublish} disabled={isPending}>
               Cancel
             </Button>
@@ -818,7 +817,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
           )
         }
         primary={
-          publishConfirming ? (
+          showPublishConfirmation ? (
             <Button type="button" onClick={handleConfirmPublish} disabled={isPending}>
               Publish build
             </Button>

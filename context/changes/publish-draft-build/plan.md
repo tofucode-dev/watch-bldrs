@@ -335,26 +335,26 @@ No migration or generated database-type change is expected. The existing `publis
 
 #### Automated
 
-- [x] 2.1 BuildForm component tests pass for eligibility, confirmation, pending, error, retry, and navigation behavior
-- [x] 2.2 Shared sticky-action changes retain Storybook type and build compatibility
-- [x] 2.3 Browser-facing build form imports no server-only build, Astro environment, or Supabase dependency
+- [x] 2.1 BuildForm component tests pass for eligibility, confirmation, pending, error, retry, and navigation behavior — f3b5e3a
+- [x] 2.2 Shared sticky-action changes retain Storybook type and build compatibility — f3b5e3a
+- [x] 2.3 Browser-facing build form imports no server-only build, Astro environment, or Supabase dependency — f3b5e3a
 
 #### Manual
 
-- [x] 2.4 Phone layout keeps status and all publish controls readable, reachable, and free of horizontal overflow
-- [x] 2.5 Desktop sticky actions retain stable order and visible keyboard focus through the full interaction
-- [x] 2.6 Failed save or photo attachment blocks publication until the change is saved or discarded
-- [x] 2.7 Successful publication lands on a refresh-safe dashboard confirmation
+- [x] 2.4 Phone layout keeps status and all publish controls readable, reachable, and free of horizontal overflow — f3b5e3a
+- [x] 2.5 Desktop sticky actions retain stable order and visible keyboard focus through the full interaction — f3b5e3a
+- [x] 2.6 Failed save or photo attachment blocks publication until the change is saved or discarded — f3b5e3a
+- [x] 2.7 Successful publication lands on a refresh-safe dashboard confirmation — f3b5e3a
 
 ### Phase 3: Cross-Cutting Verification
 
 #### Automated
 
-- [ ] 3.1 Full unit and component suite passes
-- [ ] 3.2 Full local Supabase identity and Storage suite passes
-- [ ] 3.3 ESLint passes
-- [ ] 3.4 Static Storybook build passes
-- [ ] 3.5 Cloudflare Workers production build passes
+- [x] 3.1 Full unit and component suite passes
+- [x] 3.2 Full local Supabase identity and Storage suite passes
+- [x] 3.3 ESLint passes
+- [x] 3.4 Static Storybook build passes
+- [x] 3.5 Cloudflare Workers production build passes
 
 #### Manual
 

@@ -88,16 +88,12 @@ class FakeBuildStore implements BuildStore {
 
   publishBuild(authorId: string, id: string): Promise<{ id: string } | null> {
     const existing = this.drafts.get(id);
-    if (!existing || existing.authorId !== authorId) {
+    if (existing?.authorId !== authorId) {
       return Promise.resolve(null);
     }
 
     if (existing.status === "published") {
       return Promise.resolve({ id });
-    }
-
-    if (existing.status !== "draft") {
-      return Promise.resolve(null);
     }
 
     this.publishMutationCount += 1;
