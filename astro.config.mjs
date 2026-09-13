@@ -26,6 +26,7 @@ export default defineConfig({
   session: false,
   env: {
     schema: {
+      CLOUDFLARE_ENV: envField.string({ context: "server", access: "public", optional: true }),
       SUPABASE_URL: envField.string({ context: "server", access: "secret", optional: true }),
       SUPABASE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       PUBLIC_SUPABASE_URL: envField.string({ context: "client", access: "public", optional: true }),
