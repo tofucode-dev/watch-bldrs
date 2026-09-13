@@ -285,8 +285,8 @@ No database, RLS, Storage, generated-type, environment, or deployment migration 
 
 #### Automated
 
-- [x] 3.1 Grid and load-more component contracts pass
-- [x] 3.2 The complete unit/component test suite passes
-- [x] 3.3 Repository lint passes
-- [x] 3.4 All listing stories and both themes compile in the production Storybook bundle
-- [x] 3.5 The Cloudflare Workers production build passes without client/server boundary regressions
+- [x] 3.1 Grid and load-more component contracts pass — 0872db8
+- [x] 3.2 The complete unit/component test suite passes — 0872db8
+- [x] 3.3 Repository lint passes — 0872db8
+- [x] 3.4 All listing stories and both themes compile in the production Storybook bundle — 0872db8
+- [x] 3.5 The Cloudflare Workers production build passes without client/server boundary regressions — 0872db8
