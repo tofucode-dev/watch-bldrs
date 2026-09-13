@@ -181,4 +181,36 @@ describe("PhotoUpload", () => {
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:photo-upload-1");
     expect(screen.getByRole("img", { name: "Main photo preview" })).toHaveAttribute("src", "blob:photo-upload-2");
   });
+
+  it("renders previewUrl when file is null and does not create an object URL", () => {
+    const persisted = "https://example.test/signed-main.jpg";
+    render(<PhotoUpload file={null} previewUrl={persisted} onFileChange={vi.fn()} />);
+
+    expect(screen.getByRole("img", { name: "Main photo preview" })).toHaveAttribute("src", persisted);
+    expect(screen.getByRole("button", { name: "Choose image" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove" })).toBeInTheDocument();
+    expect(createObjectURL).not.toHaveBeenCalled();
+  });
+
+  it("lets a local File win over previewUrl", () => {
+    render(
+      <PhotoUpload
+        file={jpegFile("local.jpg")}
+        previewUrl="https://example.test/signed-main.jpg"
+        onFileChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: "Main photo preview" })).toHaveAttribute("src", "blob:photo-upload-1");
+  });
+
+  it("calls onFileChange(null) when Remove is clicked on a persisted preview", async () => {
+    const user = userEvent.setup();
+    const onFileChange = vi.fn();
+    render(<PhotoUpload file={null} previewUrl="https://example.test/signed-main.jpg" onFileChange={onFileChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+
+    expect(onFileChange).toHaveBeenCalledWith(null);
+  });
 });

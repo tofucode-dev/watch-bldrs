@@ -334,42 +334,42 @@ One forward migration for `save_draft_build` only. Hosted `npx supabase db push`
 
 #### Automated
 
-- [x] 2.1 `/account/builds/new` and `/account/builds/[id]/edit` exist; pages do not query Supabase directly
-- [x] 2.2 Middleware redirects anonymous `/account` requests to sign-in; sign-in only follows a safe relative `redirect`
-- [x] 2.3 `BuildForm` composes the shared kit (no new Field primitive, no auth `FormField`)
-- [x] 2.4 jsdom tests cover create vs update, Discard snapshot, validation preserve, Add part
-- [x] 2.5 Browser-safe `index.ts` does not import `astro:env/server` or `server.ts`
-- [x] 2.6 `npm run lint` passes
-- [x] 2.7 `npm run test` passes
-- [x] 2.8 `npm run build` passes
+- [x] 2.1 `/account/builds/new` and `/account/builds/[id]/edit` exist; pages do not query Supabase directly — 719b99f
+- [x] 2.2 Middleware redirects anonymous `/account` requests to sign-in; sign-in only follows a safe relative `redirect` — 719b99f
+- [x] 2.3 `BuildForm` composes the shared kit (no new Field primitive, no auth `FormField`) — 719b99f
+- [x] 2.4 jsdom tests cover create vs update, Discard snapshot, validation preserve, Add part — 719b99f
+- [x] 2.5 Browser-safe `index.ts` does not import `astro:env/server` or `server.ts` — 719b99f
+- [x] 2.6 `npm run lint` passes — 719b99f
+- [x] 2.7 `npm run test` passes — 719b99f
+- [x] 2.8 `npm run build` passes — 719b99f
 
 #### Manual
 
-- [x] 2.9 Logged-out visit to `/account/builds/new` lands on sign-in and, after login, returns to the create form
-- [x] 2.10 Empty Save Draft succeeds, URL gains the id, a second Save still works
-- [x] 2.11 Invalid URL / price-without-currency / case size 19 show field errors and keep values
-- [x] 2.12 Form is usable at ~390px and desktop: parts stack vs columns, sticky bar reachable
-- [x] 2.13 User B opening `/account/builds/{A's id}/edit` while logged in as B sees not-found, not A’s fields
-- [x] 2.14 No Publish / Unpublish control is visible
+- [x] 2.9 Logged-out visit to `/account/builds/new` lands on sign-in and, after login, returns to the create form — 719b99f
+- [x] 2.10 Empty Save Draft succeeds, URL gains the id, a second Save still works — 719b99f
+- [x] 2.11 Invalid URL / price-without-currency / case size 19 show field errors and keep values — 719b99f
+- [x] 2.12 Form is usable at ~390px and desktop: parts stack vs columns, sticky bar reachable — 719b99f
+- [x] 2.13 User B opening `/account/builds/{A's id}/edit` while logged in as B sees not-found, not A’s fields — 719b99f
+- [x] 2.14 No Publish / Unpublish control is visible — 719b99f
 
 ### Phase 3: Main photo attach and draft preview
 
 #### Automated
 
-- [ ] 3.1 `PhotoUpload` accepts optional `previewUrl`; local `File` still wins
-- [ ] 3.2 Form tests: File present → upload then attach; no File → no upload; helper error does not persist a path
-- [ ] 3.3 `getOwnedDraft` exposes a signed display URL and never stores it as `main_image_path`
-- [ ] 3.4 Clear-and-save writes a null path without calling Storage.delete
-- [ ] 3.5 `npm run lint` passes
-- [ ] 3.6 `npm run test` passes
-- [ ] 3.7 `npm run build` passes
+- [x] 3.1 `PhotoUpload` accepts optional `previewUrl`; local `File` still wins
+- [x] 3.2 Form tests: File present → upload then attach; no File → no upload; helper error does not persist a path
+- [x] 3.3 `getOwnedDraft` exposes a signed display URL and never stores it as `main_image_path`
+- [x] 3.4 Clear-and-save writes a null path without calling Storage.delete
+- [x] 3.5 `npm run lint` passes
+- [x] 3.6 `npm run test` passes
+- [x] 3.7 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.8 Choose a jpeg/png/webp ≤ 5 MiB, Save Draft, refresh `/account/builds/[id]/edit`: the well shows the stored image
-- [ ] 3.9 Replace with another allowed type (ext change) still previews after reload
-- [ ] 3.10 Remove + Save: well empty after reload; draft row remains
-- [ ] 3.11 Rejected file (too big / wrong type) never becomes `main_image_path`
-- [ ] 3.12 Anonymous and user B still cannot download A’s draft object (spot-check existing F-01 behaviour or the Storage tests)
-- [ ] 3.13 Phone and desktop: well, choose, and sticky save remain usable
-- [ ] 3.14 Remaining look gaps vs `build-form-reference.png` (torn paper, “YOUR BUILD” card, chalkboard stamps) are listed in `change.md`, not forced
+- [x] 3.8 Choose a jpeg/png/webp ≤ 5 MiB, Save Draft, refresh `/account/builds/[id]/edit`: the well shows the stored image
+- [x] 3.9 Replace with another allowed type (ext change) still previews after reload
+- [x] 3.10 Remove + Save: well empty after reload; draft row remains
+- [x] 3.11 Rejected file (too big / wrong type) never becomes `main_image_path`
+- [x] 3.12 Anonymous and user B still cannot download A’s draft object (spot-check existing F-01 behaviour or the Storage tests)
+- [x] 3.13 Phone and desktop: well, choose, and sticky save remain usable
+- [x] 3.14 Remaining look gaps vs `build-form-reference.png` (torn paper, “YOUR BUILD” card, chalkboard stamps) are listed in `change.md`, not forced

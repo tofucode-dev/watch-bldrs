@@ -7,6 +7,7 @@ import { Field, FieldContent, FieldError, FieldGroup, FieldLabel, FieldSet, Fiel
 import { Input } from "@/components/ui/input";
 import { OptionsSelect } from "@/components/ui/options-select";
 import { PartsListHeader, PartsRow } from "@/components/ui/parts-row";
+import { PhotoUpload } from "@/components/ui/photo-upload";
 import { StickyActionBar } from "@/components/ui/sticky-action-bar";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -38,11 +39,14 @@ function partRowErrorMessages(fieldErrors: Record<string, string>, rowIndex: num
   return [...new Set(messages)];
 }
 
-async function saveDraftViaAction(payload: ReturnType<typeof formStateToDraftInput>, draftId: string | null) {
-  const result = draftId
-    ? await actions.builds.update({ ...payload, id: draftId })
-    : await actions.builds.createDraft(payload);
+interface ActionResultShape {
+  data?: { ok: true; id: string } | { ok: false; error: "validation"; fields: Record<string, string> };
+  error?: { code?: string } | undefined;
+}
 
+function mapActionFailure(
+  result: ActionResultShape,
+): { errorMessage: string } | { data: NonNullable<ActionResultShape["data"]> } {
   if (result.error) {
     if (result.error.code === "UNAUTHORIZED") {
       return { errorMessage: "You must be signed in to save a draft" };
@@ -53,8 +57,85 @@ async function saveDraftViaAction(payload: ReturnType<typeof formStateToDraftInp
     return { errorMessage: "Something went wrong" };
   }
 
+  if (!result.data) {
+    return { errorMessage: "Something went wrong" };
+  }
+
   return { data: result.data };
-  return { data: { ok: true, id: "123" } };
+}
+
+async function saveDraftViaAction(payload: ReturnType<typeof formStateToDraftInput>, draftId: string | null) {
+  const result = draftId
+    ? await actions.builds.update({ ...payload, id: draftId })
+    : await actions.builds.createDraft(payload);
+
+  return mapActionFailure(result);
+}
+
+const PHOTO_UNAVAILABLE = "Draft saved, but photo upload is unavailable.";
+const PHOTO_UPLOAD_FAILED = "Draft saved, but the photo could not be uploaded.";
+const PHOTO_ATTACH_FAILED = "Draft saved, but the photo could not be attached.";
+const PHOTO_FIELD_ERROR = "Could not save this image.";
+
+async function persistMainImage(input: {
+  draftId: string;
+  file: File | null;
+  savedPath: string | null;
+  cleared: boolean;
+}): Promise<{ path?: string | null } | { errorMessage: string; fieldError: string }> {
+  if (input.file) {
+    const [{ createBrowserSupabaseClient }, { MainImageUploadError, uploadMainImage }] = await Promise.all([
+      import("@/lib/supabase-browser"),
+      import("@/lib/upload-main-image"),
+    ]);
+
+    const client = createBrowserSupabaseClient();
+    if (!client) {
+      return { errorMessage: PHOTO_UNAVAILABLE, fieldError: PHOTO_FIELD_ERROR };
+    }
+
+    const {
+      data: { user },
+    } = await client.auth.getUser();
+    if (!user) {
+      return { errorMessage: PHOTO_UNAVAILABLE, fieldError: PHOTO_FIELD_ERROR };
+    }
+
+    try {
+      const { path } = await uploadMainImage({
+        client,
+        file: input.file,
+        authorId: user.id,
+        buildId: input.draftId,
+        previousPath: input.savedPath ?? undefined,
+      });
+
+      const attached = mapActionFailure(await actions.builds.attachMainImage({ id: input.draftId, path }));
+      if ("errorMessage" in attached || !attached.data.ok) {
+        return { errorMessage: PHOTO_ATTACH_FAILED, fieldError: PHOTO_FIELD_ERROR };
+      }
+
+      return { path };
+    } catch (error) {
+      if (error instanceof MainImageUploadError && error.code === "validation") {
+        return {
+          errorMessage: "This image cannot be used.",
+          fieldError: "Use a JPEG, PNG, or WebP image of 5 MB or less.",
+        };
+      }
+      return { errorMessage: PHOTO_UPLOAD_FAILED, fieldError: PHOTO_FIELD_ERROR };
+    }
+  }
+
+  if (input.cleared && input.savedPath) {
+    const attached = mapActionFailure(await actions.builds.attachMainImage({ id: input.draftId, path: null }));
+    if ("errorMessage" in attached || !attached.data.ok) {
+      return { errorMessage: PHOTO_ATTACH_FAILED, fieldError: PHOTO_FIELD_ERROR };
+    }
+    return { path: null };
+  }
+
+  return {};
 }
 
 const NOT_SET_OPTION = { value: "", label: "Not set" };
@@ -94,6 +175,22 @@ function statusMessage(status: BarStatus, message: string | null, hasSavedDraft:
   }
 }
 
+interface PhotoSnapshot {
+  file: File | null;
+  previewUrl: string | null;
+  savedPath: string | null;
+  cleared: boolean;
+}
+
+function initialPhotoSnapshot(initialDraft?: BuildFormInitialDraft): PhotoSnapshot {
+  return {
+    file: null,
+    previewUrl: initialDraft?.mainImageUrl ?? null,
+    savedPath: initialDraft?.mainImagePath ?? null,
+    cleared: false,
+  };
+}
+
 export default function BuildForm({ initialDraft }: BuildFormProps) {
   const initialState = useMemo(
     () => (initialDraft ? formStateFromInitialDraft(initialDraft) : emptyFormState()),
@@ -106,8 +203,12 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
   const [barStatus, setBarStatus] = useState<BarStatus>("idle");
   const [barMessage, setBarMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [mainImageFile, setMainImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialDraft?.mainImageUrl ?? null);
+  const [photoCleared, setPhotoCleared] = useState(false);
 
   const savedSnapshot = useRef<BuildFormState>(cloneFormState(initialState));
+  const savedPhoto = useRef<PhotoSnapshot>(initialPhotoSnapshot(initialDraft));
   const inFlight = useRef(false);
   const draftIdRef = useRef<string | null>(initialDraft?.id ?? null);
 
@@ -176,8 +277,30 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     });
   }, []);
 
+  const handlePhotoChange = useCallback(
+    (next: File | null) => {
+      setMainImageFile(next);
+      setFieldErrors((prev) => {
+        if (!("mainImage" in prev)) {
+          return prev;
+        }
+        return Object.fromEntries(Object.entries(prev).filter(([entryKey]) => entryKey !== "mainImage"));
+      });
+      if (next === null) {
+        setPreviewUrl(null);
+        setPhotoCleared(savedPhoto.current.savedPath !== null);
+        return;
+      }
+      setPhotoCleared(false);
+    },
+    [],
+  );
+
   const handleDiscard = useCallback(() => {
     setFormState(cloneFormState(savedSnapshot.current));
+    setMainImageFile(savedPhoto.current.file);
+    setPreviewUrl(savedPhoto.current.previewUrl);
+    setPhotoCleared(savedPhoto.current.cleared);
     setFieldErrors({});
     setBarStatus("idle");
     setBarMessage(null);
@@ -205,28 +328,22 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
         return;
       }
 
-      const { data, errorMessage } = await saveDraftViaAction(payload, currentId);
+      const saveResult = await saveDraftViaAction(payload, currentId);
 
-      if (errorMessage) {
+      if ("errorMessage" in saveResult) {
         setBarStatus("error");
-        setBarMessage(errorMessage);
+        setBarMessage(saveResult.errorMessage);
         return;
       }
 
-      if (!data) {
-        setBarStatus("error");
-        setBarMessage("Something went wrong");
-        return;
-      }
-
-      if (!data.ok) {
-        setFieldErrors(data.fields);
+      if (!saveResult.data.ok) {
+        setFieldErrors(saveResult.data.fields);
         setBarStatus("error");
         setBarMessage("Fix the highlighted fields");
         return;
       }
 
-      const nextId = data.id;
+      const nextId = saveResult.data.id;
       if (!currentId) {
         draftIdRef.current = nextId;
         setDraftId(nextId);
@@ -234,6 +351,35 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       }
 
       savedSnapshot.current = cloneFormState(formState);
+
+      const photoResult = await persistMainImage({
+        draftId: nextId,
+        file: mainImageFile,
+        savedPath: savedPhoto.current.savedPath,
+        cleared: photoCleared,
+      });
+
+      if ("errorMessage" in photoResult) {
+        setFieldErrors({ mainImage: photoResult.fieldError });
+        setBarStatus("error");
+        setBarMessage(photoResult.errorMessage);
+        return;
+      }
+
+      if (photoResult.path !== undefined) {
+        setPhotoCleared(false);
+        savedPhoto.current = {
+          file: photoResult.path === null ? null : mainImageFile,
+          previewUrl: photoResult.path === null ? null : previewUrl,
+          savedPath: photoResult.path,
+          cleared: false,
+        };
+        if (photoResult.path === null) {
+          setPreviewUrl(null);
+          setMainImageFile(null);
+        }
+      }
+
       setBarStatus("saved");
       setBarMessage(null);
     } catch {
@@ -243,7 +389,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       inFlight.current = false;
       setIsPending(false);
     }
-  }, [formState]);
+  }, [formState, mainImageFile, photoCleared, previewUrl]);
 
   const watchStyleOptions = withNotSet(WATCH_STYLE_OPTIONS);
   const movementOptions = withNotSet(MOVEMENT_OPTIONS);
@@ -264,6 +410,21 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
 
         <FieldSet>
           <FieldGroup>
+            <Field data-invalid={Boolean(fieldErrors.mainImage)}>
+              <FieldLabel htmlFor="build-main-photo">Main photo</FieldLabel>
+              <FieldContent>
+                <PhotoUpload
+                  id="build-main-photo"
+                  file={mainImageFile}
+                  previewUrl={previewUrl}
+                  onFileChange={handlePhotoChange}
+                  error={fieldErrors.mainImage}
+                  disabled={isPending}
+                />
+                <FieldError errors={fieldErrors.mainImage ? [{ message: fieldErrors.mainImage }] : undefined} />
+              </FieldContent>
+            </Field>
+
             <Field data-invalid={Boolean(fieldErrors.name)}>
               <FieldLabel htmlFor="build-name">Name</FieldLabel>
               <FieldContent>

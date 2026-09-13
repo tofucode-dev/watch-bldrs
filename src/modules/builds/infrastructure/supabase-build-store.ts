@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/lib/database.types";
 
 import type { BuildStore } from "../application/ports/build-store";
+import { previewUrlForOwnedMainImagePath } from "./main-image-preview";
 import {
   isCurrencyCode,
   isDialColour,
@@ -108,6 +109,7 @@ function mapDraft(row: DraftRow): OwnedDraft | null {
     handsStyle,
     caseSizeMm: row.case_size_mm,
     mainImagePath: row.main_image_path,
+    mainImageUrl: null,
     parts,
   };
 }
@@ -158,7 +160,22 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
         return null;
       }
 
-      return mapDraft(data);
+      const mapped = mapDraft(data);
+      if (!mapped) {
+        return null;
+      }
+
+      const mainImageUrl = await previewUrlForOwnedMainImagePath(mapped.mainImagePath, async (path, expiresIn) => {
+        const { data: signed, error: signError } = await client.storage
+          .from("build-images")
+          .createSignedUrl(path, expiresIn);
+        if (signError) {
+          return null;
+        }
+        return signed.signedUrl;
+      });
+
+      return { ...mapped, mainImageUrl };
     },
 
     async attachMainImage(authorId, id, path) {

@@ -63,6 +63,24 @@ export const Selected: Story = {
   },
 };
 
+const PERSISTED_PREVIEW_URL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+export const PersistedPreview: Story = {
+  args: {
+    file: null,
+    previewUrl: PERSISTED_PREVIEW_URL,
+  },
+  render: function PersistedPreviewPhoto(args) {
+    return (
+      <Field>
+        <FieldLabel htmlFor="main-photo-persisted">Main photo</FieldLabel>
+        <StatefulPhotoUpload {...args} id="main-photo-persisted" />
+      </Field>
+    );
+  },
+};
+
 export const Invalid: Story = {
   args: {
     error: "Could not save this image.",

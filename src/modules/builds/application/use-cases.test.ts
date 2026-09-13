@@ -32,6 +32,7 @@ class FakeBuildStore implements BuildStore {
         handsStyle: input.draft.handsStyle,
         caseSizeMm: input.draft.caseSizeMm,
         mainImagePath: null,
+        mainImageUrl: null,
         parts: input.draft.parts,
       });
       return Promise.resolve({ id });
@@ -71,6 +72,7 @@ class FakeBuildStore implements BuildStore {
       return Promise.resolve(null);
     }
     existing.mainImagePath = path;
+    existing.mainImageUrl = null;
     return Promise.resolve({ id });
   }
 }
@@ -151,6 +153,35 @@ describe("draft build use cases", () => {
     await expect(
       attachMainImage(authorA, created.id, `${authorA.userId}/${created.id}/main.jpg`, store),
     ).rejects.toBeInstanceOf(DraftNotFoundError);
+  });
+
+  it("returns a signed display URL separately from the stored path", async () => {
+    const store = new FakeBuildStore();
+    const created = await createDraftBuild(authorA, {}, store);
+    const path = `${authorA.userId}/${created.id}/main.jpg`;
+    const previewUrl = "https://example.supabase.co/storage/v1/object/sign/build-images/main.jpg?token=abc";
+    const stored = store.drafts.get(created.id);
+    if (!stored) {
+      throw new Error("expected seeded draft");
+    }
+    stored.mainImagePath = path;
+    stored.mainImageUrl = previewUrl;
+
+    const draft = await getOwnedDraft(authorA, created.id, store);
+    expect(draft.mainImagePath).toBe(path);
+    expect(draft.mainImageUrl).toBe(previewUrl);
+    expect(draft.mainImagePath).not.toBe(draft.mainImageUrl);
+  });
+
+  it("clears the stored path when attach receives null", async () => {
+    const store = new FakeBuildStore();
+    const created = await createDraftBuild(authorA, {}, store);
+    const path = `${authorA.userId}/${created.id}/main.jpg`;
+    await attachMainImage(authorA, created.id, path, store);
+
+    const cleared = await attachMainImage(authorA, created.id, null, store);
+    expect(cleared.id).toBe(created.id);
+    expect(store.drafts.get(created.id)?.mainImagePath).toBeNull();
   });
 
   it("attaches a valid owned main image path", async () => {

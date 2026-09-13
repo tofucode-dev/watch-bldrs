@@ -18,6 +18,7 @@ const VALIDATION_MESSAGES: Record<MainImageValidationReason, string> = {
 export interface PhotoUploadProps {
   file: File | null;
   onFileChange: (file: File | null) => void;
+  previewUrl?: string | null;
   id?: string;
   error?: string;
   disabled?: boolean;
@@ -49,7 +50,19 @@ function MainPhotoPreview({ file }: { file: File }) {
   return <img src={previewUrl} alt={PREVIEW_ALT} className="max-h-56 w-full object-contain" />;
 }
 
-export function PhotoUpload({ file, onFileChange, id, error, disabled = false, className }: PhotoUploadProps) {
+function PersistedPhotoPreview({ src }: { src: string }) {
+  return <img src={src} alt={PREVIEW_ALT} className="max-h-56 w-full object-contain" />;
+}
+
+export function PhotoUpload({
+  file,
+  onFileChange,
+  previewUrl = null,
+  id,
+  error,
+  disabled = false,
+  className,
+}: PhotoUploadProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const inputRef = useRef<HTMLInputElement>(null);
@@ -59,6 +72,8 @@ export function PhotoUpload({ file, onFileChange, id, error, disabled = false, c
 
   const parentInvalid = Boolean(error);
   const isInvalid = parentInvalid || Boolean(validationError);
+  const persistedPreview = file === null && Boolean(previewUrl);
+  const showPreview = file !== null || persistedPreview;
 
   async function applyCandidate(candidate: File): Promise<void> {
     const generation = applyGenerationRef.current + 1;
@@ -154,9 +169,9 @@ export function PhotoUpload({ file, onFileChange, id, error, disabled = false, c
         onChange={handleInputChange}
       />
 
-      {file ? (
+      {showPreview ? (
         <>
-          <MainPhotoPreview file={file} />
+          {file ? <MainPhotoPreview file={file} /> : previewUrl ? <PersistedPhotoPreview src={previewUrl} /> : null}
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Button type="button" variant="outline" disabled={disabled} onClick={openPicker}>
               Choose image

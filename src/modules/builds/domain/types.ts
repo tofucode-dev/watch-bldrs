@@ -61,5 +61,6 @@ export interface OwnedDraft {
   handsStyle: HandsStyle | null;
   caseSizeMm: number | null;
   mainImagePath: string | null;
+  mainImageUrl: string | null;
   parts: OwnedDraftPart[];
 }

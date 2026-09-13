@@ -1,3 +1,4 @@
+import type { OwnedDraft } from "../domain/types";
 import type {
   CurrencyCode,
   DialColour,
@@ -26,5 +27,30 @@ export interface BuildFormInitialDraft {
   strapType: StrapType | null;
   handsStyle: HandsStyle | null;
   caseSizeMm: number | null;
+  mainImagePath?: string | null;
+  mainImageUrl?: string | null;
   parts: BuildFormInitialPart[];
+}
+
+export function ownedDraftToFormInitial(draft: OwnedDraft): BuildFormInitialDraft {
+  return {
+    id: draft.id,
+    name: draft.name,
+    story: draft.story,
+    watchStyle: draft.watchStyle,
+    movement: draft.movement,
+    dialColour: draft.dialColour,
+    strapType: draft.strapType,
+    handsStyle: draft.handsStyle,
+    caseSizeMm: draft.caseSizeMm,
+    mainImagePath: draft.mainImagePath,
+    mainImageUrl: draft.mainImageUrl,
+    parts: draft.parts.map((part) => ({
+      category: part.category,
+      name: part.name,
+      productUrl: part.productUrl,
+      priceAmountMinor: part.priceAmountMinor,
+      currency: part.currency,
+    })),
+  };
 }

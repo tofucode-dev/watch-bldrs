@@ -1,6 +1,7 @@
 export { default as BuildForm } from "./presentation/build-form";
 export type { BuildFormProps } from "./presentation/build-form";
 export type { BuildFormInitialDraft, BuildFormInitialPart } from "./presentation/build-form-types";
+export { ownedDraftToFormInitial } from "./presentation/build-form-types";
 export {
   CURRENCY_OPTIONS,
   DIAL_COLOUR_OPTIONS,
