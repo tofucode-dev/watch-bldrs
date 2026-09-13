@@ -269,17 +269,17 @@ No database, RLS, Storage, generated-type, environment, or deployment migration 
 
 #### Automated
 
-- [x] 1.1 Card, Badge, and PaperLabel modules pass their focused component tests
-- [x] 1.2 Shared UI lint passes after the primitive additions
-- [x] 1.3 All primitive stories compile in the production Storybook bundle
+- [x] 1.1 Card, Badge, and PaperLabel modules pass their focused component tests — 9c696d0
+- [x] 1.2 Shared UI lint passes after the primitive additions — 9c696d0
+- [x] 1.3 All primitive stories compile in the production Storybook bundle — 9c696d0
 
 ### Phase 2: Accessible Build Card Composition
 
 #### Automated
 
-- [ ] 2.1 BuildCard semantics, fallbacks, metadata, action separation, and image-loading contracts pass
-- [ ] 2.2 BuildCard and its stories pass repository lint
-- [ ] 2.3 Complete and sparse BuildCard stories compile in Storybook
+- [x] 2.1 BuildCard semantics, fallbacks, metadata, action separation, and image-loading contracts pass
+- [x] 2.2 BuildCard and its stories pass repository lint
+- [x] 2.3 Complete and sparse BuildCard stories compile in Storybook
 
 ### Phase 3: Responsive Grid and Load-More Affordance
 
