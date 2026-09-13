@@ -90,7 +90,7 @@ function BuildCardMedia({
         )}
       </a>
       {trimmedStyleLabel ? (
-        <PaperLabel tone={styleLabelTone} rotation="left" className="absolute top-3 left-3">
+        <PaperLabel tone={styleLabelTone} rotation="left" className="pointer-events-none absolute top-3 left-3">
           {trimmedStyleLabel}
         </PaperLabel>
       ) : null}

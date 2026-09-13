@@ -9,7 +9,7 @@ afterEach(() => {
 
 describe("BuildGrid", () => {
   it("renders semantic list markup with one list item per child", () => {
-    const { container } = render(
+    render(
       <BuildGrid>
         <div>First</div>
         <div>Second</div>
@@ -17,10 +17,10 @@ describe("BuildGrid", () => {
       </BuildGrid>,
     );
 
-    const grid = container.querySelector("[data-slot='build-grid']");
-    expect(grid?.tagName).toBe("UL");
+    const grid = screen.getByRole("list");
+    expect(grid.tagName).toBe("UL");
 
-    const items = container.querySelectorAll("[data-slot='build-grid-item']");
+    const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(3);
     expect(items[0]).toHaveTextContent("First");
     expect(items[1]).toHaveTextContent("Second");

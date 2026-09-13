@@ -1,4 +1,4 @@
-import { Children, type ComponentProps, type ReactNode } from "react";
+import { Children, isValidElement, type ComponentProps, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,11 @@ export function BuildGrid({ children, className, ...props }: BuildGridProps) {
       {...props}
     >
       {items.map((child, index) => (
-        <li key={index} data-slot="build-grid-item" className="min-w-0">
+        <li
+          key={isValidElement(child) && child.key != null ? child.key : index}
+          data-slot="build-grid-item"
+          className="min-w-0"
+        >
           {child}
         </li>
       ))}
