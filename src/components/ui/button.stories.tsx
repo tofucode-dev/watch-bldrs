@@ -36,6 +36,21 @@ export const Outline: Story = {
   },
 };
 
+export const LoadMore: Story = {
+  args: {
+    variant: "outline",
+    size: "lg",
+    children: "Load more builds",
+  },
+  render: function LoadMoreButton(args) {
+    return (
+      <div className="flex w-full justify-center p-6">
+        <Button {...args} className="font-heading min-w-48 tracking-widest uppercase" />
+      </div>
+    );
+  },
+};
+
 export const Secondary: Story = {
   args: {
     variant: "secondary",
