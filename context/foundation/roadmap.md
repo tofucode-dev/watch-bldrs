@@ -74,9 +74,9 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 flowchart TB
   subgraph A["A · Authoring"]
     F01["F-01 Persistence · done"]
-    F02["F-02 Form UI kit · ready"]
-    F03["F-03 Photo upload · ready"]
-    S02["S-02 Create draft"]
+    F02["F-02 Form UI kit · done"]
+    F03["F-03 Photo upload · done"]
+    S02["S-02 Create draft · done"]
     S03["S-03 Publish"]
   end
 
@@ -132,8 +132,8 @@ flowchart TB
   classDef done fill:#d1fae5,stroke:#059669,color:#064e3b
   classDef ready fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
   classDef north fill:#fef3c7,stroke:#d97706,color:#78350f
-  class F01 done
-  class F02,F03,S01,F04 ready
+  class F01,F02,F03,S01,S02 done
+  class F04 ready
   class S04 north
 ```
 
