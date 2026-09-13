@@ -1,4 +1,5 @@
 .cursor/
+.agents/
 # from 10x-astro-starter
 # build output
 dist/
