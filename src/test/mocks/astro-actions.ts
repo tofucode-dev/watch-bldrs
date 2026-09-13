@@ -5,5 +5,6 @@ export const actions = {
     createDraft: vi.fn(),
     update: vi.fn(),
     attachMainImage: vi.fn(),
+    publish: vi.fn(),
   },
 };

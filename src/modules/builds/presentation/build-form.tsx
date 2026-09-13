@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { actions } from "astro:actions";
 
@@ -158,9 +158,61 @@ function cloneFormState(state: BuildFormState): BuildFormState {
   };
 }
 
-function statusMessage(status: BarStatus, message: string | null, hasSavedDraft: boolean): string {
+function formStatesEqual(a: BuildFormState, b: BuildFormState): boolean {
+  if (
+    a.name !== b.name ||
+    a.story !== b.story ||
+    a.watchStyle !== b.watchStyle ||
+    a.movement !== b.movement ||
+    a.dialColour !== b.dialColour ||
+    a.strapType !== b.strapType ||
+    a.handsStyle !== b.handsStyle ||
+    a.caseSizeMm !== b.caseSizeMm
+  ) {
+    return false;
+  }
+
+  if (a.parts.length !== b.parts.length) {
+    return false;
+  }
+
+  return a.parts.every((part, index) => {
+    const other = b.parts[index];
+    return (
+      part.category === other.category &&
+      part.name === other.name &&
+      part.productUrl === other.productUrl &&
+      part.price === other.price &&
+      part.currency === other.currency
+    );
+  });
+}
+
+function isPhotoDirty(mainImageFile: File | null, photoCleared: boolean, saved: PhotoSnapshot): boolean {
+  if (mainImageFile !== saved.file) {
+    return true;
+  }
+  if (photoCleared !== saved.cleared) {
+    return true;
+  }
+  return false;
+}
+
+function statusMessage(
+  status: BarStatus,
+  message: string | null,
+  hasSavedDraft: boolean,
+  isDirty: boolean,
+  publishConfirming: boolean,
+): string {
   if (message) {
     return message;
+  }
+  if (publishConfirming) {
+    return "Publishing makes this build public. Editing and unpublishing are unavailable in this MVP.";
+  }
+  if (hasSavedDraft && isDirty) {
+    return "Save changes before publishing.";
   }
   switch (status) {
     case "saving":
@@ -206,6 +258,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
   const [mainImageFile, setMainImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialDraft?.mainImageUrl ?? null);
   const [photoCleared, setPhotoCleared] = useState(false);
+  const [publishConfirming, setPublishConfirming] = useState(false);
 
   const savedSnapshot = useRef<BuildFormState>(cloneFormState(initialState));
   const savedPhoto = useRef<PhotoSnapshot>(initialPhotoSnapshot(initialDraft));
@@ -213,6 +266,16 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
   const draftIdRef = useRef<string | null>(initialDraft?.id ?? null);
 
   const hasSavedDraft = draftId !== null;
+  const isDirty =
+    !formStatesEqual(formState, savedSnapshot.current) ||
+    isPhotoDirty(mainImageFile, photoCleared, savedPhoto.current);
+  const publishEnabled = hasSavedDraft && !isPending && !isDirty;
+
+  useEffect(() => {
+    if (isDirty) {
+      setPublishConfirming(false);
+    }
+  }, [isDirty]);
 
   const updateField = useCallback(<K extends keyof BuildFormState>(key: K, value: BuildFormState[K]) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
@@ -301,6 +364,54 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     setFieldErrors({});
     setBarStatus("idle");
     setBarMessage(null);
+    setPublishConfirming(false);
+  }, []);
+
+  const handlePublishClick = useCallback(() => {
+    if (!publishEnabled || isPending) {
+      return;
+    }
+    setPublishConfirming(true);
+    setBarMessage(null);
+  }, [isPending, publishEnabled]);
+
+  const handleCancelPublish = useCallback(() => {
+    if (isPending) {
+      return;
+    }
+    setPublishConfirming(false);
+    setBarMessage(null);
+  }, [isPending]);
+
+  const handleConfirmPublish = useCallback(async () => {
+    const currentId = draftIdRef.current;
+    if (!currentId || inFlight.current) {
+      return;
+    }
+
+    inFlight.current = true;
+    setIsPending(true);
+    setBarStatus("saving");
+    setBarMessage(null);
+
+    try {
+      const result = await actions.builds.publish({ id: currentId });
+      const mapped = mapActionFailure(result);
+
+      if ("errorMessage" in mapped) {
+        setBarStatus("error");
+        setBarMessage(mapped.errorMessage);
+        return;
+      }
+
+      window.location.assign("/dashboard?published=1");
+    } catch {
+      setBarStatus("error");
+      setBarMessage("Something went wrong");
+    } finally {
+      inFlight.current = false;
+      setIsPending(false);
+    }
   }, []);
 
   const handleSave = useCallback(async () => {
@@ -694,16 +805,33 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       </div>
 
       <StickyActionBar
-        status={statusMessage(barStatus, barMessage, hasSavedDraft)}
+        status={statusMessage(barStatus, barMessage, hasSavedDraft, isDirty, publishConfirming)}
         secondary={
-          <Button type="button" variant="outline" onClick={handleDiscard} disabled={isPending}>
-            Discard
-          </Button>
+          publishConfirming ? (
+            <Button type="button" variant="outline" onClick={handleCancelPublish} disabled={isPending}>
+              Cancel
+            </Button>
+          ) : (
+            <Button type="button" variant="outline" onClick={handleDiscard} disabled={isPending}>
+              Discard
+            </Button>
+          )
         }
         primary={
-          <Button type="button" onClick={handleSave} disabled={isPending}>
-            Save Draft
-          </Button>
+          publishConfirming ? (
+            <Button type="button" onClick={handleConfirmPublish} disabled={isPending}>
+              Publish build
+            </Button>
+          ) : (
+            <>
+              <Button type="button" onClick={handleSave} disabled={isPending}>
+                Save Draft
+              </Button>
+              <Button type="button" variant="secondary" onClick={handlePublishClick} disabled={!publishEnabled}>
+                Publish
+              </Button>
+            </>
+          )
         }
       />
     </div>

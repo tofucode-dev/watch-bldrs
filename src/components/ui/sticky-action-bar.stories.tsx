@@ -61,6 +61,57 @@ export const OnTallPage: Story = {
   },
 };
 
+export const ThreeActionComposition: Story = {
+  args: {
+    status: "Draft saved",
+  },
+  render: function ThreeActions() {
+    return (
+      <StickyActionBar
+        status="Draft saved"
+        secondary={
+          <Button type="button" variant="outline" onClick={fn()}>
+            Discard
+          </Button>
+        }
+        primary={
+          <>
+            <Button type="button" onClick={fn()}>
+              Save Draft
+            </Button>
+            <Button type="button" variant="secondary" onClick={fn()}>
+              Publish
+            </Button>
+          </>
+        }
+      />
+    );
+  },
+};
+
+export const PublishConfirmation: Story = {
+  args: {
+    status: "Publishing makes this build public. Editing and unpublishing are unavailable in this MVP.",
+  },
+  render: function ConfirmationBar() {
+    return (
+      <StickyActionBar
+        status="Publishing makes this build public. Editing and unpublishing are unavailable in this MVP."
+        secondary={
+          <Button type="button" variant="outline" onClick={fn()}>
+            Cancel
+          </Button>
+        }
+        primary={
+          <Button type="button" onClick={fn()}>
+            Publish build
+          </Button>
+        }
+      />
+    );
+  },
+};
+
 export const WithPartsList: Story = {
   args: {
     status: "Nothing saved yet",
