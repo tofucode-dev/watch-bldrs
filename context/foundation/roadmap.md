@@ -3,7 +3,7 @@ project: WatchBldrs
 version: 1
 status: draft
 created: 2026-09-08
-updated: 2026-09-13
+updated: 2026-09-14
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -86,9 +86,9 @@ flowchart TB
   end
 
   subgraph C["C · Public catalog"]
-    F04["F-04 Listing UI kit · ready"]
+    F04["F-04 Listing UI kit · done"]
     S04["S-04 Public listing · north star"]
-    F05["F-05 Filter UI kit"]
+    F05["F-05 Filter UI kit · done"]
     S05["S-05 Filter listing"]
     S06["S-06 Details"]
   end
@@ -132,8 +132,8 @@ flowchart TB
   classDef done fill:#d1fae5,stroke:#059669,color:#064e3b
   classDef ready fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
   classDef north fill:#fef3c7,stroke:#d97706,color:#78350f
-  class F01,F02,F03,S01,S02 done
-  class F04 ready
+  class F01,F02,F03,F04,F05,S02 done
+  class S01 ready
   class S04 north
 ```
 
