@@ -238,40 +238,40 @@ No data migration. `OptionsSelect` may gain optional `size` and `className` pass
 
 #### Automated
 
-- [x] 1.1 `FilterChip` renders the caller label and a remove control whose accessible name includes that label
-- [x] 1.2 Remove invokes `onRemove`; `disabled` does not
-- [x] 1.3 Co-located `filter-chip.stories.tsx` exists under `UI/FilterChip` and does not import `@/modules/*`
-- [x] 1.4 `FilterChip` does not hardcode watch style, movement, dial, strap, or size vocabulary
-- [x] 1.5 `npm run lint` passes
-- [x] 1.6 `npm run test` passes
-- [x] 1.7 `npm run build` passes
+- [x] 1.1 `FilterChip` renders the caller label and a remove control whose accessible name includes that label — 441fa5e
+- [x] 1.2 Remove invokes `onRemove`; `disabled` does not — 441fa5e
+- [x] 1.3 Co-located `filter-chip.stories.tsx` exists under `UI/FilterChip` and does not import `@/modules/*` — 441fa5e
+- [x] 1.4 `FilterChip` does not hardcode watch style, movement, dial, strap, or size vocabulary — 441fa5e
+- [x] 1.5 `npm run lint` passes — 441fa5e
+- [x] 1.6 `npm run test` passes — 441fa5e
+- [x] 1.7 `npm run build` passes — 441fa5e
 
 #### Manual
 
-- [x] 1.8 Chip looks token-faithful (cream/charcoal/primary) next to `filter-bar-reference.png` in Storybook Paper and Ink at desktop and ~390px
-- [x] 1.9 Remove is reachable by keyboard
-- [x] 1.10 Any `filter-bar-reference.png` chip details skipped as too expensive are listed as accepted drawbacks
+- [x] 1.8 Chip looks token-faithful (cream/charcoal/primary) next to `filter-bar-reference.png` in Storybook Paper and Ink at desktop and ~390px — 441fa5e
+- [x] 1.9 Remove is reachable by keyboard — 441fa5e
+- [x] 1.10 Any `filter-bar-reference.png` chip details skipped as too expensive are listed as accepted drawbacks — 441fa5e
 
 ### Phase 2: FilterControls composition
 
 #### Automated
 
-- [ ] 2.1 `FilterControls` is controlled and domain-free: dimensions, option lists, values, and callbacks come from the caller
-- [ ] 2.2 Each dimension uses `OptionsSelect`; All/absent is `""` through the existing mapping helper
-- [ ] 2.3 Chips render only for non-empty values; Clear all renders only when at least one chip exists
-- [ ] 2.4 Chip remove calls `onDimensionChange(id, "")`; Clear all calls `onClearAll`
-- [ ] 2.5 Stories fabricate five dimensions including exact 20–70 mm case sizes and do not import module domain or server entrypoints
-- [ ] 2.6 Component tests cover chip/clear visibility and callbacks and do not assert focus restoration
-- [ ] 2.7 No `src/modules/catalog`, URL wiring, listing chrome, result count, sort, or ranking tabs
-- [ ] 2.8 `npm run lint` passes
-- [ ] 2.9 `npm run test` passes
-- [ ] 2.10 `npm run build` passes
+- [x] 2.1 `FilterControls` is controlled and domain-free: dimensions, option lists, values, and callbacks come from the caller
+- [x] 2.2 Each dimension uses `OptionsSelect`; All/absent is `""` through the existing mapping helper
+- [x] 2.3 Chips render only for non-empty values; Clear all renders only when at least one chip exists
+- [x] 2.4 Chip remove calls `onDimensionChange(id, "")`; Clear all calls `onClearAll`
+- [x] 2.5 Stories fabricate five dimensions including exact 20–70 mm case sizes and do not import module domain or server entrypoints
+- [x] 2.6 Component tests cover chip/clear visibility and callbacks and do not assert focus restoration
+- [x] 2.7 No `src/modules/catalog`, URL wiring, listing chrome, result count, sort, or ranking tabs
+- [x] 2.8 `npm run lint` passes
+- [x] 2.9 `npm run test` passes
+- [x] 2.10 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.11 At ~390px, selects are full-width (stack or compact grid) and chips wrap; no drawer and no sideways scroll
-- [ ] 2.12 At desktop width, five filters and the chip row are readable without horizontal overflow
-- [ ] 2.13 Unfiltered state shows no chips and no Clear all (accepted difference from the mockup)
-- [ ] 2.14 A dimension can go All → value → All via the empty option and via chip remove
-- [ ] 2.15 Visual check is filter selects / chips / Clear all only — count, sort, and ranking tabs are out; remaining look gaps vs `filter-bar-reference.png` are written down, not forced
-- [ ] 2.16 Storybook Paper and Ink both reviewed with `npm run storybook`
+- [x] 2.11 At ~390px, selects are full-width (stack or compact grid) and chips wrap; no drawer and no sideways scroll
+- [x] 2.12 At desktop width, five filters and the chip row are readable without horizontal overflow
+- [x] 2.13 Unfiltered state shows no chips and no Clear all (accepted difference from the mockup)
+- [x] 2.14 A dimension can go All → value → All via the empty option and via chip remove
+- [x] 2.15 Visual check is filter selects / chips / Clear all only — count, sort, and ranking tabs are out; remaining look gaps vs `filter-bar-reference.png` are written down, not forced
+- [x] 2.16 Storybook Paper and Ink both reviewed with `npm run storybook`
