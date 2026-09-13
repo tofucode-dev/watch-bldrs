@@ -334,23 +334,23 @@ One forward migration for `save_draft_build` only. Hosted `npx supabase db push`
 
 #### Automated
 
-- [ ] 2.1 `/account/builds/new` and `/account/builds/[id]/edit` exist; pages do not query Supabase directly
-- [ ] 2.2 Middleware redirects anonymous `/account` requests to sign-in; sign-in only follows a safe relative `redirect`
-- [ ] 2.3 `BuildForm` composes the shared kit (no new Field primitive, no auth `FormField`)
-- [ ] 2.4 jsdom tests cover create vs update, Discard snapshot, validation preserve, Add part
-- [ ] 2.5 Browser-safe `index.ts` does not import `astro:env/server` or `server.ts`
-- [ ] 2.6 `npm run lint` passes
-- [ ] 2.7 `npm run test` passes
-- [ ] 2.8 `npm run build` passes
+- [x] 2.1 `/account/builds/new` and `/account/builds/[id]/edit` exist; pages do not query Supabase directly
+- [x] 2.2 Middleware redirects anonymous `/account` requests to sign-in; sign-in only follows a safe relative `redirect`
+- [x] 2.3 `BuildForm` composes the shared kit (no new Field primitive, no auth `FormField`)
+- [x] 2.4 jsdom tests cover create vs update, Discard snapshot, validation preserve, Add part
+- [x] 2.5 Browser-safe `index.ts` does not import `astro:env/server` or `server.ts`
+- [x] 2.6 `npm run lint` passes
+- [x] 2.7 `npm run test` passes
+- [x] 2.8 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.9 Logged-out visit to `/account/builds/new` lands on sign-in and, after login, returns to the create form
-- [ ] 2.10 Empty Save Draft succeeds, URL gains the id, a second Save still works
-- [ ] 2.11 Invalid URL / price-without-currency / case size 19 show field errors and keep values
-- [ ] 2.12 Form is usable at ~390px and desktop: parts stack vs columns, sticky bar reachable
-- [ ] 2.13 User B opening `/account/builds/{A's id}/edit` while logged in as B sees not-found, not A’s fields
-- [ ] 2.14 No Publish / Unpublish control is visible
+- [x] 2.9 Logged-out visit to `/account/builds/new` lands on sign-in and, after login, returns to the create form
+- [x] 2.10 Empty Save Draft succeeds, URL gains the id, a second Save still works
+- [x] 2.11 Invalid URL / price-without-currency / case size 19 show field errors and keep values
+- [x] 2.12 Form is usable at ~390px and desktop: parts stack vs columns, sticky bar reachable
+- [x] 2.13 User B opening `/account/builds/{A's id}/edit` while logged in as B sees not-found, not A’s fields
+- [x] 2.14 No Publish / Unpublish control is visible
 
 ### Phase 3: Main photo attach and draft preview
 

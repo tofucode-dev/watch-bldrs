@@ -72,6 +72,25 @@ const astroConfig = tseslint.config({
     "astro/no-set-html-directive": "error",
     "astro/no-unused-css-selector": "warn",
     "astro/prefer-class-list-directive": "warn",
+    "@typescript-eslint/no-misused-promises": "off",
+  },
+});
+
+const moduleBoundaryConfig = tseslint.config({
+  files: ["src/**/*.{ts,tsx,astro}"],
+  ignores: ["src/modules/*/infrastructure/**", "src/modules/*/server.ts", "src/modules/*/actions.ts"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@/modules/*/infrastructure", "@/modules/*/infrastructure/*"],
+            message: "Import module code through @/modules/<name> or @/modules/<name>/server only.",
+          },
+        ],
+      },
+    ],
   },
 });
 
@@ -83,6 +102,7 @@ export default tseslint.config(
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
+  moduleBoundaryConfig,
   eslintPluginPrettier,
   storybook.configs["flat/recommended"],
 );

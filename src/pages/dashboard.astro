@@ -13,6 +13,12 @@ const { user } = Astro.locals;
         Welcome, <span class="text-foreground font-semibold">{user?.email}</span>
       </p>
       <p class="text-muted-foreground mt-2 text-sm">This page is only for authenticated users.</p>
+      <a
+        href="/account/builds/new"
+        class="bg-primary text-primary-foreground font-heading hover:bg-primary/90 mt-6 inline-flex px-4 py-2 text-sm font-bold tracking-widest uppercase transition-colors"
+      >
+        New build
+      </a>
       <form method="POST" action="/api/auth/signout" class="mt-6">
         <button
           type="submit"

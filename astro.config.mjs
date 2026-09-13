@@ -13,6 +13,14 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        // Miniflare writes local traces to .wrangler on every Worker/Action
+        // request. Without this, Vite treats those SQLite WAL files as HMR
+        // changes even though no app module maps to them.
+        ignored: ["**/.git/**", "**/node_modules/**", "**/.wrangler/**"],
+      },
+    },
   },
   adapter: cloudflare({ imageService: "compile" }),
   session: false,

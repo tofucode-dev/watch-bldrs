@@ -1,0 +1,43 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { BuildForm, type BuildFormInitialDraft } from "@/modules/builds";
+import { getOwnedDraftForForm } from "@/modules/builds/server";
+
+const { id } = Astro.params;
+const notFoundHeaders = { "Cache-Control": "private, no-store" };
+
+if (!id) {
+  return new Response(null, { status: 404, statusText: "Not Found", headers: notFoundHeaders });
+}
+
+const draft = await getOwnedDraftForForm(Astro.request, Astro.cookies, Astro.locals.user, id);
+
+if (!draft) {
+  return new Response(null, { status: 404, statusText: "Not Found", headers: notFoundHeaders });
+}
+
+const initialDraft: BuildFormInitialDraft = {
+  id: draft.id,
+  name: draft.name,
+  story: draft.story,
+  watchStyle: draft.watchStyle,
+  movement: draft.movement,
+  dialColour: draft.dialColour,
+  strapType: draft.strapType,
+  handsStyle: draft.handsStyle,
+  caseSizeMm: draft.caseSizeMm,
+  parts: draft.parts.map((part) => ({
+    category: part.category,
+    name: part.name,
+    productUrl: part.productUrl,
+    priceAmountMinor: part.priceAmountMinor,
+    currency: part.currency,
+  })),
+};
+
+Astro.response.headers.set("Cache-Control", "private, no-store");
+---
+
+<Layout title="Edit build">
+  <BuildForm initialDraft={initialDraft} client:load />
+</Layout>

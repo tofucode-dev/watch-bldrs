@@ -5,6 +5,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
+      "astro:actions": path.resolve(import.meta.dirname, "./src/test/mocks/astro-actions.ts"),
     },
   },
   test: {

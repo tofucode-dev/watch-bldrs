@@ -16,6 +16,7 @@ export const PART_NAME_MAX_LENGTH = 120;
 export const PRODUCT_URL_MAX_LENGTH = 2048;
 export const CASE_SIZE_MIN_MM = 20;
 export const CASE_SIZE_MAX_MM = 70;
+export const PRICE_AMOUNT_MINOR_MAX = 2_147_483_647;
 
 // eslint-disable-next-line no-control-regex -- reject ASCII control characters in product URLs
 const CONTROL_CHARS = /[\u0000-\u001F\u007F]/;
@@ -85,8 +86,13 @@ function validateEnumField<T extends string>(
   return value;
 }
 
-function validatePart(part: DraftPartInput, index: number, fields: Record<string, string>): ValidatedPart | null {
-  const prefix = `parts.${index}`;
+function validatePart(
+  part: DraftPartInput,
+  formIndex: number,
+  position: number,
+  fields: Record<string, string>,
+): ValidatedPart | null {
+  const prefix = `parts.${formIndex}`;
   const categoryRaw = normalizeOptionalText(part.category);
   const name = normalizeOptionalText(part.name);
   const productUrl = normalizeOptionalText(part.productUrl);
@@ -124,7 +130,7 @@ function validatePart(part: DraftPartInput, index: number, fields: Record<string
 
   let priceAmountMinor: number | null = null;
   if (hasPrice) {
-    if (!Number.isInteger(price) || price < 0) {
+    if (!Number.isInteger(price) || price < 0 || price > PRICE_AMOUNT_MINOR_MAX) {
       addFieldError(fields, `${prefix}.priceAmountMinor`, "Price must be a whole number of 0 or more");
     } else {
       priceAmountMinor = price;
@@ -146,7 +152,7 @@ function validatePart(part: DraftPartInput, index: number, fields: Record<string
     name.length > PART_NAME_MAX_LENGTH ||
     (productUrl !== null && !isAllowedProductUrl(productUrl)) ||
     hasPrice !== hasCurrency ||
-    (hasPrice && (!Number.isInteger(price) || price < 0)) ||
+    (hasPrice && (!Number.isInteger(price) || price < 0 || price > PRICE_AMOUNT_MINOR_MAX)) ||
     (hasCurrency && !isCurrencyCode(currencyRaw))
   ) {
     return null;
@@ -158,7 +164,7 @@ function validatePart(part: DraftPartInput, index: number, fields: Record<string
     productUrl,
     priceAmountMinor,
     currency,
-    position: index,
+    position,
   };
 }
 
@@ -214,11 +220,12 @@ export function validateDraftInput(input: DraftBuildInput): ValidatedDraft {
 
   const rawParts = input.parts ?? [];
   const keptParts: ValidatedPart[] = [];
-  for (const part of rawParts) {
+  for (let formIndex = 0; formIndex < rawParts.length; formIndex++) {
+    const part = rawParts[formIndex];
     if (isBlankPart(part)) {
       continue;
     }
-    const validated = validatePart(part, keptParts.length, fields);
+    const validated = validatePart(part, formIndex, keptParts.length, fields);
     if (validated) {
       keptParts.push(validated);
     }

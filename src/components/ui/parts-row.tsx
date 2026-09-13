@@ -1,6 +1,7 @@
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { Label } from "@/components/ui/label";
+import { FieldError } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 
 export interface PartsRowCell {
@@ -49,49 +50,55 @@ export interface PartsRowProps extends ComponentProps<"div"> {
   index: ReactNode;
   cells: PartsRowCell[];
   action?: ReactNode;
+  errors?: string[];
 }
 
-export function PartsRow({ index, cells, action, className, style, ...props }: PartsRowProps) {
+export function PartsRow({ index, cells, action, errors, className, style, ...props }: PartsRowProps) {
+  const uniqueErrors = [...new Set(errors?.filter(Boolean))];
+
   return (
-    <div
-      data-slot="parts-row"
-      className={cn(
-        "grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3",
-        "md:items-end",
-        partsListGridClassName,
-        className,
-      )}
-      style={{ ...partsColumnsStyle(cells.length), ...style }}
-      {...props}
-    >
+    <div className="flex flex-col gap-1.5">
       <div
-        data-slot="parts-row-index"
-        className="text-muted-foreground col-start-1 row-start-1 flex h-9 items-center text-sm font-medium"
+        data-slot="parts-row"
+        className={cn(
+          "grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3",
+          "md:items-end",
+          partsListGridClassName,
+          className,
+        )}
+        style={{ ...partsColumnsStyle(cells.length), ...style }}
+        {...props}
       >
-        {index}
-      </div>
-      {cells.map((cell, cellIndex) => (
         <div
-          key={`${cell.label}-${String(cellIndex)}`}
-          data-slot="parts-row-cell"
-          className="col-span-2 min-w-0 md:col-span-1 md:col-start-auto md:row-start-1"
+          data-slot="parts-row-index"
+          className="text-muted-foreground col-start-1 row-start-1 flex h-9 items-center text-sm font-medium"
         >
-          <div className="flex min-w-0 flex-col items-stretch gap-1.5">
-            <Label htmlFor={cell.htmlFor} data-slot="parts-row-cell-label" className="md:sr-only">
-              {cell.label}
-            </Label>
-            {cell.control}
+          {index}
+        </div>
+        {cells.map((cell, cellIndex) => (
+          <div
+            key={`${cell.label}-${String(cellIndex)}`}
+            data-slot="parts-row-cell"
+            className="col-span-2 min-w-0 md:col-span-1 md:col-start-auto md:row-start-1"
+          >
+            <div className="flex min-w-0 flex-col items-stretch gap-1.5">
+              <Label htmlFor={cell.htmlFor} data-slot="parts-row-cell-label" className="md:sr-only">
+                {cell.label}
+              </Label>
+              {cell.control}
+            </div>
           </div>
-        </div>
-      ))}
-      {action ? (
-        <div
-          data-slot="parts-row-action"
-          className="col-start-2 row-start-1 flex h-9 items-center justify-end md:-col-start-1"
-        >
-          {action}
-        </div>
-      ) : null}
+        ))}
+        {action ? (
+          <div
+            data-slot="parts-row-action"
+            className="col-start-2 row-start-1 flex h-9 items-center justify-end md:-col-start-1"
+          >
+            {action}
+          </div>
+        ) : null}
+      </div>
+      <FieldError errors={uniqueErrors.map((message) => ({ message }))} />
     </div>
   );
 }

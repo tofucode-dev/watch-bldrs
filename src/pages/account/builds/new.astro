@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { BuildForm } from "@/modules/builds";
+
+Astro.response.headers.set("Cache-Control", "private, no-store");
+---
+
+<Layout title="New build">
+  <BuildForm client:load />
+</Layout>

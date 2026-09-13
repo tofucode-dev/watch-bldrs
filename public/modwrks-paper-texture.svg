@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" preserveAspectRatio="none">
+  <title>MODWRKS warm paper texture</title>
+  <desc>Subtle antique cream paper grain with faint drafting lines and fibers.</desc>
+  <defs>
+    <filter id="paper-grain" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="4" seed="17" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+      <feComponentTransfer>
+        <feFuncR type="table" tableValues="0.18 0.68" />
+        <feFuncG type="table" tableValues="0.16 0.61" />
+        <feFuncB type="table" tableValues="0.11 0.48" />
+        <feFuncA type="table" tableValues="0 0.18" />
+      </feComponentTransfer>
+    </filter>
+
+    <pattern id="draft-grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#8e7b5f" stroke-width="1" opacity="0.09" />
+    </pattern>
+
+    <pattern id="fibers" width="240" height="190" patternUnits="userSpaceOnUse">
+      <path d="M18 26c22-4 33 2 48-5M148 57c16 3 25-5 39-2M80 126c19 2 31-4 47 0M192 164c11-1 18-8 27-5M30 174c9 2 15-3 22-2" fill="none" stroke="#725c3f" stroke-width="1.1" stroke-linecap="round" opacity="0.11" />
+      <path d="M105 19c4 6 10 9 16 10M217 101c4 4 7 7 13 7M59 89c5-2 9-2 14 0M166 139c4 1 7 2 10 0" fill="none" stroke="#fffaf0" stroke-width="1.2" stroke-linecap="round" opacity="0.18" />
+    </pattern>
+
+    <radialGradient id="edge-wash" cx="50%" cy="45%" r="74%">
+      <stop offset="58%" stop-color="#f3ead7" stop-opacity="0" />
+      <stop offset="100%" stop-color="#c6af89" stop-opacity="0.18" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="1200" fill="url(#draft-grid)" />
+  <rect width="1600" height="1200" fill="url(#fibers)" />
+  <rect x="-24" y="-24" width="1648" height="1248" filter="url(#paper-grain)" opacity="0.64" />
+  <rect width="1600" height="1200" fill="url(#edge-wash)" />
+</svg>

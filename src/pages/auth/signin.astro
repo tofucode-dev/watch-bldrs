@@ -1,8 +1,12 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SignInForm from "@/components/auth/SignInForm";
+import { safeRedirect } from "@/lib/safe-redirect";
 
 const error = Astro.url.searchParams.get("error");
+const redirectParam = Astro.url.searchParams.get("redirect");
+const sanitizedRedirect = safeRedirect(redirectParam, Astro.url.origin);
+const redirectTo = sanitizedRedirect === "/" ? null : sanitizedRedirect;
 ---
 
 <Layout title="Sign in">
@@ -10,7 +14,7 @@ const error = Astro.url.searchParams.get("error");
     <div class="border-border bg-card shadow-paper w-full max-w-sm border p-8">
       <p class="font-script text-primary text-xl">Welcome back</p>
       <h1 class="font-heading mt-1 mb-6 text-3xl font-extrabold tracking-tight uppercase">Sign in</h1>
-      <SignInForm serverError={error} client:load />
+      <SignInForm serverError={error} redirectTo={redirectTo} client:load />
       <p class="text-muted-foreground mt-4 text-center text-sm">
         Don't have an account? <a href="/auth/signup" class="text-primary font-medium hover:underline">Sign up</a>
       </p>

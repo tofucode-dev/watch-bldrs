@@ -96,6 +96,28 @@ describe("validateDraftInput", () => {
         parts: [{ category: "case", name: "Case", priceAmountMinor: -1, currency: "USD" }],
       }),
     ).toThrow(DraftValidationError);
+
+    expect(() =>
+      validateDraftInput({
+        parts: [{ category: "case", name: "Case", priceAmountMinor: 2_147_483_648, currency: "USD" }],
+      }),
+    ).toThrow(DraftValidationError);
+  });
+
+  it("maps validation errors to the original form row index", () => {
+    try {
+      validateDraftInput({
+        parts: [{ category: "case", name: "Case", priceAmountMinor: 100 }, { priceAmountMinor: 5000 }],
+      });
+      expect.unreachable();
+    } catch (error) {
+      expect(error).toBeInstanceOf(DraftValidationError);
+      const fields = (error as DraftValidationError).fields;
+      expect(fields["parts.0.currency"]).toMatch(/Price and currency/);
+      expect(fields["parts.1.category"]).toMatch(/category and name/);
+      expect(fields["parts.1.name"]).toMatch(/category and name/);
+      expect(fields["parts.1.priceAmountMinor"]).toMatch(/Price and currency/);
+    }
   });
 
   it("drops blank part rows and requires category plus name on started rows", () => {

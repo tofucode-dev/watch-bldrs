@@ -1,16 +1,18 @@
 import type { AstroCookies } from "astro";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import type { Database } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase";
 import type { Actor } from "@/types";
 
 import { attachMainImage } from "./application/attach-main-image";
+import { actorFromUser } from "./application/actor";
 import { createDraftBuild } from "./application/create-draft-build";
 import { getOwnedDraft } from "./application/get-owned-draft";
 import { createSupabaseBuildStore } from "./infrastructure/supabase-build-store";
 import { updateDraftBuild } from "./application/update-draft-build";
-import type { DraftBuildInput } from "./domain/types";
+import type { DraftBuildInput, OwnedDraft } from "./domain/types";
+import { DraftNotFoundError } from "./domain/errors";
 
 export { builds } from "./actions";
 export { actorFromUser } from "./application/actor";
@@ -42,4 +44,25 @@ export function createBuildUseCasesForRequest(request: Request, cookies: AstroCo
     getOwnedDraft: (actor: Actor, id: string) => getOwnedDraft(actor, id, store),
     attachMainImage: (actor: Actor, id: string, path: string | null) => attachMainImage(actor, id, path, store),
   };
+}
+
+export async function getOwnedDraftForForm(
+  request: Request,
+  cookies: AstroCookies,
+  user: User | null,
+  id: string,
+): Promise<OwnedDraft | null> {
+  const store = createBuildStoreForRequest(request, cookies);
+  if (!store || !user) {
+    return null;
+  }
+
+  try {
+    return await getOwnedDraft(actorFromUser(user), id, store);
+  } catch (error) {
+    if (error instanceof DraftNotFoundError) {
+      return null;
+    }
+    throw error;
+  }
 }
