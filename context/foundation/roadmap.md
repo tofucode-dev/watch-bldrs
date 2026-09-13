@@ -3,7 +3,7 @@ project: WatchBldrs
 version: 1
 status: draft
 created: 2026-09-08
-updated: 2026-09-12
+updated: 2026-09-13
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -45,7 +45,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 | F-02 | authoring-form-components | (foundation) every UI component needed to implement the authoring form is in the shared UI library (photo upload is F-03) | — | FR-004, FR-005 | done |
 | F-03 | photo-upload-component | (foundation) a photo-upload component and its upload logic can attach one main photo to private storage | F-01 | FR-004 | done |
 | S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | — | US-01, FR-001 | ready |
-| S-02 | create-draft-build | user can create a draft build with watch attributes, parts list, and main photo; the draft stays private | F-01, F-02, F-03, S-01 | US-02, FR-003, FR-004, FR-005 | proposed |
+| S-02 | create-draft-build | user can create a draft build with watch attributes, parts list, and main photo; the draft stays private | F-01, F-02, F-03, S-01 | US-02, FR-003, FR-004, FR-005 | in-progress |
 | S-03 | publish-draft-build | user can publish a draft they own so it is eligible for the public listing | S-02 | US-02, FR-004 | proposed |
 | F-04 | listing-ui-components | (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library | — | FR-002 | ready |
 | S-04 | show-public-builds | user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden | F-04, S-03 | US-02, FR-002 | proposed |
@@ -257,7 +257,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Create only — do not also build the public listing or the account list. The author seeing their own builds is S-08; the public seeing them is S-04. Not every field is required, so the form must not block posting. Must remain usable on phone-sized and desktop-sized screens.
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-03: Publish a draft
 

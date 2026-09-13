@@ -139,13 +139,14 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
       return { id: data };
     },
 
-    async getOwnedDraft(_authorId, id) {
+    async getOwnedDraft(authorId, id) {
       const { data, error } = await client
         .from("builds")
         .select(
           "id, name, story, watch_style, movement, dial_colour, strap_type, hands_style, case_size_mm, main_image_path, build_parts(category, name, product_url, price_amount_minor, currency, position)",
         )
         .eq("id", id)
+        .eq("author_id", authorId)
         .eq("status", "draft")
         .maybeSingle();
 
@@ -160,11 +161,12 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
       return mapDraft(data);
     },
 
-    async attachMainImage(_authorId, id, path) {
+    async attachMainImage(authorId, id, path) {
       const { data, error } = await client
         .from("builds")
         .update({ main_image_path: path })
         .eq("id", id)
+        .eq("author_id", authorId)
         .eq("status", "draft")
         .select("id")
         .maybeSingle();

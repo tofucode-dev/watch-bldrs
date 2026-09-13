@@ -116,4 +116,91 @@ describe("save_draft_build identity matrix", () => {
     expect(row?.status).toBe("draft");
     expect(row?.name).toBe("Author A draft updated");
   });
+
+  it("a second save replaces parts instead of appending", async () => {
+    const buildId = await saveAuthorDraft({ p_name: "Parts replace" });
+
+    const { data, error } = await identities.authorA.client.rpc("save_draft_build", {
+      p_id: buildId,
+      p_name: "Parts replace",
+      p_parts: [
+        {
+          category: "dial",
+          name: "Replacement dial",
+          product_url: "https://example.com/dial",
+          price_amount_minor: 5000,
+          currency: "EUR",
+          position: 0,
+        },
+      ],
+    });
+    expect(error).toBeNull();
+    expect(data).toBe(buildId);
+
+    const { data: parts } = await identities.authorA.client
+      .from("build_parts")
+      .select("name, category, position")
+      .eq("build_id", buildId)
+      .order("position");
+
+    expect(parts).toEqual([{ name: "Replacement dial", category: "dial", position: 0 }]);
+  });
+
+  it("does not update a published row via save_draft_build", async () => {
+    const buildId = await saveAuthorDraft({ p_name: "Soon published" });
+
+    const { error: publishError } = await identities.authorA.client
+      .from("builds")
+      .update({ status: "published" })
+      .eq("id", buildId);
+    expect(publishError).toBeNull();
+
+    const { data: before } = await identities.authorA.client
+      .from("builds")
+      .select("status, name, published_at")
+      .eq("id", buildId)
+      .single();
+    expect(before?.status).toBe("published");
+    expect(before?.published_at).not.toBeNull();
+
+    const { data: partsBefore } = await identities.authorA.client
+      .from("build_parts")
+      .select("name, category, position")
+      .eq("build_id", buildId)
+      .order("position");
+
+    const { data, error } = await identities.authorA.client.rpc("save_draft_build", {
+      p_id: buildId,
+      p_name: "Should not land",
+      p_parts: [
+        {
+          category: "dial",
+          name: "Hijack dial",
+          product_url: "https://example.com/hijack",
+          price_amount_minor: 1,
+          currency: "USD",
+          position: 0,
+        },
+      ],
+    });
+
+    expect(data).toBeNull();
+    expect(error).not.toBeNull();
+
+    const { data: after } = await identities.authorA.client
+      .from("builds")
+      .select("status, name, published_at")
+      .eq("id", buildId)
+      .single();
+    expect(after?.status).toBe("published");
+    expect(after?.name).toBe("Soon published");
+    expect(after?.published_at).toBe(before?.published_at);
+
+    const { data: partsAfter } = await identities.authorA.client
+      .from("build_parts")
+      .select("name, category, position")
+      .eq("build_id", buildId)
+      .order("position");
+    expect(partsAfter).toEqual(partsBefore);
+  });
 });

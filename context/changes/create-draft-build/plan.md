@@ -87,7 +87,7 @@ Introduce `src/modules/builds`, domain validation, create/update/get/attach use 
 
 **Intent**: Orchestrate validate → store. Actions and pages call these, not Supabase.
 
-**Contract**: `createDraftBuild(actor, input) → { id }`; `updateDraftBuild(actor, id, input) → { id }`; `getOwnedDraft(actor, id) → draft | not found`; `attachMainImage(actor, id, path) → { id }`. Unauthenticated → expected auth error. Store port talks in domain types, not `database.types.ts` rows. Do not set `published` / `published_at`. Fake store for Node tests; no Astro imports.
+**Contract**: `createDraftBuild(actor, input) → { id }`; `updateDraftBuild(actor, id, input) → { id }`; `getOwnedDraft(actor, id) → draft | not found`; `attachMainImage(actor, id, path | null) → { id }` (null clears `main_image_path` without Storage.delete — Phase 3 attach surface landed with the Action). Unauthenticated → expected auth error. Store port talks in domain types, not `database.types.ts` rows. Do not set `published` / `published_at`. Fake store for Node tests; no Astro imports.
 
 #### 4. Infrastructure adapter
 
@@ -95,7 +95,7 @@ Introduce `src/modules/builds`, domain validation, create/update/get/attach use 
 
 **Intent**: Map the user-scoped Supabase client to the store port.
 
-**Contract**: Call `save_draft_build` via `rpc` for create/update. `getOwnedDraft` selects the author’s draft by id (RLS) and maps parts ordered by `position`. `attachMainImage` updates `main_image_path` only on an owned draft. Map PostgREST/RPC failures to domain/application errors; never return raw Supabase messages. Path values must look like `{uuid}/{uuid}/main.{jpg|png|webp}` before write.
+**Contract**: Call `save_draft_build` via `rpc` for create/update. `getOwnedDraft` selects the author’s draft by id (RLS) and maps parts ordered by `position`. `attachMainImage` updates `main_image_path` only on an owned draft. Map PostgREST/RPC failures to domain/application errors; never return raw Supabase messages. Path values must look like `{uuid}/{uuid}/main.{jpg|png|webp}` before write. Null path skips the pattern and writes `main_image_path = null` (no Storage.delete).
 
 #### 5. Actions registry and actor
 
@@ -315,20 +315,20 @@ One forward migration for `save_draft_build` only. Hosted `npx supabase db push`
 
 #### Automated
 
-- [x] 1.1 New migration applies on a clean local reset and `npm run db:types` is committed
-- [x] 1.2 Domain tests cover empty draft, length limits, case size bounds, URL scheme, price/currency pair, started vs blank part rows, enum/currency allowlists
-- [x] 1.3 Use-case tests with a fake store cover unauthenticated, create, update owned draft, not-found for missing/other-user/published ids, attach path
-- [x] 1.4 `src/actions/index.ts` re-exports grouped `builds` actions; handlers do not trust a client `authorId`
-- [x] 1.5 `npm run test:integration` includes author A / anon / user B coverage for `save_draft_build`
-- [x] 1.6 No publish/unpublish/delete Action exists
-- [x] 1.7 `npm run lint` passes
-- [x] 1.8 `npm run test` passes
-- [x] 1.9 `npm run build` passes
+- [x] 1.1 New migration applies on a clean local reset and `npm run db:types` is committed — d582189
+- [x] 1.2 Domain tests cover empty draft, length limits, case size bounds, URL scheme, price/currency pair, started vs blank part rows, enum/currency allowlists — d582189
+- [x] 1.3 Use-case tests with a fake store cover unauthenticated, create, update owned draft, not-found for missing/other-user/published ids, attach path — d582189
+- [x] 1.4 `src/actions/index.ts` re-exports grouped `builds` actions; handlers do not trust a client `authorId` — d582189
+- [x] 1.5 `npm run test:integration` includes author A / anon / user B coverage for `save_draft_build` — d582189
+- [x] 1.6 No publish/unpublish/delete Action exists — d582189
+- [x] 1.7 `npm run lint` passes — d582189
+- [x] 1.8 `npm run test` passes — d582189
+- [x] 1.9 `npm run build` passes — d582189
 
 #### Manual
 
-- [x] 1.10 `npx supabase db reset` then `npm run test:integration` observed green on the local Docker stack
-- [x] 1.11 A thrown RPC/validation error does not include a Supabase stack trace in the Action result shape used by the later island (inspect the mapped error object)
+- [x] 1.10 `npx supabase db reset` then `npm run test:integration` observed green on the local Docker stack — d582189
+- [x] 1.11 A thrown RPC/validation error does not include a Supabase stack trace in the Action result shape used by the later island (inspect the mapped error object) — d582189
 
 ### Phase 2: Gated create page and form island
 
