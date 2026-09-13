@@ -356,20 +356,20 @@ One forward migration for `save_draft_build` only. Hosted `npx supabase db push`
 
 #### Automated
 
-- [x] 3.1 `PhotoUpload` accepts optional `previewUrl`; local `File` still wins
-- [x] 3.2 Form tests: File present → upload then attach; no File → no upload; helper error does not persist a path
-- [x] 3.3 `getOwnedDraft` exposes a signed display URL and never stores it as `main_image_path`
-- [x] 3.4 Clear-and-save writes a null path without calling Storage.delete
-- [x] 3.5 `npm run lint` passes
-- [x] 3.6 `npm run test` passes
-- [x] 3.7 `npm run build` passes
+- [x] 3.1 `PhotoUpload` accepts optional `previewUrl`; local `File` still wins — 2b8bac0
+- [x] 3.2 Form tests: File present → upload then attach; no File → no upload; helper error does not persist a path — 2b8bac0
+- [x] 3.3 `getOwnedDraft` exposes a signed display URL and never stores it as `main_image_path` — 2b8bac0
+- [x] 3.4 Clear-and-save writes a null path without calling Storage.delete — 2b8bac0
+- [x] 3.5 `npm run lint` passes — 2b8bac0
+- [x] 3.6 `npm run test` passes — 2b8bac0
+- [x] 3.7 `npm run build` passes — 2b8bac0
 
 #### Manual
 
-- [x] 3.8 Choose a jpeg/png/webp ≤ 5 MiB, Save Draft, refresh `/account/builds/[id]/edit`: the well shows the stored image
-- [x] 3.9 Replace with another allowed type (ext change) still previews after reload
-- [x] 3.10 Remove + Save: well empty after reload; draft row remains
-- [x] 3.11 Rejected file (too big / wrong type) never becomes `main_image_path`
-- [x] 3.12 Anonymous and user B still cannot download A’s draft object (spot-check existing F-01 behaviour or the Storage tests)
-- [x] 3.13 Phone and desktop: well, choose, and sticky save remain usable
-- [x] 3.14 Remaining look gaps vs `build-form-reference.png` (torn paper, “YOUR BUILD” card, chalkboard stamps) are listed in `change.md`, not forced
+- [x] 3.8 Choose a jpeg/png/webp ≤ 5 MiB, Save Draft, refresh `/account/builds/[id]/edit`: the well shows the stored image — 2b8bac0
+- [x] 3.9 Replace with another allowed type (ext change) still previews after reload — 2b8bac0
+- [x] 3.10 Remove + Save: well empty after reload; draft row remains — 2b8bac0
+- [x] 3.11 Rejected file (too big / wrong type) never becomes `main_image_path` — 2b8bac0
+- [x] 3.12 Anonymous and user B still cannot download A’s draft object (spot-check existing F-01 behaviour or the Storage tests) — 2b8bac0
+- [x] 3.13 Phone and desktop: well, choose, and sticky save remain usable — 2b8bac0
+- [x] 3.14 Remaining look gaps vs `build-form-reference.png` (torn paper, “YOUR BUILD” card, chalkboard stamps) are listed in `change.md`, not forced — 2b8bac0
