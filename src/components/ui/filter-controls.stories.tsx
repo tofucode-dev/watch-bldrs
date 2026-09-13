@@ -54,6 +54,9 @@ function createDimensions(values: Partial<Record<string, string>> = {}): FilterD
   ];
 }
 
+const onDimensionChangeSpy = fn();
+const onClearAllSpy = fn();
+
 function FilterControlsDemo({
   initialValues = {},
   widthClassName = "w-full max-w-6xl",
@@ -71,11 +74,11 @@ function FilterControlsDemo({
           setDimensions((current) =>
             current.map((dimension) => (dimension.id === id ? { ...dimension, value } : dimension)),
           );
-          fn()(id, value);
+          onDimensionChangeSpy(id, value);
         }}
         onClearAll={() => {
           setDimensions(createDimensions());
-          fn()();
+          onClearAllSpy();
         }}
       />
     </div>

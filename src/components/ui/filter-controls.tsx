@@ -13,6 +13,7 @@ export interface FilterDimension {
   value?: string;
 }
 
+/** Controlled filter toolbar. Root div props (e.g. `disabled`) are layout-only and do not disable inner selects or chips — add explicit forwarding in S-05 if loading states need it. */
 export interface FilterControlsProps extends ComponentProps<"div"> {
   dimensions: FilterDimension[];
   onDimensionChange: (id: string, value: string) => void;
