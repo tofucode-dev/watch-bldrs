@@ -277,16 +277,16 @@ No database, RLS, Storage, generated-type, environment, or deployment migration 
 
 #### Automated
 
-- [x] 2.1 BuildCard semantics, fallbacks, metadata, action separation, and image-loading contracts pass
-- [x] 2.2 BuildCard and its stories pass repository lint
-- [x] 2.3 Complete and sparse BuildCard stories compile in Storybook
+- [x] 2.1 BuildCard semantics, fallbacks, metadata, action separation, and image-loading contracts pass — fe5508c
+- [x] 2.2 BuildCard and its stories pass repository lint — fe5508c
+- [x] 2.3 Complete and sparse BuildCard stories compile in Storybook — fe5508c
 
 ### Phase 3: Responsive Grid and Load-More Affordance
 
 #### Automated
 
-- [ ] 3.1 Grid and load-more component contracts pass
-- [ ] 3.2 The complete unit/component test suite passes
-- [ ] 3.3 Repository lint passes
-- [ ] 3.4 All listing stories and both themes compile in the production Storybook bundle
-- [ ] 3.5 The Cloudflare Workers production build passes without client/server boundary regressions
+- [x] 3.1 Grid and load-more component contracts pass
+- [x] 3.2 The complete unit/component test suite passes
+- [x] 3.3 Repository lint passes
+- [x] 3.4 All listing stories and both themes compile in the production Storybook bundle
+- [x] 3.5 The Cloudflare Workers production build passes without client/server boundary regressions
