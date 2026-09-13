@@ -1,10 +1,10 @@
 ---
 change_id: create-draft-build
 title: Create a private draft build
-status: implemented
+status: archived
 created: 2026-09-13
 updated: 2026-09-13
-archived_at: null
+archived_at: 2026-09-13T22:01:40Z
 ---
 
 ## Notes

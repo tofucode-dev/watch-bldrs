@@ -51,4 +51,21 @@ describe("OptionsSelect", () => {
     expect(trigger).toHaveAttribute("aria-invalid", "true");
     expect(trigger).toBeDisabled();
   });
+
+  it("passes size and className to the trigger", () => {
+    render(
+      <OptionsSelect
+        options={options}
+        value="automatic"
+        onValueChange={() => undefined}
+        size="sm"
+        className="max-w-40"
+      />,
+    );
+
+    const trigger = screen.getByRole("combobox");
+
+    expect(trigger).toHaveAttribute("data-size", "sm");
+    expect(trigger).toHaveClass("max-w-40", "w-full");
+  });
 });

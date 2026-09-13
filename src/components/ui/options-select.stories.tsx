@@ -68,3 +68,10 @@ export const Disabled: Story = {
     value: "nh35",
   },
 };
+
+export const Small: Story = {
+  args: {
+    size: "sm",
+    className: "max-w-48",
+  },
+};

@@ -5,6 +5,7 @@ import {
   toRadixValue,
   type SelectOption,
 } from "@/components/ui/options-select-mapping";
+import { cn } from "@/lib/utils";
 
 export interface OptionsSelectProps {
   options: SelectOption[];
@@ -14,6 +15,8 @@ export interface OptionsSelectProps {
   id?: string;
   disabled?: boolean;
   "aria-invalid"?: boolean | "true" | "false";
+  size?: "sm" | "default";
+  className?: string;
 }
 
 export function OptionsSelect({
@@ -24,6 +27,8 @@ export function OptionsSelect({
   id,
   disabled,
   "aria-invalid": ariaInvalid,
+  size,
+  className,
 }: OptionsSelectProps) {
   const radixOptions = mapOptionsForRadix(options);
 
@@ -35,7 +40,7 @@ export function OptionsSelect({
       }}
       disabled={disabled}
     >
-      <SelectTrigger id={id} aria-invalid={ariaInvalid} className="w-full">
+      <SelectTrigger id={id} aria-invalid={ariaInvalid} size={size} className={cn("w-full", className)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
