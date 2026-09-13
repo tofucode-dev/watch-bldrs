@@ -277,24 +277,21 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     });
   }, []);
 
-  const handlePhotoChange = useCallback(
-    (next: File | null) => {
-      setMainImageFile(next);
-      setFieldErrors((prev) => {
-        if (!("mainImage" in prev)) {
-          return prev;
-        }
-        return Object.fromEntries(Object.entries(prev).filter(([entryKey]) => entryKey !== "mainImage"));
-      });
-      if (next === null) {
-        setPreviewUrl(null);
-        setPhotoCleared(savedPhoto.current.savedPath !== null);
-        return;
+  const handlePhotoChange = useCallback((next: File | null) => {
+    setMainImageFile(next);
+    setFieldErrors((prev) => {
+      if (!("mainImage" in prev)) {
+        return prev;
       }
-      setPhotoCleared(false);
-    },
-    [],
-  );
+      return Object.fromEntries(Object.entries(prev).filter(([entryKey]) => entryKey !== "mainImage"));
+    });
+    if (next === null) {
+      setPreviewUrl(null);
+      setPhotoCleared(savedPhoto.current.savedPath !== null);
+      return;
+    }
+    setPhotoCleared(false);
+  }, []);
 
   const handleDiscard = useCallback(() => {
     setFormState(cloneFormState(savedSnapshot.current));

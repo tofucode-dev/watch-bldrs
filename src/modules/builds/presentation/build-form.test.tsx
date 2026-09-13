@@ -332,9 +332,7 @@ describe("BuildForm", () => {
     vi.mocked(createBrowserSupabaseClient).mockReturnValue(
       mockBrowserClient() as unknown as ReturnType<typeof createBrowserSupabaseClient>,
     );
-    vi.mocked(uploadMainImage)
-      .mockResolvedValueOnce({ path: IMAGE_PATH })
-      .mockResolvedValueOnce({ path: pngPath });
+    vi.mocked(uploadMainImage).mockResolvedValueOnce({ path: IMAGE_PATH }).mockResolvedValueOnce({ path: pngPath });
     const user = userEvent.setup();
 
     const { container } = render(<BuildForm />);
