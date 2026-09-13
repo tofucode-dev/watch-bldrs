@@ -322,14 +322,14 @@ No migration or generated database-type change is expected. The existing `publis
 
 #### Automated
 
-- [ ] 1.1 Publication use-case unit tests pass, including anonymous, owner, non-owner, missing, and idempotent retry cases
-- [ ] 1.2 Focused local-Supabase publication tests pass after a clean local schema reset
-- [ ] 1.3 Production source contains no service-role import, browser server-entrypoint import, or new migration for publication
+- [x] 1.1 Publication use-case unit tests pass, including anonymous, owner, non-owner, missing, and idempotent retry cases
+- [x] 1.2 Focused local-Supabase publication tests pass after a clean local schema reset
+- [x] 1.3 Production source contains no service-role import, browser server-entrypoint import, or new migration for publication
 
 #### Manual
 
-- [ ] 1.4 Adapter update and retry lookup both constrain ID and author, with draft status on the update
-- [ ] 1.5 Published and updated timestamps remain unchanged after a repeated publication request
+- [x] 1.4 Adapter update and retry lookup both constrain ID and author, with draft status on the update
+- [x] 1.5 Published and updated timestamps remain unchanged after a repeated publication request
 
 ### Phase 2: Author Publish Experience
 

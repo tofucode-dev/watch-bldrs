@@ -198,5 +198,42 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
 
       return { id: data.id };
     },
+
+    async publishBuild(authorId, id) {
+      const { data: updated, error: updateError } = await client
+        .from("builds")
+        .update({ status: "published" })
+        .eq("id", id)
+        .eq("author_id", authorId)
+        .eq("status", "draft")
+        .select("id")
+        .maybeSingle();
+
+      if (updateError) {
+        mapStoreError(updateError);
+      }
+
+      if (updated) {
+        return { id: updated.id };
+      }
+
+      const { data: published, error: readError } = await client
+        .from("builds")
+        .select("id")
+        .eq("id", id)
+        .eq("author_id", authorId)
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (readError) {
+        mapStoreError(readError);
+      }
+
+      if (!published) {
+        return null;
+      }
+
+      return { id: published.id };
+    },
   };
 }

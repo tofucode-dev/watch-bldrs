@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase";
 import { actorFromUser } from "./application/actor";
 import { attachMainImage } from "./application/attach-main-image";
 import { createDraftBuild } from "./application/create-draft-build";
+import { publishBuild } from "./application/publish-build";
 import { updateDraftBuild } from "./application/update-draft-build";
 import { DraftNotFoundError, DraftValidationError, UnauthenticatedError, UnexpectedStoreError } from "./domain/errors";
 import { createSupabaseBuildStore } from "./infrastructure/supabase-build-store";
@@ -101,6 +102,18 @@ export const builds = {
           input.path,
           storeFromContext(context),
         );
+        return { ok: true, id: result.id };
+      } catch (error) {
+        return toActionResult(error);
+      }
+    },
+  }),
+
+  publish: defineAction({
+    input: z.object({ id: z.uuid() }),
+    handler: async (input, context): Promise<DraftActionResult> => {
+      try {
+        const result = await publishBuild(actorFromUser(context.locals.user), input.id, storeFromContext(context));
         return { ok: true, id: result.id };
       } catch (error) {
         return toActionResult(error);

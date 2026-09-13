@@ -9,6 +9,7 @@ import { attachMainImage } from "./application/attach-main-image";
 import { actorFromUser } from "./application/actor";
 import { createDraftBuild } from "./application/create-draft-build";
 import { getOwnedDraft } from "./application/get-owned-draft";
+import { publishBuild } from "./application/publish-build";
 import { createSupabaseBuildStore } from "./infrastructure/supabase-build-store";
 import { updateDraftBuild } from "./application/update-draft-build";
 import type { DraftBuildInput, OwnedDraft } from "./domain/types";
@@ -19,6 +20,7 @@ export { actorFromUser } from "./application/actor";
 export { attachMainImage } from "./application/attach-main-image";
 export { createDraftBuild } from "./application/create-draft-build";
 export { getOwnedDraft } from "./application/get-owned-draft";
+export { publishBuild } from "./application/publish-build";
 export { updateDraftBuild } from "./application/update-draft-build";
 export { createSupabaseBuildStore } from "./infrastructure/supabase-build-store";
 export type { BuildStore } from "./application/ports/build-store";
@@ -43,6 +45,7 @@ export function createBuildUseCasesForRequest(request: Request, cookies: AstroCo
     updateDraftBuild: (actor: Actor, id: string, input: DraftBuildInput) => updateDraftBuild(actor, id, input, store),
     getOwnedDraft: (actor: Actor, id: string) => getOwnedDraft(actor, id, store),
     attachMainImage: (actor: Actor, id: string, path: string | null) => attachMainImage(actor, id, path, store),
+    publishBuild: (actor: Actor, id: string) => publishBuild(actor, id, store),
   };
 }
 
