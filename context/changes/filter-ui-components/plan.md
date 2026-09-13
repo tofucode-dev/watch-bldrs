@@ -256,22 +256,22 @@ No data migration. `OptionsSelect` may gain optional `size` and `className` pass
 
 #### Automated
 
-- [x] 2.1 `FilterControls` is controlled and domain-free: dimensions, option lists, values, and callbacks come from the caller
-- [x] 2.2 Each dimension uses `OptionsSelect`; All/absent is `""` through the existing mapping helper
-- [x] 2.3 Chips render only for non-empty values; Clear all renders only when at least one chip exists
-- [x] 2.4 Chip remove calls `onDimensionChange(id, "")`; Clear all calls `onClearAll`
-- [x] 2.5 Stories fabricate five dimensions including exact 20–70 mm case sizes and do not import module domain or server entrypoints
-- [x] 2.6 Component tests cover chip/clear visibility and callbacks and do not assert focus restoration
-- [x] 2.7 No `src/modules/catalog`, URL wiring, listing chrome, result count, sort, or ranking tabs
-- [x] 2.8 `npm run lint` passes
-- [x] 2.9 `npm run test` passes
-- [x] 2.10 `npm run build` passes
+- [x] 2.1 `FilterControls` is controlled and domain-free: dimensions, option lists, values, and callbacks come from the caller — 8e83c5f
+- [x] 2.2 Each dimension uses `OptionsSelect`; All/absent is `""` through the existing mapping helper — 8e83c5f
+- [x] 2.3 Chips render only for non-empty values; Clear all renders only when at least one chip exists — 8e83c5f
+- [x] 2.4 Chip remove calls `onDimensionChange(id, "")`; Clear all calls `onClearAll` — 8e83c5f
+- [x] 2.5 Stories fabricate five dimensions including exact 20–70 mm case sizes and do not import module domain or server entrypoints — 8e83c5f
+- [x] 2.6 Component tests cover chip/clear visibility and callbacks and do not assert focus restoration — 8e83c5f
+- [x] 2.7 No `src/modules/catalog`, URL wiring, listing chrome, result count, sort, or ranking tabs — 8e83c5f
+- [x] 2.8 `npm run lint` passes — 8e83c5f
+- [x] 2.9 `npm run test` passes — 8e83c5f
+- [x] 2.10 `npm run build` passes — 8e83c5f
 
 #### Manual
 
-- [x] 2.11 At ~390px, selects are full-width (stack or compact grid) and chips wrap; no drawer and no sideways scroll
-- [x] 2.12 At desktop width, five filters and the chip row are readable without horizontal overflow
-- [x] 2.13 Unfiltered state shows no chips and no Clear all (accepted difference from the mockup)
-- [x] 2.14 A dimension can go All → value → All via the empty option and via chip remove
-- [x] 2.15 Visual check is filter selects / chips / Clear all only — count, sort, and ranking tabs are out; remaining look gaps vs `filter-bar-reference.png` are written down, not forced
-- [x] 2.16 Storybook Paper and Ink both reviewed with `npm run storybook`
+- [x] 2.11 At ~390px, selects are full-width (stack or compact grid) and chips wrap; no drawer and no sideways scroll — 8e83c5f
+- [x] 2.12 At desktop width, five filters and the chip row are readable without horizontal overflow — 8e83c5f
+- [x] 2.13 Unfiltered state shows no chips and no Clear all (accepted difference from the mockup) — 8e83c5f
+- [x] 2.14 A dimension can go All → value → All via the empty option and via chip remove — 8e83c5f
+- [x] 2.15 Visual check is filter selects / chips / Clear all only — count, sort, and ranking tabs are out; remaining look gaps vs `filter-bar-reference.png` are written down, not forced — 8e83c5f
+- [x] 2.16 Storybook Paper and Ink both reviewed with `npm run storybook` — 8e83c5f
