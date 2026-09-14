@@ -159,7 +159,19 @@ Run: `npm run test:integration -- build-ownership-mutations`.
 
 ### 6.5 Adding a test for a catalog query change
 
-- TBD — see §3 Phase 3 for keyset pagination and AND filter patterns.
+Catalog pagination uses composite keyset `(published_at DESC, id DESC)` with AND filters applied before the boundary. See `catalog-filters.test.ts`.
+
+**Tied-timestamp pattern** (Risk #5 — same `published_at`, distinct ids):
+
+1. **Seed** — via `serviceRole`, insert ≥13 published rows sharing one `published_at` timestamp but distinct ids, all matching the same filter set (e.g. `watch_style: diver`, `movement: nh35`, …). Include one filter-matching **draft** neighbor so the test proves exclusion, not emptiness.
+2. **Forward page** — `listPublishedBuilds({ direction: "first", boundary: null, filters }, createSupabaseCatalogStore(anon))`; expect page size 12 and a `nextCursor`.
+3. **Forward page 2** — `direction: "after"` with `decodeCatalogCursor(nextCursor)`; collect ids from both pages.
+4. **Backward** — `direction: "before"` with `decodeCatalogCursor(previousCursor)` from page 2; first-page ids must match page 1 exactly.
+5. **Assertions** — `new Set(allIds).size === expectedPublishedCount`; no draft id in collected set; every seeded published id appears exactly once.
+
+**Filter URL preservation (unit):** `src/modules/catalog/server.test.ts` — given 3+ active filters and an `after` cursor, assert `previousUrl` and `nextUrl` from `resolveCatalogListing` retain every filter param. Use mocked store; no Supabase required.
+
+Run: `npm run test:integration -- catalog-filters` and `npm run test -- src/modules/catalog/server.test.ts`.
 
 ### 6.6 Per-rollout-phase notes
 

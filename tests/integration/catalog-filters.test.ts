@@ -214,3 +214,112 @@ describe("catalog listing filters", () => {
     expect(pages[0].items).toHaveLength(12);
   });
 });
+
+describe("catalog tied-timestamp pagination under filters", () => {
+  let identities: TestIdentities;
+  const buildIds: string[] = [];
+  const matchingPublishedIds: string[] = [];
+  let matchingDraftId: string;
+
+  const tiedPublishedAt = "2026-09-14T15:00:00.000Z";
+  const tiedFilters = {
+    watch_style: "diver" as const,
+    movement: "nh35" as const,
+    dial_colour: "black" as const,
+    strap_type: "steel_bracelet" as const,
+    case_size_mm: 40,
+  };
+
+  beforeAll(async () => {
+    identities = await createTestIdentities();
+
+    const matchingPublishedSeeds = Array.from({ length: 13 }, (_, index) => ({
+      author_id: index % 2 === 0 ? identities.authorA.id : identities.userB.id,
+      status: "published" as const,
+      name: `Tied timestamp match ${index + 1}`,
+      published_at: tiedPublishedAt,
+      watch_style: tiedFilters.watch_style,
+      movement: tiedFilters.movement,
+      dial_colour: tiedFilters.dial_colour,
+      strap_type: tiedFilters.strap_type,
+      case_size_mm: tiedFilters.case_size_mm,
+    }));
+
+    const draftSeed: BuildInsert = {
+      author_id: identities.authorA.id,
+      status: "draft",
+      name: "Tied timestamp matching draft",
+      published_at: null,
+      watch_style: tiedFilters.watch_style,
+      movement: tiedFilters.movement,
+      dial_colour: tiedFilters.dial_colour,
+      strap_type: tiedFilters.strap_type,
+      case_size_mm: tiedFilters.case_size_mm,
+    };
+
+    for (const seed of [...matchingPublishedSeeds, draftSeed]) {
+      const { data, error } = await identities.serviceRole.from("builds").insert(seed).select("id").single();
+      if (error) {
+        throw new Error(`Failed to seed tied-timestamp catalog build: ${error.message}`);
+      }
+      buildIds.push(data.id);
+      if (seed.status === "published") {
+        matchingPublishedIds.push(data.id);
+      } else {
+        matchingDraftId = data.id;
+      }
+    }
+  });
+
+  afterAll(async () => {
+    for (const buildId of buildIds) {
+      await cleanupBuild(identities.serviceRole, buildId);
+    }
+  });
+
+  it("paginates through tied published_at rows without skipping, duplicating, or leaking drafts", async () => {
+    const store = createSupabaseCatalogStore(identities.anon);
+    const collectedIds: string[] = [];
+
+    const first = await listPublishedBuilds({ direction: "first", boundary: null, filters: tiedFilters }, store);
+    collectedIds.push(...first.items.map((item) => item.id));
+    expect(first.items).toHaveLength(12);
+    expect(first.nextCursor).not.toBeNull();
+
+    const nextCursor = first.nextCursor;
+    if (!nextCursor) {
+      throw new Error("Expected a next-page cursor for tied-timestamp results");
+    }
+
+    const second = await listPublishedBuilds(
+      {
+        direction: "after",
+        boundary: decodeCatalogCursor(nextCursor),
+        filters: tiedFilters,
+      },
+      store,
+    );
+    collectedIds.push(...second.items.map((item) => item.id));
+    expect(second.items).toHaveLength(1);
+    expect(second.previousCursor).not.toBeNull();
+
+    const previousCursor = second.previousCursor;
+    if (!previousCursor) {
+      throw new Error("Expected a previous-page cursor for tied-timestamp results");
+    }
+
+    const backToFirst = await listPublishedBuilds(
+      {
+        direction: "before",
+        boundary: decodeCatalogCursor(previousCursor),
+        filters: tiedFilters,
+      },
+      store,
+    );
+
+    expect(backToFirst.items.map((item) => item.id)).toEqual(first.items.map((item) => item.id));
+    expect(new Set(collectedIds).size).toBe(matchingPublishedIds.length);
+    expect(collectedIds).toEqual(expect.arrayContaining(matchingPublishedIds));
+    expect(collectedIds).not.toContain(matchingDraftId);
+  });
+});

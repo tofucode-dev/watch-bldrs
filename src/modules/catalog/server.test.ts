@@ -61,6 +61,50 @@ describe("resolveCatalogListing", () => {
     });
   });
 
+  it("preserves every active filter in next and previous URLs when paginating with an after cursor", async () => {
+    const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
+    const firstId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+    const lastId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+    const after = encodeCatalogCursor({
+      publishedAt: "2026-09-14T12:00:00.000Z",
+      id: firstId,
+    });
+
+    vi.mocked(createSupabaseCatalogStore).mockReturnValue({
+      listPublished: vi.fn().mockResolvedValue({
+        items: [
+          { publishedAt: "2026-09-14T12:00:00.000Z", card: { ...sampleItem, id: firstId } },
+          { publishedAt: "2026-09-14T11:00:00.000Z", card: { ...sampleItem, id: lastId } },
+        ],
+        hasMore: true,
+      }),
+    });
+
+    const result = await resolveCatalogListing(
+      makeRequest(
+        `https://example.com/builds?watch_style=diver&movement=nh35&dial_colour=black&strap_type=steel_bracelet&case_size_mm=40&after=${after}`,
+      ),
+      cookies,
+    );
+
+    expect(result.state).toMatchObject({ status: "success" });
+    if (result.state.status !== "success") {
+      throw new Error("Expected success state");
+    }
+
+    const filterParams = [
+      "watch_style=diver",
+      "movement=nh35",
+      "dial_colour=black",
+      "strap_type=steel_bracelet",
+      "case_size_mm=40",
+    ];
+    for (const param of filterParams) {
+      expect(result.state.previousUrl).toContain(param);
+      expect(result.state.nextUrl).toContain(param);
+    }
+  });
+
   it("passes filters to the store and preserves them in pagination URLs", async () => {
     const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
     const nextCursor = encodeCatalogCursor({

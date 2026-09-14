@@ -389,16 +389,16 @@ Close Risks #4, #6, #7. Adds minimal HTTP infrastructure — the only phase that
 
 #### Automated
 
-- [x] 2.1 `npm run test:integration` passes with build-ownership-mutations and extended build-delete
-- [x] 2.2 `npm run test` and `npm run lint` pass
+- [x] 2.1 `npm run test:integration` passes with build-ownership-mutations and extended build-delete — a20f5a5
+- [x] 2.2 `npm run test` and `npm run lint` pass — a20f5a5
 
 ### Phase 3: Catalog Keyset & Filter Edge Cases
 
 #### Automated
 
-- [ ] 3.1 `npm run test:integration` passes with extended catalog-filters tied-timestamp case
-- [ ] 3.2 `npm run test` passes including extended server.test.ts
-- [ ] 3.3 `npm run lint` passes
+- [x] 3.1 `npm run test:integration` passes with extended catalog-filters tied-timestamp case
+- [x] 3.2 `npm run test` passes including extended server.test.ts
+- [x] 3.3 `npm run lint` passes
 
 ### Phase 4: Session Chain, Migrations Gate & Workers Smoke
 
