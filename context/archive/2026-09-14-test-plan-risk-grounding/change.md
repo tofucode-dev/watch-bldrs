@@ -1,9 +1,10 @@
 ---
 change_id: test-plan-risk-grounding
 title: Test plan risk grounding
-status: impl_reviewed
+status: archived
 created: 2026-09-14
 updated: 2026-09-14
+archived_at: 2026-09-14T21:05:02Z
 ---
 
 ## Notes
