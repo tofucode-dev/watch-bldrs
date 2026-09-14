@@ -2,7 +2,6 @@
 const { user } = Astro.locals;
 const path = Astro.url.pathname;
 
-const isHome = path === "/";
 const isDashboard = path.startsWith("/dashboard");
 const isCatalog = path === "/builds" || path.startsWith("/builds/");
 

@@ -7,149 +7,151 @@ import { fileURLToPath } from "node:url";
 
 const DEMO_EMAIL = "catalog-demo@example.com";
 const DEMO_PASSWORD = "catalog-demo-password";
-const DEFAULT_IMAGE = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public", "images.jpg");
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_MOCKS_DIR = path.join(SCRIPT_DIR, "fixtures", "mocks");
+const DEFAULT_IMAGE = path.join(SCRIPT_DIR, "..", "public", "images.jpg");
+const COPIES_PER_MOCK = 3;
 
-const CATALOG_DEMO_BUILDS = [
+const DIAL_COLOURS = ["black", "white", "blue", "green", "silver", "other"];
+
+const STORY_SNIPPETS = [
+  "Built for daily wear with a focus on legibility and comfort.",
+  "A weekend mod that turned into my favorite wrist companion.",
+  "Assembled from off-the-shelf parts for a cleaner dial presence.",
+  "Tuned for balance on the wrist and easy strap swaps.",
+  "Inspired by classic references, finished with modern proportions.",
+  "Dial and hands chosen for contrast in low light.",
+];
+
+/** @type {Array<{ name: string; watch_style: string; movement: string; case_size_mm: number; strap_type: string; image: string }>} */
+const MOCK_BUILD_TEMPLATES = [
   {
-    name: "Grand Seiko Spring Drive GMT",
-    watch_style: "gmt",
-    movement: "other",
-    dial_colour: "green",
-    strap_type: "steel_bracelet",
-    case_size_mm: 40,
-    status: "published",
-    daysAgo: 0,
+    name: "Backcountry Field",
+    watch_style: "field",
+    movement: "nh35",
+    case_size_mm: 38,
+    strap_type: "nato",
+    image: "mock_1.png",
   },
   {
-    name: "NH35 Sub Homage",
+    name: "Deepwater Explorer",
     watch_style: "diver",
     movement: "nh35",
-    dial_colour: "blue",
-    strap_type: "rubber",
     case_size_mm: 40,
-    status: "published",
-    daysAgo: 0,
+    strap_type: "steel_bracelet",
+    image: "mock_2.png",
   },
   {
-    name: "Field Explorer",
-    watch_style: "field",
-    movement: "nh36",
-    dial_colour: "black",
-    strap_type: "nato",
-    case_size_mm: 38,
-    status: "published",
-    daysAgo: 1,
-  },
-  {
-    name: "Dress Dauphine",
-    watch_style: "dress",
-    movement: "miyota_8215",
-    dial_colour: "silver",
-    strap_type: "leather",
-    case_size_mm: 39,
-    status: "published",
-    daysAgo: 1,
-  },
-  {
-    name: "GMT Traveller",
+    name: "Ember GMT",
     watch_style: "gmt",
     movement: "nh34",
-    dial_colour: "blue",
-    strap_type: "steel_bracelet",
     case_size_mm: 40,
-    status: "published",
-    daysAgo: 2,
+    strap_type: "steel_bracelet",
+    image: "mock_3.png",
   },
   {
-    name: "Pilot Flieger",
-    watch_style: "pilot",
-    movement: "nh35",
-    dial_colour: "black",
+    name: "Midnight Dress",
+    watch_style: "dress",
+    movement: "other",
+    case_size_mm: 39,
     strap_type: "leather",
-    case_size_mm: 42,
-    status: "published",
-    daysAgo: 2,
+    image: "mock_4.png",
   },
   {
-    name: "Integrated Bracelet Build",
+    name: "Integrated Blue",
     watch_style: "integrated",
     movement: "nh35",
-    dial_colour: "green",
-    strap_type: "steel_bracelet",
     case_size_mm: 40,
-    status: "published",
-    daysAgo: 3,
-  },
-  {
-    name: "White Dial Diver",
-    watch_style: "diver",
-    movement: "nh36",
-    dial_colour: "white",
-    strap_type: "rubber",
-    case_size_mm: 41,
-    status: "published",
-    daysAgo: 4,
-  },
-  {
-    name: "Green Dial Field",
-    watch_style: "field",
-    movement: "nh35",
-    dial_colour: "green",
-    strap_type: "nato",
-    case_size_mm: 38,
-    status: "published",
-    daysAgo: 5,
-  },
-  {
-    name: "Silver Dress Build",
-    watch_style: "dress",
-    movement: "miyota_8215",
-    dial_colour: "silver",
-    strap_type: "leather",
-    case_size_mm: 37,
-    status: "published",
-    daysAgo: 6,
-  },
-  {
-    name: "Blue GMT",
-    watch_style: "gmt",
-    movement: "nh34",
-    dial_colour: "blue",
     strap_type: "steel_bracelet",
-    case_size_mm: 40,
-    status: "published",
-    daysAgo: 7,
+    image: "mock_5.png",
   },
   {
-    name: "Pilot NATO",
+    name: "Desert Pilot",
     watch_style: "pilot",
     movement: "nh35",
-    dial_colour: "black",
-    strap_type: "nato",
     case_size_mm: 42,
-    status: "published",
-    daysAgo: 8,
+    strap_type: "leather",
+    image: "mock_6.png",
   },
   {
-    name: "Rubber Diver",
-    watch_style: "diver",
-    movement: "nh36",
-    dial_colour: "black",
-    strap_type: "rubber",
+    name: "Bronze Expedition",
+    watch_style: "field",
+    movement: "other",
     case_size_mm: 41,
-    status: "published",
-    daysAgo: 9,
+    strap_type: "other",
+    image: "mock_7.png",
   },
   {
-    name: "Bench Experiment",
+    name: "Silver Sector",
+    watch_style: "dress",
+    movement: "other",
+    case_size_mm: 38,
+    strap_type: "leather",
+    image: "mock_8.png",
+  },
+  {
+    name: "Trackside Chronograph",
     watch_style: "other",
     movement: "other",
-    dial_colour: "other",
-    strap_type: "other",
     case_size_mm: 40,
-    status: "published",
-    daysAgo: 10,
+    strap_type: "leather",
+    image: "mock_9.png",
   },
+  {
+    name: "Snowfield Minimal",
+    watch_style: "other",
+    movement: "other",
+    case_size_mm: 36,
+    strap_type: "other",
+    image: "mock_10.png",
+  },
+];
+
+function pickBySeed(values, seed) {
+  return values[((seed % values.length) + values.length) % values.length];
+}
+
+function buildName(templateName, copyIndex) {
+  if (copyIndex === 0) {
+    return templateName;
+  }
+
+  return `${templateName} · ${copyIndex + 1}`;
+}
+
+function expandMockBuilds(mocksDir) {
+  /** @type {Array<{ name: string; watch_style: string; movement: string; dial_colour: string; strap_type: string; case_size_mm: number; status: "published"; daysAgo: number; story: string; imagePath: string }>} */
+  const builds = [];
+  let daysAgo = 0;
+
+  for (const [templateIndex, template] of MOCK_BUILD_TEMPLATES.entries()) {
+    const imagePath = path.join(mocksDir, template.image);
+
+    for (let copyIndex = 0; copyIndex < COPIES_PER_MOCK; copyIndex += 1) {
+      const seed = templateIndex * COPIES_PER_MOCK + copyIndex;
+
+      builds.push({
+        name: buildName(template.name, copyIndex),
+        watch_style: template.watch_style,
+        movement: template.movement,
+        dial_colour: pickBySeed(DIAL_COLOURS, seed + templateIndex + 1),
+        strap_type: template.strap_type,
+        case_size_mm: template.case_size_mm,
+        status: "published",
+        daysAgo,
+        story: pickBySeed(STORY_SNIPPETS, seed + 3),
+        imagePath,
+      });
+
+      daysAgo += 1;
+    }
+  }
+
+  return builds;
+}
+
+const CATALOG_DEMO_BUILDS = [
+  ...expandMockBuilds(DEFAULT_MOCKS_DIR),
   {
     name: "Private Draft — Should Not Appear In Catalog",
     watch_style: "diver",
@@ -159,6 +161,8 @@ const CATALOG_DEMO_BUILDS = [
     case_size_mm: 41,
     status: "draft",
     daysAgo: null,
+    story: null,
+    imagePath: path.join(DEFAULT_MOCKS_DIR, "mock_2.png"),
   },
 ];
 
@@ -196,32 +200,71 @@ function requireEnv(name, value) {
   return value;
 }
 
-function assertLocalSupabaseUrl(url) {
+function isLocalSupabaseUrl(url) {
   let parsed;
   try {
     parsed = new URL(url);
   } catch {
-    throw new Error(`Invalid Supabase URL: ${url}`);
+    return false;
   }
 
   const hostname = parsed.hostname.toLowerCase();
-  if (hostname !== "localhost" && hostname !== "127.0.0.1" && hostname !== "::1") {
-    throw new Error(`Refusing to seed catalog demo data against non-local Supabase URL (${hostname}).`);
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
+function assertSeedTargetAllowed(url, allowRemote) {
+  if (allowRemote || isLocalSupabaseUrl(url)) {
+    return;
   }
+
+  let hostname = url;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    // Keep the raw URL in the error message.
+  }
+
+  throw new Error(
+    `Refusing to seed catalog demo data against non-local Supabase URL (${hostname}). Pass --allow-remote when targeting hosted Supabase.`,
+  );
 }
 
 function parseArgs(argv) {
-  const imageFlagIndex = argv.indexOf("--image");
-  if (imageFlagIndex === -1) {
-    return { imagePath: DEFAULT_IMAGE };
+  const options = {
+    mocksDir: DEFAULT_MOCKS_DIR,
+    fallbackImagePath: null,
+    allowRemote: process.env.SEED_ALLOW_REMOTE === "true",
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+
+    if (arg === "--allow-remote") {
+      options.allowRemote = true;
+      continue;
+    }
+
+    if (arg === "--mocks-dir") {
+      const value = argv[index + 1];
+      if (!value) {
+        throw new Error("Pass a directory path after --mocks-dir");
+      }
+      options.mocksDir = path.resolve(value);
+      index += 1;
+      continue;
+    }
+
+    if (arg === "--image") {
+      const value = argv[index + 1];
+      if (!value) {
+        throw new Error("Pass a file path after --image");
+      }
+      options.fallbackImagePath = path.resolve(value);
+      index += 1;
+    }
   }
 
-  const imagePath = argv[imageFlagIndex + 1];
-  if (!imagePath) {
-    throw new Error("Pass a file path after --image");
-  }
-
-  return { imagePath: path.resolve(imagePath) };
+  return options;
 }
 
 function contentTypeForPath(imagePath) {
@@ -247,6 +290,20 @@ function publishedAtForDaysAgo(daysAgo) {
   return date.toISOString();
 }
 
+function loadImageBytes(imagePath, cache) {
+  if (!imagePath || !existsSync(imagePath)) {
+    return null;
+  }
+
+  if (cache.has(imagePath)) {
+    return cache.get(imagePath);
+  }
+
+  const bytes = readFileSync(imagePath);
+  cache.set(imagePath, bytes);
+  return bytes;
+}
+
 async function findDemoUserId(serviceRole) {
   const { data, error } = await serviceRole.auth.admin.listUsers({ page: 1, perPage: 200 });
   if (error) {
@@ -265,21 +322,44 @@ async function clearDemoData(serviceRole, authorId) {
     throw new Error(`Failed to list demo builds: ${error.message}`);
   }
 
-  const imagePaths = (builds ?? [])
+  await removeBuildImages(serviceRole, builds ?? []);
+  await deleteBuildRows(serviceRole, (builds ?? []).map((build) => build.id));
+}
+
+async function removeBuildImages(serviceRole, builds) {
+  const imagePaths = builds
     .map((build) => build.main_image_path)
     .filter((value) => typeof value === "string" && value.length > 0);
 
-  if (imagePaths.length > 0) {
-    const { error: storageError } = await serviceRole.storage.from("build-images").remove(imagePaths);
-    if (storageError) {
-      throw new Error(`Failed to remove demo images: ${storageError.message}`);
-    }
+  if (imagePaths.length === 0) {
+    return;
   }
 
-  const { error: deleteError } = await serviceRole.from("builds").delete().eq("author_id", authorId);
-  if (deleteError) {
-    throw new Error(`Failed to delete demo builds: ${deleteError.message}`);
+  const { error: storageError } = await serviceRole.storage.from("build-images").remove(imagePaths);
+  if (storageError) {
+    throw new Error(`Failed to remove build images: ${storageError.message}`);
   }
+}
+
+async function deleteBuildRows(serviceRole, buildIds) {
+  if (buildIds.length === 0) {
+    return;
+  }
+
+  const { error: deleteError } = await serviceRole.from("builds").delete().in("id", buildIds);
+  if (deleteError) {
+    throw new Error(`Failed to delete builds: ${deleteError.message}`);
+  }
+}
+
+async function clearAllBuilds(serviceRole) {
+  const { data: builds, error } = await serviceRole.from("builds").select("id, main_image_path");
+  if (error) {
+    throw new Error(`Failed to list builds for reset: ${error.message}`);
+  }
+
+  await removeBuildImages(serviceRole, builds ?? []);
+  await deleteBuildRows(serviceRole, (builds ?? []).map((build) => build.id));
 }
 
 async function ensureDemoUser(serviceRole) {
@@ -302,7 +382,7 @@ async function ensureDemoUser(serviceRole) {
   return data.user.id;
 }
 
-async function seedBuild(serviceRole, authorId, seed, imageBytes, imagePath) {
+async function seedBuild(serviceRole, authorId, seed, imageCache, fallbackImagePath) {
   const publishedAt = seed.status === "published" && seed.daysAgo !== null ? publishedAtForDaysAgo(seed.daysAgo) : null;
 
   const { data: build, error: insertError } = await serviceRole
@@ -316,7 +396,7 @@ async function seedBuild(serviceRole, authorId, seed, imageBytes, imagePath) {
       dial_colour: seed.dial_colour,
       strap_type: seed.strap_type,
       case_size_mm: seed.case_size_mm,
-      story: seed.status === "published" ? "Seeded catalog demo build for local browsing." : null,
+      story: seed.status === "published" ? seed.story : null,
     })
     .select("id")
     .single();
@@ -326,6 +406,14 @@ async function seedBuild(serviceRole, authorId, seed, imageBytes, imagePath) {
   }
 
   let mainImagePath = null;
+  const primaryImagePath = seed.imagePath ?? fallbackImagePath;
+  let imagePath = primaryImagePath;
+  let imageBytes = loadImageBytes(imagePath, imageCache);
+
+  if (!imageBytes && fallbackImagePath && imagePath !== fallbackImagePath) {
+    imagePath = fallbackImagePath;
+    imageBytes = loadImageBytes(imagePath, imageCache);
+  }
 
   if (imageBytes && seed.status === "published") {
     const extension = storageExtensionForPath(imagePath);
@@ -358,11 +446,46 @@ async function seedBuild(serviceRole, authorId, seed, imageBytes, imagePath) {
   return build.id;
 }
 
+function resolveCatalogDemoBuilds(mocksDir, fallbackImagePath) {
+  if (mocksDir === DEFAULT_MOCKS_DIR && !fallbackImagePath) {
+    return CATALOG_DEMO_BUILDS;
+  }
+
+  const publishedBuilds = expandMockBuilds(mocksDir);
+  return [
+    ...publishedBuilds,
+    {
+      name: "Private Draft — Should Not Appear In Catalog",
+      watch_style: "diver",
+      movement: "nh35",
+      dial_colour: "black",
+      strap_type: "steel_bracelet",
+      case_size_mm: 41,
+      status: "draft",
+      daysAgo: null,
+      story: null,
+      imagePath: fallbackImagePath ?? path.join(mocksDir, "mock_2.png"),
+    },
+  ];
+}
+
+function resolveSupabaseUrl(statusEnv, allowRemote) {
+  if (allowRemote && process.env.SUPABASE_URL) {
+    return process.env.SUPABASE_URL;
+  }
+
+  if (isLocalSupabaseUrl(process.env.SUPABASE_URL ?? "")) {
+    return process.env.SUPABASE_URL;
+  }
+
+  return statusEnv.API_URL || statusEnv.SUPABASE_URL || process.env.SUPABASE_URL || "http://127.0.0.1:54321";
+}
+
 async function main() {
-  const { imagePath } = parseArgs(process.argv.slice(2));
+  const { mocksDir, fallbackImagePath, allowRemote } = parseArgs(process.argv.slice(2));
   const statusEnv = parseSupabaseStatusEnv();
-  const url = statusEnv.API_URL || statusEnv.SUPABASE_URL || "http://127.0.0.1:54321";
-  assertLocalSupabaseUrl(url);
+  const url = resolveSupabaseUrl(statusEnv, allowRemote);
+  assertSeedTargetAllowed(url, allowRemote);
   const serviceRoleKey = requireEnv(
     "SUPABASE_SERVICE_ROLE_KEY",
     process.env.SUPABASE_SERVICE_ROLE_KEY || statusEnv.SERVICE_ROLE_KEY,
@@ -376,31 +499,54 @@ async function main() {
     },
   });
 
-  let imageBytes = null;
-  if (existsSync(imagePath)) {
-    imageBytes = readFileSync(imagePath);
-    console.log(`Using image: ${imagePath}`);
-  } else {
-    console.warn(`No image found at ${imagePath}. Seeding published builds without photos.`);
-    console.warn("Save your watch photo there or rerun with: npm run db:seed-catalog-demo -- --image <path>");
+  if (allowRemote) {
+    console.log("Remote seed enabled: clearing all builds before re-seeding demo catalog.");
+    await clearAllBuilds(serviceRole);
+  }
+
+  const catalogDemoBuilds = resolveCatalogDemoBuilds(mocksDir, fallbackImagePath);
+  const imageCache = new Map();
+  const uniqueImagePaths = [...new Set(catalogDemoBuilds.map((seed) => seed.imagePath).filter(Boolean))];
+  const resolvedFallbackImagePath = fallbackImagePath ?? (existsSync(DEFAULT_IMAGE) ? DEFAULT_IMAGE : null);
+
+  for (const imagePath of uniqueImagePaths) {
+    if (existsSync(imagePath)) {
+      loadImageBytes(imagePath, imageCache);
+      console.log(`Loaded mock image: ${imagePath}`);
+    } else {
+      console.warn(`Missing mock image: ${imagePath}`);
+    }
+  }
+
+  if (imageCache.size === 0 && resolvedFallbackImagePath && existsSync(resolvedFallbackImagePath)) {
+    loadImageBytes(resolvedFallbackImagePath, imageCache);
+    console.log(`Using fallback image: ${resolvedFallbackImagePath}`);
+  } else if (imageCache.size === 0) {
+    console.warn("No mock images found. Seeding published builds without photos.");
+    console.warn("Add PNGs to scripts/fixtures/mocks/ or rerun with: npm run db:seed-catalog-demo -- --image <path>");
   }
 
   const authorId = await ensureDemoUser(serviceRole);
   const buildIds = [];
 
-  for (const seed of CATALOG_DEMO_BUILDS) {
-    const buildId = await seedBuild(serviceRole, authorId, seed, imageBytes, imagePath);
+  for (const seed of catalogDemoBuilds) {
+    const buildId = await seedBuild(serviceRole, authorId, seed, imageCache, resolvedFallbackImagePath);
     buildIds.push(buildId);
   }
 
-  const publishedCount = CATALOG_DEMO_BUILDS.filter((seed) => seed.status === "published").length;
+  const publishedCount = catalogDemoBuilds.filter((seed) => seed.status === "published").length;
+  const uploadedImageCount = catalogDemoBuilds.filter(
+    (seed) => seed.status === "published" && seed.imagePath && imageCache.has(seed.imagePath),
+  ).length;
+
   console.log("");
   console.log("Catalog demo data ready.");
+  console.log(`- Supabase:    ${url}`);
   console.log(`- Demo author: ${DEMO_EMAIL}`);
   console.log("- Password:    not printed; see DEMO_PASSWORD in scripts/seed-catalog-demo.mjs");
-  console.log(`- Published:   ${publishedCount} builds`);
+  console.log(`- Published:   ${publishedCount} builds (${MOCK_BUILD_TEMPLATES.length} mocks x${COPIES_PER_MOCK})`);
   console.log(`- Draft:       1 build (hidden from catalog)`);
-  console.log(`- Images:      ${imageBytes ? "uploaded for published builds" : "none"}`);
+  console.log(`- Images:      ${uploadedImageCount} published builds with photos`);
   console.log("");
   console.log("Open /builds after the catalog page lands.");
   console.log("Note: catalog integration tests clear this demo data automatically before they run.");
