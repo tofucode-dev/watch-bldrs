@@ -346,14 +346,14 @@ Low volume expected. Page size 12, select only card projection fields, sign imag
 
 #### Automated
 
-- [ ] 1.1 Owned-build cursor and use-case unit tests pass
-- [ ] 1.2 Store unit tests cover list boundaries and delete Storage ordering
-- [ ] 1.3 Integration tests pass for owned list and delete authorization
-- [ ] 1.4 Lint passes
+- [x] 1.1 Owned-build cursor and use-case unit tests pass
+- [x] 1.2 Store unit tests cover list boundaries and delete Storage ordering
+- [x] 1.3 Integration tests pass for owned list and delete authorization
+- [x] 1.4 Lint passes
 
 #### Manual
 
-- [ ] 1.5 None required — backend only
+- [x] 1.5 None required — backend only
 
 ### Phase 2: Published Edit Enablement and Route Migration
 

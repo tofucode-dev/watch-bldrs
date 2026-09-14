@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase";
 import { actorFromUser } from "./application/actor";
 import { attachMainImage } from "./application/attach-main-image";
 import { createDraftBuild } from "./application/create-draft-build";
+import { deleteBuild } from "./application/delete-build";
 import { publishBuild } from "./application/publish-build";
 import { updateDraftBuild } from "./application/update-draft-build";
 import { DraftNotFoundError, DraftValidationError, UnauthenticatedError, UnexpectedStoreError } from "./domain/errors";
@@ -35,6 +36,10 @@ const draftInputSchema = z.object({
 
 export type DraftActionResult =
   { ok: true; id: string } | { ok: false; error: "validation"; fields: Record<string, string> };
+
+export interface DeleteActionResult {
+  ok: true;
+}
 
 function storeFromContext(context: { request: Request; cookies: Parameters<typeof createClient>[1] }) {
   const client = createClient(context.request.headers, context.cookies);
@@ -117,6 +122,27 @@ export const builds = {
         return { ok: true, id: result.id };
       } catch (error) {
         return toActionResult(error);
+      }
+    },
+  }),
+
+  delete: defineAction({
+    input: z.object({ id: z.uuid() }),
+    handler: async (input, context): Promise<DeleteActionResult> => {
+      try {
+        await deleteBuild(actorFromUser(context.locals.user), input.id, storeFromContext(context));
+        return { ok: true };
+      } catch (error) {
+        if (error instanceof ActionError) {
+          throw error;
+        }
+        if (error instanceof UnauthenticatedError) {
+          throw new ActionError({ code: "UNAUTHORIZED", message: error.message });
+        }
+        if (error instanceof UnexpectedStoreError) {
+          throw new ActionError({ code: "INTERNAL_SERVER_ERROR", message: error.message });
+        }
+        throw new ActionError({ code: "INTERNAL_SERVER_ERROR", message: "Something went wrong" });
       }
     },
   }),

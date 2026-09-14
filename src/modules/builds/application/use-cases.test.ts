@@ -6,7 +6,7 @@ import type { Actor } from "@/types";
 import { attachMainImage } from "./attach-main-image";
 import { createDraftBuild } from "./create-draft-build";
 import { getOwnedDraft } from "./get-owned-draft";
-import type { BuildStore } from "./ports/build-store";
+import type { BuildStore, ListOwnedBuildsInput, ListOwnedBuildsResult } from "./ports/build-store";
 import { publishBuild } from "./publish-build";
 import { updateDraftBuild } from "./update-draft-build";
 import { DraftNotFoundError, DraftValidationError, UnauthenticatedError } from "../domain/errors";
@@ -101,6 +101,78 @@ class FakeBuildStore implements BuildStore {
     existing.publishedAt = new Date().toISOString();
     existing.updatedAt = new Date().toISOString();
     return Promise.resolve({ id });
+  }
+
+  listOwnedBuilds(authorId: string, input: ListOwnedBuildsInput): Promise<ListOwnedBuildsResult> {
+    const owned = [...this.drafts.values()]
+      .filter((draft) => draft.authorId === authorId)
+      .sort((left, right) => {
+        const timeCompare = right.updatedAt.localeCompare(left.updatedAt);
+        if (timeCompare !== 0) {
+          return timeCompare;
+        }
+        return right.id.localeCompare(left.id);
+      });
+
+    if (owned.length === 0) {
+      return Promise.resolve({ items: [], hasMore: false });
+    }
+
+    let startIndex = 0;
+    let endIndex = owned.length;
+
+    if (input.direction === "after" && input.boundary) {
+      const boundaryIndex = owned.findIndex(
+        (draft) => draft.updatedAt === input.boundary?.updatedAt && draft.id === input.boundary.id,
+      );
+      if (boundaryIndex === -1) {
+        return Promise.resolve({ items: [], hasMore: false });
+      }
+      startIndex = boundaryIndex + 1;
+      endIndex = Math.min(startIndex + input.pageSize + 1, owned.length);
+    } else if (input.direction === "before" && input.boundary) {
+      const boundaryIndex = owned.findIndex(
+        (draft) => draft.updatedAt === input.boundary?.updatedAt && draft.id === input.boundary.id,
+      );
+      if (boundaryIndex === -1) {
+        return Promise.resolve({ items: [], hasMore: false });
+      }
+      endIndex = boundaryIndex;
+      startIndex = Math.max(0, endIndex - input.pageSize - 1);
+    } else {
+      endIndex = Math.min(input.pageSize + 1, owned.length);
+    }
+
+    const slice = owned.slice(startIndex, endIndex);
+    const hasMore = slice.length > input.pageSize;
+    const pageItems = hasMore ? slice.slice(0, input.pageSize) : slice;
+
+    return Promise.resolve({
+      items: pageItems.map((draft) => ({
+        updatedAt: draft.updatedAt,
+        card: {
+          id: draft.id,
+          name: draft.name,
+          status: draft.status,
+          mainImageUrl: draft.mainImageUrl,
+          watchStyle: draft.watchStyle,
+          movement: draft.movement,
+          dialColour: draft.dialColour,
+          strapType: draft.strapType,
+          caseSizeMm: draft.caseSizeMm,
+          updatedAt: draft.updatedAt,
+        },
+      })),
+      hasMore,
+    });
+  }
+
+  deleteBuild(authorId: string, id: string): Promise<void> {
+    const existing = this.drafts.get(id);
+    if (existing?.authorId === authorId) {
+      this.drafts.delete(id);
+    }
+    return Promise.resolve();
   }
 }
 

@@ -35,3 +35,10 @@ export class UnexpectedStoreError extends Error {
     this.name = "UnexpectedStoreError";
   }
 }
+
+export class InvalidOwnedBuildCursorError extends Error {
+  constructor(message = "Invalid owned build cursor") {
+    super(message);
+    this.name = "InvalidOwnedBuildCursorError";
+  }
+}
