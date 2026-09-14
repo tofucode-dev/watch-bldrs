@@ -229,7 +229,12 @@ function assertSeedTargetAllowed(url, allowRemote) {
   );
 }
 
+/**
+ * @param {string[]} argv
+ * @returns {{ mocksDir: string, fallbackImagePath: string | null, allowRemote: boolean }}
+ */
 function parseArgs(argv) {
+  /** @type {{ mocksDir: string, fallbackImagePath: string | null, allowRemote: boolean }} */
   const options = {
     mocksDir: DEFAULT_MOCKS_DIR,
     fallbackImagePath: null,
@@ -323,7 +328,10 @@ async function clearDemoData(serviceRole, authorId) {
   }
 
   await removeBuildImages(serviceRole, builds ?? []);
-  await deleteBuildRows(serviceRole, (builds ?? []).map((build) => build.id));
+  await deleteBuildRows(
+    serviceRole,
+    (builds ?? []).map((build) => build.id),
+  );
 }
 
 async function removeBuildImages(serviceRole, builds) {
@@ -359,7 +367,10 @@ async function clearAllBuilds(serviceRole) {
   }
 
   await removeBuildImages(serviceRole, builds ?? []);
-  await deleteBuildRows(serviceRole, (builds ?? []).map((build) => build.id));
+  await deleteBuildRows(
+    serviceRole,
+    (builds ?? []).map((build) => build.id),
+  );
 }
 
 async function ensureDemoUser(serviceRole) {
