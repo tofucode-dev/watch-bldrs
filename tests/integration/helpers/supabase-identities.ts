@@ -138,6 +138,44 @@ export async function createTestIdentities(): Promise<TestIdentities> {
   };
 }
 
+export const CATALOG_DEMO_EMAIL = "catalog-demo@example.com";
+
 export async function cleanupBuild(serviceRole: SupabaseClient<Database>, buildId: string): Promise<void> {
   await serviceRole.from("builds").delete().eq("id", buildId);
+}
+
+export async function clearCatalogDemoData(serviceRole: SupabaseClient<Database>): Promise<void> {
+  const { data, error } = await serviceRole.auth.admin.listUsers({ page: 1, perPage: 200 });
+  if (error) {
+    throw new Error(`Failed to list users while clearing catalog demo data: ${error.message}`);
+  }
+
+  const demoUserId = data.users.find((user) => user.email === CATALOG_DEMO_EMAIL)?.id;
+  if (!demoUserId) {
+    return;
+  }
+
+  const { data: builds, error: buildsError } = await serviceRole
+    .from("builds")
+    .select("id, main_image_path")
+    .eq("author_id", demoUserId);
+  if (buildsError) {
+    throw new Error(`Failed to list catalog demo builds: ${buildsError.message}`);
+  }
+
+  const imagePaths = (builds ?? [])
+    .map((build) => build.main_image_path)
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
+
+  if (imagePaths.length > 0) {
+    const { error: storageError } = await serviceRole.storage.from("build-images").remove(imagePaths);
+    if (storageError) {
+      throw new Error(`Failed to remove catalog demo images: ${storageError.message}`);
+    }
+  }
+
+  const { error: deleteError } = await serviceRole.from("builds").delete().eq("author_id", demoUserId);
+  if (deleteError) {
+    throw new Error(`Failed to delete catalog demo builds: ${deleteError.message}`);
+  }
 }

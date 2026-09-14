@@ -346,20 +346,20 @@ S-04 can be implemented and released with directly seeded or otherwise existing 
 
 #### Automated
 
-- [ ] 1.1 Catalog cursor tests reject malformed, partial, conflicting, non-UUID, and non-date boundaries
-- [ ] 1.2 Catalog use-case and adapter tests cover empty, twelve/thirteen, previous/next, equal-timestamp, error, display-label, zero-like, and per-image fallback behavior
-- [ ] 1.3 Catalog integration tests prove anonymous, author A, and user B receive identical published-only deterministic pages and never their own drafts
-- [ ] 1.4 Catalog query source explicitly constrains published status and timestamp while selecting only the card projection
-- [ ] 1.5 Browser-safe catalog exports contain no Worker-only, Supabase-infrastructure, or deep cross-module imports
-- [ ] 1.6 Phase 1 repository lint passes
-- [ ] 1.7 Phase 1 unit and component tests pass
-- [ ] 1.8 Phase 1 Cloudflare Workers build passes
+- [x] 1.1 Catalog cursor tests reject malformed, partial, conflicting, non-UUID, and non-date boundaries
+- [x] 1.2 Catalog use-case and adapter tests cover empty, twelve/thirteen, previous/next, equal-timestamp, error, display-label, zero-like, and per-image fallback behavior
+- [x] 1.3 Catalog integration tests prove anonymous, author A, and user B receive identical published-only deterministic pages and never their own drafts
+- [x] 1.4 Catalog query source explicitly constrains published status and timestamp while selecting only the card projection
+- [x] 1.5 Browser-safe catalog exports contain no Worker-only, Supabase-infrastructure, or deep cross-module imports
+- [x] 1.6 Phase 1 repository lint passes
+- [x] 1.7 Phase 1 unit and component tests pass
+- [x] 1.8 Phase 1 Cloudflare Workers build passes
 
 #### Manual
 
-- [ ] 1.9 Clean local reset and catalog integration run pass without leaving seeded rows
-- [ ] 1.10 Representative catalog query plan is inspected and its MVP indexing conclusion recorded
-- [ ] 1.11 Logs and test output contain no cookies, keys, signed URLs, or sensitive image data
+- [x] 1.9 Clean local reset and catalog integration run pass without leaving seeded rows
+- [x] 1.10 Representative catalog query plan is inspected and its MVP indexing conclusion recorded
+- [x] 1.11 Logs and test output contain no cookies, keys, signed URLs, or sensitive image data
 
 ### Phase 2: Accessible SSR Catalog Surface
 
