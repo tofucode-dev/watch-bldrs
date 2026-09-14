@@ -358,7 +358,7 @@ No migration or generated database-type change is expected. The existing `publis
 
 #### Manual
 
-- [x] 3.6 Author publishes an empty or populated saved draft and sees confirmation at phone and desktop widths
-- [x] 3.7 Every unsaved or failed-to-persist form and photo state blocks Publish with understandable guidance
-- [x] 3.8 Anonymous and non-author attempts cannot publish or learn protected record state
-- [x] 3.9 No unpublish, catalog, details, account-list, or published-edit surface was added
+- [x] 3.6 Author publishes an empty or populated saved draft and sees confirmation at phone and desktop widths - 3bb121b
+- [x] 3.7 Every unsaved or failed-to-persist form and photo state blocks Publish with understandable guidance - 3bb121b
+- [x] 3.8 Anonymous and non-author attempts cannot publish or learn protected record state - 3bb121b
+- [x] 3.9 No unpublish, catalog, details, account-list, or published-edit surface was added - 3bb121b
