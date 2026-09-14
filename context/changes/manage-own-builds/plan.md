@@ -390,14 +390,14 @@ Low volume expected. Page size 12, select only card projection fields, sign imag
 
 #### Automated
 
-- [x] 4.1 Full unit and component test suite passes
-- [x] 4.2 Integration tests pass
-- [x] 4.3 Lint passes
-- [x] 4.4 Production build passes
-- [x] 4.5 No server-only code in client bundles
+- [x] 4.1 Full unit and component test suite passes — 4dd1ec3
+- [x] 4.2 Integration tests pass — 4dd1ec3
+- [x] 4.3 Lint passes — 4dd1ec3
+- [x] 4.4 Production build passes — 4dd1ec3
+- [x] 4.5 No server-only code in client bundles — 4dd1ec3
 
 #### Manual
 
-- [x] 4.6 End-to-end proving flow: list, create, publish, edit published, delete
-- [x] 4.7 User B cannot access or delete author A builds
-- [x] 4.8 Accepted visual gaps recorded in change.md
+- [x] 4.6 End-to-end proving flow: list, create, publish, edit published, delete — 4dd1ec3
+- [x] 4.7 User B cannot access or delete author A builds — 4dd1ec3
+- [x] 4.8 Accepted visual gaps recorded in change.md — 4dd1ec3
