@@ -382,17 +382,17 @@ S-04 can be implemented and released with directly seeded or otherwise existing 
 
 #### Automated
 
-- [x] 3.1 Final repository lint passes
-- [x] 3.2 Final unit and component test suite passes
-- [x] 3.3 Final Storybook production build passes
-- [x] 3.4 Final Cloudflare Workers production build passes
-- [x] 3.5 Clean-reset catalog integration suite passes
-- [x] 3.6 Browser/server boundary review finds no server-only catalog code or sensitive values in client-facing imports
-- [x] 3.7 Cross-module review finds no infrastructure deep imports or circular dependency
-- [x] 3.8 Foundation docs name S-04 for catalog exclusion and S-07 for likes persistence
+- [x] 3.1 Final repository lint passes — 73f10b7
+- [x] 3.2 Final unit and component test suite passes — 73f10b7
+- [x] 3.3 Final Storybook production build passes — 73f10b7
+- [x] 3.4 Final Cloudflare Workers production build passes — 73f10b7
+- [x] 3.5 Clean-reset catalog integration suite passes — 73f10b7
+- [x] 3.6 Browser/server boundary review finds no server-only catalog code or sensitive values in client-facing imports — 73f10b7
+- [x] 3.7 Cross-module review finds no infrastructure deep imports or circular dependency — 73f10b7
+- [x] 3.8 Foundation docs name S-04 for catalog exclusion and S-07 for likes persistence — 73f10b7
 
 #### Manual
 
-- [x] 3.9 Final phone and desktop proving subset passes across paging and zero-card states
-- [x] 3.10 Published refresh visibility and draft exclusion are confirmed for every public identity
-- [x] 3.11 Verification evidence, query-plan conclusion, and accepted visual gaps are recorded in change.md
+- [x] 3.9 Final phone and desktop proving subset passes across paging and zero-card states — 73f10b7
+- [x] 3.10 Published refresh visibility and draft exclusion are confirmed for every public identity — 73f10b7
+- [x] 3.11 Verification evidence, query-plan conclusion, and accepted visual gaps are recorded in change.md — 73f10b7
