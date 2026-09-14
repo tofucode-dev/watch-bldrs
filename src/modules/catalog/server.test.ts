@@ -113,4 +113,15 @@ describe("resolveCatalogListing", () => {
     const result = await resolveCatalogListing(makeRequest(), cookies);
     expect(result).toEqual({ status: "unavailable" });
   });
+
+  it("returns unavailable for unexpected store failures", async () => {
+    const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
+
+    vi.mocked(createSupabaseCatalogStore).mockReturnValue({
+      listPublished: vi.fn().mockRejectedValue(new TypeError("Cannot read properties of null")),
+    });
+
+    const result = await resolveCatalogListing(makeRequest(), cookies);
+    expect(result).toEqual({ status: "unavailable" });
+  });
 });

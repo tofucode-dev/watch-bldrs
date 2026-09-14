@@ -82,9 +82,6 @@ export async function resolveCatalogListing(request: Request, cookies: AstroCook
     if (error instanceof InvalidCatalogCursorError) {
       return { status: "invalid-cursor" };
     }
-    if (error instanceof CatalogUnavailableError) {
-      return { status: "unavailable" };
-    }
-    throw error;
+    return { status: "unavailable" };
   }
 }

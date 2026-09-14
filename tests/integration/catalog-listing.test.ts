@@ -32,14 +32,14 @@ describe("catalog listing identity matrix", () => {
     const seeds = [
       { authorId: identities.authorA.id, status: "draft" as const, name: "Author A draft", publishedAt: null },
       { authorId: identities.userB.id, status: "draft" as const, name: "User B draft", publishedAt: null },
-      ...Array.from({ length: 13 }, (_, index) => ({
+      ...Array.from({ length: 25 }, (_, index) => ({
         authorId: index % 2 === 0 ? identities.authorA.id : identities.userB.id,
         status: "published" as const,
         name: `Published ${index + 1}`,
         publishedAt:
           index < 2
             ? sharedTimestamp
-            : `2026-09-${String(14 - Math.floor(index / 2)).padStart(2, "0")}T${String(10 + index).padStart(2, "0")}:00:00.000Z`,
+            : new Date(Date.UTC(2026, 8, 13, 12, 0, 0) - index * 3_600_000).toISOString(),
       })),
     ];
 
@@ -126,22 +126,55 @@ describe("catalog listing identity matrix", () => {
       },
       store,
     );
-    expect(second.items).toHaveLength(1);
+    expect(second.items).toHaveLength(12);
+    expect(second.nextCursor).not.toBeNull();
     expect(second.previousCursor).not.toBeNull();
 
-    const previousCursor = second.previousCursor;
-    if (!previousCursor) {
-      throw new Error("Expected a previous-page cursor");
+    const secondNextCursor = second.nextCursor;
+    if (!secondNextCursor) {
+      throw new Error("Expected a third-page cursor");
     }
 
-    const back = await listPublishedBuilds(
+    const third = await listPublishedBuilds(
       {
-        direction: "before",
-        boundary: decodeCatalogCursor(previousCursor),
+        direction: "after",
+        boundary: decodeCatalogCursor(secondNextCursor),
       },
       store,
     );
-    expect(back.items.map((item) => item.id)).toEqual(first.items.map((item) => item.id));
+    expect(third.items).toHaveLength(1);
+    expect(third.previousCursor).not.toBeNull();
+
+    const fromThird = third.previousCursor;
+    if (!fromThird) {
+      throw new Error("Expected a previous-page cursor from the third page");
+    }
+
+    const backToSecond = await listPublishedBuilds(
+      {
+        direction: "before",
+        boundary: decodeCatalogCursor(fromThird),
+      },
+      store,
+    );
+    expect(backToSecond.items.map((item) => item.id)).toEqual(second.items.map((item) => item.id));
+
+    const fromSecond = second.previousCursor;
+    if (!fromSecond) {
+      throw new Error("Expected a previous-page cursor from the second page");
+    }
+
+    const backToFirst = await listPublishedBuilds(
+      {
+        direction: "before",
+        boundary: decodeCatalogCursor(fromSecond),
+      },
+      store,
+    );
+    expect(backToFirst.items.map((item) => item.id)).toEqual(first.items.map((item) => item.id));
+
+    const allIds = [...first.items, ...second.items, ...third.items].map((item) => item.id);
+    expect(new Set(allIds).size).toBe(25);
   });
 });
 

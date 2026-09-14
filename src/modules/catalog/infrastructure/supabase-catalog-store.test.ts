@@ -94,12 +94,37 @@ describe("createSupabaseCatalogStore", () => {
 
     await store.listPublished({
       direction: "before",
-      boundary: { publishedAt: "2026-09-14T11:00:00.000Z", id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" },
+      boundary: { publishedAt: "2026-09-14T11:00:00+00:00", id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" },
       pageSize: 12,
     });
 
     expect(chain.order).toHaveBeenCalledWith("published_at", { ascending: true });
     expect(chain.order).toHaveBeenCalledWith("id", { ascending: true });
+    expect(chain.or).toHaveBeenCalledWith(
+      'published_at.gt."2026-09-14T11:00:00.000Z",and(published_at.eq."2026-09-14T11:00:00.000Z",id.gt."bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb")',
+    );
+  });
+
+  it("keeps the twelve rows closest to a before cursor when hasMore", async () => {
+    const rows = Array.from({ length: 13 }, (_, index) => ({
+      ...baseRow,
+      id: `${String(index + 1).padStart(8, "0")}-0000-4000-8000-000000000000`,
+      published_at: `2026-09-14T${String(index).padStart(2, "0")}:00:00.000Z`,
+    }));
+    const { client } = createMockClient(rows);
+    const store = createSupabaseCatalogStore(client as never);
+
+    const result = await store.listPublished({
+      direction: "before",
+      boundary: { publishedAt: "2026-09-13T23:00:00.000Z", id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" },
+      pageSize: 12,
+    });
+
+    expect(result.hasMore).toBe(true);
+    expect(result.items).toHaveLength(12);
+    expect(result.items[0]?.card.id).toBe(rows[11].id);
+    expect(result.items[11]?.card.id).toBe(rows[0].id);
+    expect(result.items.map((item) => item.card.id)).not.toContain(rows[12].id);
   });
 
   it("maps display labels and zero likes", async () => {

@@ -196,6 +196,20 @@ function requireEnv(name, value) {
   return value;
 }
 
+function assertLocalSupabaseUrl(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`Invalid Supabase URL: ${url}`);
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  if (hostname !== "localhost" && hostname !== "127.0.0.1" && hostname !== "::1") {
+    throw new Error(`Refusing to seed catalog demo data against non-local Supabase URL (${hostname}).`);
+  }
+}
+
 function parseArgs(argv) {
   const imageFlagIndex = argv.indexOf("--image");
   if (imageFlagIndex === -1) {
@@ -348,6 +362,7 @@ async function main() {
   const { imagePath } = parseArgs(process.argv.slice(2));
   const statusEnv = parseSupabaseStatusEnv();
   const url = statusEnv.API_URL || statusEnv.SUPABASE_URL || "http://127.0.0.1:54321";
+  assertLocalSupabaseUrl(url);
   const serviceRoleKey = requireEnv(
     "SUPABASE_SERVICE_ROLE_KEY",
     process.env.SUPABASE_SERVICE_ROLE_KEY || statusEnv.SERVICE_ROLE_KEY,
@@ -382,7 +397,7 @@ async function main() {
   console.log("");
   console.log("Catalog demo data ready.");
   console.log(`- Demo author: ${DEMO_EMAIL}`);
-  console.log(`- Password:    ${DEMO_PASSWORD}`);
+  console.log("- Password:    not printed; see DEMO_PASSWORD in scripts/seed-catalog-demo.mjs");
   console.log(`- Published:   ${publishedCount} builds`);
   console.log(`- Draft:       1 build (hidden from catalog)`);
   console.log(`- Images:      ${imageBytes ? "uploaded for published builds" : "none"}`);

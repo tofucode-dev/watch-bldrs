@@ -2,6 +2,7 @@ import { InvalidCatalogCursorError } from "../domain/errors";
 import type { CatalogCursorPayload, CatalogQueryDirection } from "./catalog-types";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const ISO_TIMESTAMPTZ_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
 
 function bytesToBase64Url(bytes: Uint8Array): string {
   let binary = "";
@@ -22,9 +23,17 @@ function base64UrlToBytes(encoded: string): Uint8Array {
   return bytes;
 }
 
-function isValidIsoTimestamp(value: string): boolean {
-  const parsed = Date.parse(value);
-  return Number.isFinite(parsed);
+function canonicalizeTimestamp(value: string): string {
+  if (!ISO_TIMESTAMPTZ_PATTERN.test(value)) {
+    throw new InvalidCatalogCursorError();
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new InvalidCatalogCursorError();
+  }
+
+  return parsed.toISOString();
 }
 
 function parseCursorPayload(value: unknown): CatalogCursorPayload {
@@ -45,16 +54,16 @@ function parseCursorPayload(value: unknown): CatalogCursorPayload {
     throw new InvalidCatalogCursorError();
   }
 
-  if (!isValidIsoTimestamp(publishedAt) || !UUID_PATTERN.test(id)) {
+  if (!UUID_PATTERN.test(id)) {
     throw new InvalidCatalogCursorError();
   }
 
-  return { publishedAt, id };
+  return { publishedAt: canonicalizeTimestamp(publishedAt), id };
 }
 
 export function encodeCatalogCursor(payload: CatalogCursorPayload): string {
   const json = JSON.stringify({
-    publishedAt: payload.publishedAt,
+    publishedAt: canonicalizeTimestamp(payload.publishedAt),
     id: payload.id,
   });
   return bytesToBase64Url(new TextEncoder().encode(json));

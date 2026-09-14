@@ -39,6 +39,22 @@ describe("catalog cursor", () => {
     expect(() => decodeCatalogCursor(encoded)).toThrow(InvalidCatalogCursorError);
   });
 
+  it("rejects Date.parse-valid timestamps that are not ISO-8601", () => {
+    const encoded = btoa(JSON.stringify({ publishedAt: "January 1, 2020", id: VALID_PAYLOAD.id }))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/g, "");
+    expect(() => decodeCatalogCursor(encoded)).toThrow(InvalidCatalogCursorError);
+  });
+
+  it("canonicalizes offset timestamps to UTC ISO-8601", () => {
+    const encoded = encodeCatalogCursor({
+      publishedAt: "2026-09-14T10:00:00+00:00",
+      id: VALID_PAYLOAD.id,
+    });
+    expect(decodeCatalogCursor(encoded)).toEqual(VALID_PAYLOAD);
+  });
+
   it("rejects extra tuple members", () => {
     const encoded = btoa(
       JSON.stringify({

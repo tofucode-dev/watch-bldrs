@@ -24,22 +24,34 @@ interface CatalogRow {
   published_at: string | null;
 }
 
+function quoteFilterValue(value: string): string {
+  return `"${value.replaceAll('"', '\\"')}"`;
+}
+
+function keysetTimestamp(publishedAt: string): string {
+  const parsed = new Date(publishedAt);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new CatalogUnavailableError();
+  }
+  return parsed.toISOString();
+}
+
 function applyAfterBoundary<T extends { or: (filters: string) => T }>(
   query: T,
   boundary: { publishedAt: string; id: string },
 ): T {
-  return query.or(
-    `published_at.lt.${boundary.publishedAt},and(published_at.eq.${boundary.publishedAt},id.lt.${boundary.id})`,
-  );
+  const publishedAt = quoteFilterValue(keysetTimestamp(boundary.publishedAt));
+  const id = quoteFilterValue(boundary.id);
+  return query.or(`published_at.lt.${publishedAt},and(published_at.eq.${publishedAt},id.lt.${id})`);
 }
 
 function applyBeforeBoundary<T extends { or: (filters: string) => T }>(
   query: T,
   boundary: { publishedAt: string; id: string },
 ): T {
-  return query.or(
-    `published_at.gt.${boundary.publishedAt},and(published_at.eq.${boundary.publishedAt},id.gt.${boundary.id})`,
-  );
+  const publishedAt = quoteFilterValue(keysetTimestamp(boundary.publishedAt));
+  const id = quoteFilterValue(boundary.id);
+  return query.or(`published_at.gt.${publishedAt},and(published_at.eq.${publishedAt},id.gt.${id})`);
 }
 
 async function mapRowToListedItem(client: CatalogClient, row: CatalogRow): Promise<CatalogListedItem | null> {
@@ -101,13 +113,10 @@ export function createSupabaseCatalogStore(client: CatalogClient): CatalogStore 
         throw new CatalogUnavailableError();
       }
 
-      let rows = data as CatalogRow[];
-      if (input.direction === "before") {
-        rows = [...rows].reverse();
-      }
-
+      const rows = (data ?? []) as CatalogRow[];
       const hasMore = rows.length > input.pageSize;
-      const displayRows = hasMore ? rows.slice(0, input.pageSize) : rows;
+      const boundedRows = hasMore ? rows.slice(0, input.pageSize) : rows;
+      const displayRows = input.direction === "before" ? [...boundedRows].reverse() : boundedRows;
 
       const mapped = await Promise.all(displayRows.map((row) => mapRowToListedItem(client, row)));
       const items = mapped.filter((item): item is CatalogListedItem => item !== null);
