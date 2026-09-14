@@ -74,6 +74,32 @@ describe("createSupabaseCatalogStore", () => {
     expect(chain.not).toHaveBeenCalledWith("published_at", "is", null);
   });
 
+  it("chains all active filters before keyset boundaries", async () => {
+    const { client, chain } = createMockClient([baseRow]);
+    const store = createSupabaseCatalogStore(client as never);
+
+    await store.listPublished({
+      direction: "after",
+      boundary: { publishedAt: "2026-09-14T12:00:00.000Z", id: baseRow.id },
+      pageSize: 12,
+      filters: {
+        watch_style: "diver",
+        movement: "nh35",
+        dial_colour: "black",
+        strap_type: "steel_bracelet",
+        case_size_mm: 40,
+      },
+    });
+
+    expect(chain.eq).toHaveBeenNthCalledWith(1, "status", "published");
+    expect(chain.eq).toHaveBeenNthCalledWith(2, "watch_style", "diver");
+    expect(chain.eq).toHaveBeenNthCalledWith(3, "movement", "nh35");
+    expect(chain.eq).toHaveBeenNthCalledWith(4, "dial_colour", "black");
+    expect(chain.eq).toHaveBeenNthCalledWith(5, "strap_type", "steel_bracelet");
+    expect(chain.eq).toHaveBeenNthCalledWith(6, "case_size_mm", 40);
+    expect(chain.eq.mock.invocationCallOrder.at(-1)).toBeLessThan(chain.or.mock.invocationCallOrder[0]);
+  });
+
   it("slices thirteen rows down to twelve and reports hasMore", async () => {
     const rows = Array.from({ length: 13 }, (_, index) => ({
       ...baseRow,

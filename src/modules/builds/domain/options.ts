@@ -16,6 +16,9 @@ export const PART_CATEGORIES = [
 ] as const;
 export const CURRENCIES = ["USD", "EUR", "GBP", "PLN", "CHF", "JPY", "CAD", "AUD"] as const;
 
+export const CASE_SIZE_MIN_MM = 20;
+export const CASE_SIZE_MAX_MM = 70;
+
 export type WatchStyle = (typeof WATCH_STYLES)[number];
 export type Movement = (typeof MOVEMENTS)[number];
 export type DialColour = (typeof DIAL_COLOURS)[number];

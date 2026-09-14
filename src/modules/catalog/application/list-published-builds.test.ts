@@ -4,6 +4,7 @@ import { encodeCatalogCursor } from "./catalog-cursor";
 import { listPublishedBuilds } from "./list-published-builds";
 import type { CatalogListedItem, CatalogStore, ListPublishedInput } from "./ports/catalog-store";
 import { CatalogUnavailableError } from "../domain/errors";
+import type { CatalogFilters } from "./catalog-filters";
 
 function makeCard(id: string, publishedAt: string): CatalogListedItem {
   return {
@@ -23,12 +24,15 @@ function makeCard(id: string, publishedAt: string): CatalogListedItem {
 }
 
 class FakeCatalogStore implements CatalogStore {
+  lastInput: ListPublishedInput | undefined;
+
   constructor(
     private readonly pages: Record<string, { items: CatalogListedItem[]; hasMore: boolean }>,
     private readonly shouldFail = false,
   ) {}
 
   listPublished(input: ListPublishedInput) {
+    this.lastInput = input;
     if (this.shouldFail) {
       return Promise.reject(new CatalogUnavailableError());
     }
@@ -69,6 +73,21 @@ describe("listPublishedBuilds", () => {
 
     const page = await listPublishedBuilds({ direction: "first", boundary: null }, store);
     expect(page.previousCursor).toBeNull();
+    expect(page.nextCursor).toBe(encodeCatalogCursor({ publishedAt: t2, id: id2 }));
+  });
+
+  it("forwards active filters while deriving cursors", async () => {
+    const filters: CatalogFilters = { watch_style: "diver", movement: "nh35", case_size_mm: 40 };
+    const store = new FakeCatalogStore({
+      "first:none": {
+        items: [makeCard(id1, t1), makeCard(id2, t2)],
+        hasMore: true,
+      },
+    });
+
+    const page = await listPublishedBuilds({ direction: "first", boundary: null, filters }, store);
+
+    expect(store.lastInput?.filters).toBe(filters);
     expect(page.nextCursor).toBe(encodeCatalogCursor({ publishedAt: t2, id: id2 }));
   });
 

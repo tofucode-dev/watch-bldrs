@@ -2,10 +2,12 @@ import { encodeCatalogCursor } from "./catalog-cursor";
 import type { CatalogPage, CatalogQueryDirection, CatalogCursorPayload } from "./catalog-types";
 import { CATALOG_PAGE_SIZE } from "./catalog-types";
 import type { CatalogStore } from "./ports/catalog-store";
+import type { CatalogFilters } from "./catalog-filters";
 
 export interface ListPublishedBuildsInput {
   direction: CatalogQueryDirection;
   boundary: CatalogCursorPayload | null;
+  filters?: CatalogFilters;
 }
 
 export async function listPublishedBuilds(input: ListPublishedBuildsInput, store: CatalogStore): Promise<CatalogPage> {
@@ -13,6 +15,7 @@ export async function listPublishedBuilds(input: ListPublishedBuildsInput, store
     direction: input.direction,
     boundary: input.boundary,
     pageSize: CATALOG_PAGE_SIZE,
+    filters: input.filters,
   });
 
   const items = result.items.map((item) => item.card);

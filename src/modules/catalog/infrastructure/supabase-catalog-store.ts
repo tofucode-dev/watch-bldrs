@@ -4,6 +4,7 @@ import type { Database } from "@/lib/database.types";
 
 import { CatalogUnavailableError } from "../domain/errors";
 import type { CatalogStore, CatalogListedItem, ListPublishedInput } from "../application/ports/catalog-store";
+import type { CatalogFilters } from "../application/catalog-filters";
 import { dialColourLabel, movementLabel, strapTypeLabel, watchStyleLabel } from "./display-labels";
 import { publicImageUrlForPath } from "./public-image-url";
 
@@ -54,6 +55,31 @@ function applyBeforeBoundary<T extends { or: (filters: string) => T }>(
   return query.or(`published_at.gt.${publishedAt},and(published_at.eq.${publishedAt},id.gt.${id})`);
 }
 
+function applyCatalogFilters<T extends { eq: (column: string, value: string | number) => T }>(
+  query: T,
+  filters: CatalogFilters | undefined,
+): T {
+  let filteredQuery = query;
+
+  if (filters?.watch_style !== undefined) {
+    filteredQuery = filteredQuery.eq("watch_style", filters.watch_style);
+  }
+  if (filters?.movement !== undefined) {
+    filteredQuery = filteredQuery.eq("movement", filters.movement);
+  }
+  if (filters?.dial_colour !== undefined) {
+    filteredQuery = filteredQuery.eq("dial_colour", filters.dial_colour);
+  }
+  if (filters?.strap_type !== undefined) {
+    filteredQuery = filteredQuery.eq("strap_type", filters.strap_type);
+  }
+  if (filters?.case_size_mm !== undefined) {
+    filteredQuery = filteredQuery.eq("case_size_mm", filters.case_size_mm);
+  }
+
+  return filteredQuery;
+}
+
 async function mapRowToListedItem(client: CatalogClient, row: CatalogRow): Promise<CatalogListedItem | null> {
   if (row.published_at === null) {
     return null;
@@ -89,6 +115,7 @@ export function createSupabaseCatalogStore(client: CatalogClient): CatalogStore 
       const limit = input.pageSize + 1;
 
       let query = client.from("builds").select(CARD_SELECT).eq("status", "published").not("published_at", "is", null);
+      query = applyCatalogFilters(query, input.filters);
 
       if (input.direction === "first") {
         query = query.order("published_at", { ascending: false }).order("id", { ascending: false });

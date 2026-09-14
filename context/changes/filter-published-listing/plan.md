@@ -289,11 +289,11 @@ No database migration. Existing published rows with NULL filter attributes simpl
 
 #### Automated
 
-- [ ] 1.1 Filter parse rejects unknown enum values and out-of-range case sizes
-- [ ] 1.2 `buildCatalogListingHref` emits stable param order and omits empty filters
-- [ ] 1.3 Store adapter tests prove AND `.eq()` chaining before keyset boundaries
-- [ ] 1.4 `npm run test -- src/modules/catalog/application/catalog-filters.test.ts src/modules/catalog/application/catalog-url.test.ts src/modules/catalog/infrastructure/supabase-catalog-store.test.ts src/modules/catalog/application/list-published-builds.test.ts` passes
-- [ ] 1.5 `npm run lint` passes
+- [x] 1.1 Filter parse rejects unknown enum values and out-of-range case sizes
+- [x] 1.2 `buildCatalogListingHref` emits stable param order and omits empty filters
+- [x] 1.3 Store adapter tests prove AND `.eq()` chaining before keyset boundaries
+- [x] 1.4 `npm run test -- src/modules/catalog/application/catalog-filters.test.ts src/modules/catalog/application/catalog-url.test.ts src/modules/catalog/infrastructure/supabase-catalog-store.test.ts src/modules/catalog/application/list-published-builds.test.ts` passes
+- [x] 1.5 `npm run lint` passes
 
 ### Phase 2: Server Adapter and Listing States
 

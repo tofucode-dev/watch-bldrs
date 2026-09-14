@@ -1,4 +1,4 @@
----
+﻿---
 project: WatchBldrs
 version: 1
 status: draft
@@ -20,85 +20,85 @@ milestone_status: open
 
 ## Milestone
 
-**M-1: Proving flow — publish and discover** — Status: open
+**M-1: Proving flow â€” publish and discover** â€” Status: open
 
-- **Intent:** Deliver the primary success criterion: an enthusiast can sign in, create a structured draft, publish it, and another person can browse and filter it; an authenticated user can like it. Sequence for speed — park anything not on that path.
+- **Intent:** Deliver the primary success criterion: an enthusiast can sign in, create a structured draft, publish it, and another person can browse and filter it; an authenticated user can like it. Sequence for speed â€” park anything not on that path.
 - **Source materials:** `context/foundation/prd.md` (v1)
 - **Done when:** every F-NN and S-NN below is `done`.
-- **Scope anchors:** FR-001–FR-010, US-01–US-07, Access Control, Non-Functional Requirements (phone and desktop; sign-in must not block a first publish).
+- **Scope anchors:** FR-001â€“FR-010, US-01â€“US-07, Access Control, Non-Functional Requirements (phone and desktop; sign-in must not block a first publish).
 
 ## Vision recap
 
-Custom-watch builds already exist on forums and Reddit, but they are hard to find and filter, and details like parts and prices are often missing. Structured attributes beat mixed threads. WatchBldrs is a dedicated place to present a finished build and to scan other people’s builds for parts, prices, and inspiration.
+Custom-watch builds already exist on forums and Reddit, but they are hard to find and filter, and details like parts and prices are often missing. Structured attributes beat mixed threads. WatchBldrs is a dedicated place to present a finished build and to scan other peopleâ€™s builds for parts, prices, and inspiration.
 
 ## North star
 
-**S-04: user can browse published builds on the public listing** — this is the first proving story (the smallest end-to-end delivery that would prove the product’s core claim: a structured build belongs in a dedicated catalog). Create and publish come immediately before so the listing is not empty; details and filters stay separate so this slice is not the whole flow.
+**S-04: user can browse published builds on the public listing** â€” this is the first proving story (the smallest end-to-end delivery that would prove the productâ€™s core claim: a structured build belongs in a dedicated catalog). Create and publish come immediately before so the listing is not empty; details and filters stay separate so this slice is not the whole flow.
 
-> Here, **north star** means the smallest end-to-end slice whose successful delivery would prove that core claim — placed as early as Prerequisites allow because everything else only matters if this works.
+> Here, **north star** means the smallest end-to-end slice whose successful delivery would prove that core claim â€” placed as early as Prerequisites allow because everything else only matters if this works.
 
 ## At a glance
 
-| ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
+| ID | Change ID | Outcome (user can â€¦) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI), and private main-image storage | — | Access Control; Success Criteria guardrails; FR-003, FR-004 | done |
-| F-02 | authoring-form-components | (foundation) every UI component needed to implement the authoring form is in the shared UI library (photo upload is F-03) | — | FR-004, FR-005 | done |
+| F-01 | build-visibility-and-storage | (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI), and private main-image storage | â€” | Access Control; Success Criteria guardrails; FR-003, FR-004 | done |
+| F-02 | authoring-form-components | (foundation) every UI component needed to implement the authoring form is in the shared UI library (photo upload is F-03) | â€” | FR-004, FR-005 | done |
 | F-03 | photo-upload-component | (foundation) a photo-upload component and its upload logic can attach one main photo to private storage | F-01 | FR-004 | done |
-| S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | — | US-01, FR-001 | ready |
+| S-01 | sign-in-and-session | user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout | â€” | US-01, FR-001 | ready |
 | S-02 | create-draft-build | user can create a draft build with watch attributes, parts list, and main photo; the draft stays private | F-01, F-02, F-03, S-01 | US-02, FR-003, FR-004, FR-005 | done |
 | S-03 | publish-draft-build | user can publish a draft they own so it is eligible for the public listing | S-02 | US-02, FR-004 | done |
-| F-04 | listing-ui-components | (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library | — | FR-002 | done |
+| F-04 | listing-ui-components | (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library | â€” | FR-002 | done |
 | S-04 | show-public-builds | user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden | F-04, S-03 | US-02, FR-002 | done |
 | F-05 | filter-ui-components | (foundation) filter components that attach to an existing listing are in the shared UI library | F-04 | FR-006 | done |
-| S-05 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination | F-05, S-04 | US-03, FR-002, FR-006 | proposed |
-| S-06 | view-published-details | user can open a published build’s details and see main photo, name, author, story, watch attributes, parts list, and like count | S-04 | US-04, FR-002, FR-010 | proposed |
+| S-05 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination | F-05, S-04 | US-03, FR-002, FR-006 | in-progress |
+| S-06 | view-published-details | user can open a published buildâ€™s details and see main photo, name, author, story, watch attributes, parts list, and like count | S-04 | US-04, FR-002, FR-010 | proposed |
 | S-07 | like-published-build | authenticated user can like and unlike a published build at most once; like count is visible | S-01, S-06 | US-05, FR-007 | proposed |
-| S-08 | manage-own-builds | authenticated user can open an account area of only their drafts and published builds, start a new draft, and delete a build they own (including from details when they are the author) | S-02, S-04 | US-07, FR-003, FR-008 | proposed |
+| S-08 | manage-own-builds | authenticated user can open an account area of only their drafts and published builds, start a new draft, and delete a build they own (including from details when they are the author) | S-02, S-04 | US-07, FR-003, FR-008 | planning |
 | S-09 | edit-own-build | authenticated user can edit a build they own using the same form and photo-upload path as create, including from details when they are the author | F-02, F-03, S-02, S-08 | US-07, FR-003, FR-004, FR-005 | proposed |
 | F-06 | home-page-components | (foundation) Nav bar, Hero, Quick Filters, and home-page sections are in the shared UI library | F-04, F-05 | FR-009 | proposed |
 | S-10 | home-recent-builds | user landing on the home page sees recently published builds and can reach the listing, including by watch style | F-06, S-04, S-05 | US-06, FR-009 | proposed |
 
 ## Streams
 
-Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
+Navigation aid â€” groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Authoring | `F-01` → `F-02` → `F-03` → `S-02` → `S-03` | Speed path to a real draft and publish; `F-02` and `F-03` can run in parallel. |
-| B | Session and like | `S-01` → `S-07` | Parallel with Stream A; likes join Stream C at `S-06`. |
-| C | Public catalog | `F-04` → `S-04` → `F-05` → `S-05` → `S-06` | Listing kit can run in parallel with authoring; north star is `S-04`. |
-| D | Account | `S-08` → `S-09` | Joins Stream C at `S-04` (reuses listing components); edit reuses Stream A’s form and photo kit. |
-| E | Home | `F-06` → `S-10` | Joins Stream C at `S-05` so Quick Filters reuse the filter kit. |
+| A | Authoring | `F-01` â†’ `F-02` â†’ `F-03` â†’ `S-02` â†’ `S-03` | Speed path to a real draft and publish; `F-02` and `F-03` can run in parallel. |
+| B | Session and like | `S-01` â†’ `S-07` | Parallel with Stream A; likes join Stream C at `S-06`. |
+| C | Public catalog | `F-04` â†’ `S-04` â†’ `F-05` â†’ `S-05` â†’ `S-06` | Listing kit can run in parallel with authoring; north star is `S-04`. |
+| D | Account | `S-08` â†’ `S-09` | Joins Stream C at `S-04` (reuses listing components); edit reuses Stream Aâ€™s form and photo kit. |
+| E | Home | `F-06` â†’ `S-10` | Joins Stream C at `S-05` so Quick Filters reuse the filter kit. |
 
 ```mermaid
 flowchart TB
-  subgraph A["A · Authoring"]
-    F01["F-01 Persistence · done"]
-    F02["F-02 Form UI kit · done"]
-    F03["F-03 Photo upload · done"]
-    S02["S-02 Create draft · done"]
-    S03["S-03 Publish · done"]
+  subgraph A["A Â· Authoring"]
+    F01["F-01 Persistence Â· done"]
+    F02["F-02 Form UI kit Â· done"]
+    F03["F-03 Photo upload Â· done"]
+    S02["S-02 Create draft Â· done"]
+    S03["S-03 Publish Â· done"]
   end
 
-  subgraph B["B · Session and like"]
-    S01["S-01 Sign in · ready"]
+  subgraph B["B Â· Session and like"]
+    S01["S-01 Sign in Â· ready"]
     S07["S-07 Like / unlike"]
   end
 
-  subgraph C["C · Public catalog"]
-    F04["F-04 Listing UI kit · done"]
-    S04["S-04 Public listing · north star · planning"]
-    F05["F-05 Filter UI kit · done"]
+  subgraph C["C Â· Public catalog"]
+    F04["F-04 Listing UI kit Â· done"]
+    S04["S-04 Public listing Â· north star Â· planning"]
+    F05["F-05 Filter UI kit Â· done"]
     S05["S-05 Filter listing"]
     S06["S-06 Details"]
   end
 
-  subgraph D["D · Account"]
+  subgraph D["D Â· Account"]
     S08["S-08 Account list + delete"]
     S09["S-09 Edit own build"]
   end
 
-  subgraph E["E · Home"]
+  subgraph E["E Â· Home"]
     F06["F-06 Home UI kit"]
     S10["S-10 Home page"]
   end
@@ -137,20 +137,20 @@ flowchart TB
   class S04 north
 ```
 
-Open the preview for this file (`Markdown: Open Preview`) to see the graph. Arrows mean “must complete before.”
+Open the preview for this file (`Markdown: Open Preview`) to see the graph. Arrows mean â€œmust complete before.â€
 
 ## Baseline
 
 What's already in place in the codebase as of `2026-09-11` (auto-researched + user-confirmed).
 Foundations below assume these are present and do NOT re-scaffold them.
 
-- **Frontend:** partial — page routing and a starter control exist; auth screens have one-off email/password fields. There is no shared form kit, photo-upload control, listing card set, filter set, or home-page set.
-- **Backend / API:** partial — server-rendered app with session middleware and sign-in/up/out HTTP handlers; grouped UI mutations for builds are not introduced yet.
-- **Data:** present — migrations for `builds`, `build_parts`, RLS, and private `build-images` Storage; generated types; integration tests under `tests/integration/`.
-- **Auth:** present — cookie session, register/log in/log out, and route guards exist (currently password-based; PRD prefers magic link or Google/Reddit SSO).
-- **Deploy / infra:** present — production host, deploy config, and CI deploy-on-merge are wired.
-- **Observability:** partial — platform request observability is on; no application error-tracking product.
-- **Architecture contract (added):** documented, not implemented — `architecture/` records module boundaries (`auth`, `builds`, `catalog`, `likes`), access rules, publication state, storage, and catalog query rules; those product modules are not in the codebase yet.
+- **Frontend:** partial â€” page routing and a starter control exist; auth screens have one-off email/password fields. There is no shared form kit, photo-upload control, listing card set, filter set, or home-page set.
+- **Backend / API:** partial â€” server-rendered app with session middleware and sign-in/up/out HTTP handlers; grouped UI mutations for builds are not introduced yet.
+- **Data:** present â€” migrations for `builds`, `build_parts`, RLS, and private `build-images` Storage; generated types; integration tests under `tests/integration/`.
+- **Auth:** present â€” cookie session, register/log in/log out, and route guards exist (currently password-based; PRD prefers magic link or Google/Reddit SSO).
+- **Deploy / infra:** present â€” production host, deploy config, and CI deploy-on-merge are wired.
+- **Observability:** partial â€” platform request observability is on; no application error-tracking product.
+- **Architecture contract (added):** documented, not implemented â€” `architecture/` records module boundaries (`auth`, `builds`, `catalog`, `likes`), access rules, publication state, storage, and catalog query rules; those product modules are not in the codebase yet.
 
 ## Foundations
 
@@ -159,12 +159,12 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage.
 - **Change ID:** build-visibility-and-storage
 - **PRD refs:** Access Control; Success Criteria guardrails; FR-003, FR-004
-- **Unlocks:** S-02, F-03 (and therefore S-03–S-10); the draft-privacy guardrail that catalog slices must not violate
-- **Prerequisites:** —
+- **Unlocks:** S-02, F-03 (and therefore S-03â€“S-10); the draft-privacy guardrail that catalog slices must not violate
+- **Prerequisites:** â€”
 - **Parallel with:** F-02, F-04, S-01
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Sequenced first because draft privacy and ownership cannot be bolted on after a public listing exists; this is the minimum persistence contract — later slices still have to create, upload, publish, and show builds through real user flows.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Sequenced first because draft privacy and ownership cannot be bolted on after a public listing exists; this is the minimum persistence contract â€” later slices still have to create, upload, publish, and show builds through real user flows.
 - **Status:** done
 
 ### F-02: Authoring form components
@@ -173,11 +173,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** authoring-form-components
 - **PRD refs:** FR-004, FR-005
 - **Unlocks:** S-02, S-09
-- **Prerequisites:** —
+- **Prerequisites:** â€”
 - **Parallel with:** F-03, F-04, S-01
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Scoped to the form only — listing cards, filters, and home chrome wait for later foundations. After this lands, S-02 still has to compose the actual draft form and persist a build.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Scoped to the form only â€” listing cards, filters, and home chrome wait for later foundations. After this lands, S-02 still has to compose the actual draft form and persist a build.
 - **Status:** done
 
 ### F-03: Photo upload component
@@ -188,9 +188,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unlocks:** S-02, S-09
 - **Prerequisites:** F-01
 - **Parallel with:** F-02, F-04, S-01
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Extra gallery photos stay parked. This is the upload control and logic, not a finished build — S-02 still attaches the photo to a draft the author creates.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Extra gallery photos stay parked. This is the upload control and logic, not a finished build â€” S-02 still attaches the photo to a draft the author creates.
 - **Status:** done
 
 ### F-04: Listing UI components
@@ -199,11 +199,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** listing-ui-components
 - **PRD refs:** FR-002
 - **Unlocks:** S-04, S-06, S-08, F-05, F-06
-- **Prerequisites:** —
+- **Prerequisites:** â€”
 - **Parallel with:** F-02, F-03, S-01, S-02, S-03
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** This is the listing kit, not a finished catalog. Pagination / infinite scroll is S-04’s job so the first listing slice still exercises a real browse path. Can run in parallel with authoring; an empty card set does not prove the product on its own.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** This is the listing kit, not a finished catalog. Pagination / infinite scroll is S-04â€™s job so the first listing slice still exercises a real browse path. Can run in parallel with authoring; an empty card set does not prove the product on its own.
 - **Status:** done
 
 ### F-05: Filter UI components
@@ -214,9 +214,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unlocks:** S-05, F-06
 - **Prerequisites:** F-04
 - **Parallel with:** S-06, S-08
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Widgets only — wiring them onto the live listing, AND semantics, and keeping pagination working are S-05. Do not invent a second listing.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Widgets only â€” wiring them onto the live listing, AND semantics, and keeping pagination working are S-05. Do not invent a second listing.
 - **Status:** done
 
 ### F-06: Home page components
@@ -227,9 +227,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unlocks:** S-10
 - **Prerequisites:** F-04, F-05
 - **Parallel with:** S-05, S-07, S-09
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Home is a secondary success criterion — this kit waits until listing cards and filter widgets exist so Quick Filters reuse them instead of forking a second filter set. S-10 still has to compose the landing page and show recent published builds.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Home is a secondary success criterion â€” this kit waits until listing cards and filter widgets exist so Quick Filters reuse them instead of forking a second filter set. S-10 still has to compose the landing page and show recent published builds.
 - **Status:** proposed
 
 ## Slices
@@ -239,11 +239,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** user can register, log in, and log out without extra profile fields; create, edit, and like stay gated after logout.
 - **Change ID:** sign-in-and-session
 - **PRD refs:** US-01, FR-001
-- **Prerequisites:** —
+- **Prerequisites:** â€”
 - **Parallel with:** F-02, F-03, F-04
-- **Blockers:** —
+- **Blockers:** â€”
 - **Unknowns:**
-  - Keep the existing password sign-in for the proving flow, or switch now to magic link / Google / Reddit SSO as Access Control prefers? — Owner: user. Block: no.
+  - Keep the existing password sign-in for the proving flow, or switch now to magic link / Google / Reddit SSO as Access Control prefers? â€” Owner: user. Block: no.
 - **Risk:** Auth already exists, so this slice stays thin on purpose; blocking it on provider choice would burn calendar time the deadline does not have.
 - **Status:** ready
 
@@ -254,9 +254,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-02, FR-003, FR-004, FR-005
 - **Prerequisites:** F-01, F-02, F-03, S-01
 - **Parallel with:** F-04
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Create only — do not also build the public listing or the account list. The author seeing their own builds is S-08; the public seeing them is S-04. Not every field is required, so the form must not block posting. Must remain usable on phone-sized and desktop-sized screens.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Create only â€” do not also build the public listing or the account list. The author seeing their own builds is S-08; the public seeing them is S-04. Not every field is required, so the form must not block posting. Must remain usable on phone-sized and desktop-sized screens.
 - **Status:** done
 
 ### S-03: Publish a draft
@@ -266,8 +266,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-02, FR-004
 - **Prerequisites:** S-02
 - **Parallel with:** F-04
-- **Blockers:** —
-- **Unknowns:** —
+- **Blockers:** â€”
+- **Unknowns:** â€”
 - **Risk:** Thin on purpose: publish is a distinct author action from create. Appearing on the listing waits for S-04 so this slice does not absorb browse UI. The MVP UI still does not expose unpublish.
 - **Status:** done
 
@@ -277,11 +277,11 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** show-public-builds
 - **PRD refs:** US-02, FR-002
 - **Prerequisites:** F-04, S-03
-- **Parallel with:** —
-- **Blockers:** —
+- **Parallel with:** â€”
+- **Blockers:** â€”
 - **Unknowns:**
-  - Pagination, infinite load, or scroll-load for the listing? — Owner: user. Block: no.
-- **Risk:** This is the north star — if a published structured build cannot be browsed in a dedicated listing, filters and likes have nothing to show. Five-filter AND behavior waits for S-05; details wait for S-06. Empty catalog is an empty state, not other people’s drafts.
+  - Pagination, infinite load, or scroll-load for the listing? â€” Owner: user. Block: no.
+- **Risk:** This is the north star â€” if a published structured build cannot be browsed in a dedicated listing, filters and likes have nothing to show. Five-filter AND behavior waits for S-05; details wait for S-06. Empty catalog is an empty state, not other peopleâ€™s drafts.
 - **Status:** done
 
 ### S-05: Filter the published listing
@@ -291,21 +291,21 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-03, FR-002, FR-006
 - **Prerequisites:** F-05, S-04
 - **Parallel with:** S-06, S-08
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Empty combined results are an accepted PRD risk — handle as an empty state, do not drop filters. Drafts must never leak into results. Must reuse S-04’s listing and load-more behavior rather than replacing it.
-- **Status:** proposed
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Empty combined results are an accepted PRD risk â€” handle as an empty state, do not drop filters. Drafts must never leak into results. Must reuse S-04â€™s listing and load-more behavior rather than replacing it.
+- **Status:** in-progress
 
-### S-06: View a published build’s details
+### S-06: View a published buildâ€™s details
 
-- **Outcome:** user can open a published build’s details and see main photo, name, author, story, watch attributes, parts list, and like count.
+- **Outcome:** user can open a published buildâ€™s details and see main photo, name, author, story, watch attributes, parts list, and like count.
 - **Change ID:** view-published-details
 - **PRD refs:** US-04, FR-002, FR-010
 - **Prerequisites:** S-04
 - **Parallel with:** S-05, S-08
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Reuse listing kit pieces where they fit; do not rebuild cards from scratch. A draft’s public details stay unavailable to anyone except its author. Interactive like waits for S-07 — the count can show as zero until then. Author edit and delete on this page land with S-08/S-09.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Reuse listing kit pieces where they fit; do not rebuild cards from scratch. A draftâ€™s public details stay unavailable to anyone except its author. Interactive like waits for S-07 â€” the count can show as zero until then. Author edit and delete on this page land with S-08/S-09.
 - **Status:** proposed
 
 ### S-07: Like a published build
@@ -315,8 +315,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-05, FR-007
 - **Prerequisites:** S-01, S-06
 - **Parallel with:** S-08, S-09, S-10
-- **Blockers:** —
-- **Unknowns:** —
+- **Blockers:** â€”
+- **Unknowns:** â€”
 - **Risk:** Likes persist only in this slice so engagement is not built before a public details page exists. Likes must not change listing or home order. Visitors cannot like without logging in.
 - **Status:** proposed
 
@@ -327,10 +327,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-07, FR-003, FR-008
 - **Prerequisites:** S-02, S-04
 - **Parallel with:** S-05, S-06, S-07
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Reuse S-04’s listing components; this is the author’s list, not a second card kit. Editing is S-09 so this slice stays list-and-delete. Another user must still be unable to delete. After publish, the author still sees the build here as published.
-- **Status:** proposed
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Reuse S-04â€™s listing components; this is the authorâ€™s list, not a second card kit. Editing is S-09 so this slice stays list-and-delete. Another user must still be unable to delete. After publish, the author still sees the build here as published.
+- **Status:** planning
 
 ### S-09: Edit own build
 
@@ -339,9 +339,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-07, FR-003, FR-004, FR-005
 - **Prerequisites:** F-02, F-03, S-02, S-08
 - **Parallel with:** S-05, S-07, S-10
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Create did not include edit — this slice is that gap. Reuse F-02 and F-03; do not invent a second form kit. Another user must still be unable to edit.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Create did not include edit â€” this slice is that gap. Reuse F-02 and F-03; do not invent a second form kit. Another user must still be unable to edit.
 - **Status:** proposed
 
 ### S-10: Home shows recent published builds
@@ -351,9 +351,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **PRD refs:** US-06, FR-009
 - **Prerequisites:** F-06, S-04, S-05
 - **Parallel with:** S-07, S-09
-- **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Secondary success criterion — sequenced after the north star, not before it. Home is recency only; Popular / Best / Hot / Build of the Week stay parked. Drafts never appear. Quick Filters must reuse F-05 rather than fork new filter behavior.
+- **Blockers:** â€”
+- **Unknowns:** â€”
+- **Risk:** Secondary success criterion â€” sequenced after the north star, not before it. Home is recency only; Popular / Best / Hot / Build of the Week stay parked. Drafts never appear. Quick Filters must reuse F-05 rather than fork new filter behavior.
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -370,7 +370,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-04 | show-public-builds | Browse published builds on the public listing with pagination or infinite scroll | no | Planning in `context/changes/show-public-builds/`; this is the north star |
 | F-05 | filter-ui-components | Add filter components that attach to the existing listing | no | Already `done` |
 | S-05 | filter-published-listing | Filter published builds with five AND filters without breaking pagination | no | Needs F-05 (done) and S-04 |
-| S-06 | view-published-details | Open a published build’s details | no | Needs S-04 |
+| S-06 | view-published-details | Open a published buildâ€™s details | no | Needs S-04 |
 | S-07 | like-published-build | Like and unlike a published build once | no | Needs S-01 and S-06 |
 | S-08 | manage-own-builds | Account area to list, start, and delete own builds | no | Needs S-02 (done) and S-04; reuses listing components |
 | S-09 | edit-own-build | Edit a build the author owns | no | Needs form kit, photo upload, create, and account list |
@@ -381,20 +381,20 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 
 ## Open Roadmap Questions
 
-1. **Keep existing password sign-in for the proving flow, or switch now to magic link / Google / Reddit SSO?** — Owner: user. Block: none (S-01 records this as a non-blocking unknown so planning can start).
+1. **Keep existing password sign-in for the proving flow, or switch now to magic link / Google / Reddit SSO?** â€” Owner: user. Block: none (S-01 records this as a non-blocking unknown so planning can start).
 
 ## Parked
 
-- **Search by name and Build Story** — Why parked: PRD §Non-Goals; listing is filter-only in this MVP.
-- **Extra gallery photos** — Why parked: PRD §Non-Goals; main photo only.
-- **Similar/related-build recommendations** — Why parked: PRD §Non-Goals; next phase.
-- **Comments, notifications, following, private messages, forums, articles, events, and a marketplace** — Why parked: PRD §Non-Goals; community extras outside the proving flow.
-- **Store integrations, live product prices, automatic build-cost totals, a visual watch configurator, and automatic part-compatibility checks** — Why parked: PRD §Non-Goals; would replace author-entered parts/prices.
-- **Unpublish/republish** — Why parked: PRD §Non-Goals; publish-once-or-delete is enough (FR-003).
-- **A separate favourite action or favourites listing** — Why parked: PRD §Non-Goals; like is the save (FR-007).
-- **Hot / Best / Popular / Build of the Week ranking** — Why parked: PRD §Non-Goals; home is recency plus listing entry points.
-- **An administration panel and manual Featured Builds** — Why parked: PRD §Non-Goals; no admin role in the MVP.
-- **A native mobile application** — Why parked: PRD §Non-Goals; this MVP is a responsive web app.
+- **Search by name and Build Story** â€” Why parked: PRD Â§Non-Goals; listing is filter-only in this MVP.
+- **Extra gallery photos** â€” Why parked: PRD Â§Non-Goals; main photo only.
+- **Similar/related-build recommendations** â€” Why parked: PRD Â§Non-Goals; next phase.
+- **Comments, notifications, following, private messages, forums, articles, events, and a marketplace** â€” Why parked: PRD Â§Non-Goals; community extras outside the proving flow.
+- **Store integrations, live product prices, automatic build-cost totals, a visual watch configurator, and automatic part-compatibility checks** â€” Why parked: PRD Â§Non-Goals; would replace author-entered parts/prices.
+- **Unpublish/republish** â€” Why parked: PRD Â§Non-Goals; publish-once-or-delete is enough (FR-003).
+- **A separate favourite action or favourites listing** â€” Why parked: PRD Â§Non-Goals; like is the save (FR-007).
+- **Hot / Best / Popular / Build of the Week ranking** â€” Why parked: PRD Â§Non-Goals; home is recency plus listing entry points.
+- **An administration panel and manual Featured Builds** â€” Why parked: PRD Â§Non-Goals; no admin role in the MVP.
+- **A native mobile application** â€” Why parked: PRD Â§Non-Goals; this MVP is a responsive web app.
 
 ## Milestone History
 
@@ -402,11 +402,11 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 
 ## Done
 
-- **S-04: user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden.** — Archived 2026-09-14 → `context/archive/2026-09-14-show-public-builds/`. Lesson: —.
-- **F-05: (foundation) filter components that attach to an existing listing are in the shared UI library** — Archived 2026-09-13 → `context/archive/2026-09-13-filter-ui-components/`. Lesson: —.
-- **F-01: (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage** — Archived 2026-09-11 → `context/archive/2026-09-09-build-visibility-and-storage/`. Lesson: —.
-- **F-02: (foundation) every UI component needed to implement the authoring form is in the shared UI library, so the create-draft slice can compose the form without inventing widgets. Photo upload is owned by F-03, not this foundation.** — Archived 2026-09-12 → `context/archive/2026-09-11-authoring-form-components/`. Lesson: —.
-- **F-03: (foundation) a photo-upload component and its upload logic can send one main photo to private storage and return a reference the draft form can attach.** — Archived 2026-09-12 → `context/archive/2026-09-12-photo-upload-component/`. Lesson: —.
-- **S-02: user can create a draft build with watch attributes, parts list, and main photo; the draft stays private.** — Archived 2026-09-13 → `context/archive/2026-09-13-create-draft-build/`. Lesson: —.
-- **F-04: (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library so the public listing can be composed from them.** — Archived 2026-09-13 → `context/archive/2026-09-13-listing-ui-components/`. Lesson: —.
-- **S-03: user can publish a draft they own so it is eligible for the public listing.** — Archived 2026-09-14 → `context/archive/2026-09-14-publish-draft-build/`. Lesson: —.
+- **S-04: user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden.** â€” Archived 2026-09-14 â†’ `context/archive/2026-09-14-show-public-builds/`. Lesson: â€”.
+- **F-05: (foundation) filter components that attach to an existing listing are in the shared UI library** â€” Archived 2026-09-13 â†’ `context/archive/2026-09-13-filter-ui-components/`. Lesson: â€”.
+- **F-01: (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage** â€” Archived 2026-09-11 â†’ `context/archive/2026-09-09-build-visibility-and-storage/`. Lesson: â€”.
+- **F-02: (foundation) every UI component needed to implement the authoring form is in the shared UI library, so the create-draft slice can compose the form without inventing widgets. Photo upload is owned by F-03, not this foundation.** â€” Archived 2026-09-12 â†’ `context/archive/2026-09-11-authoring-form-components/`. Lesson: â€”.
+- **F-03: (foundation) a photo-upload component and its upload logic can send one main photo to private storage and return a reference the draft form can attach.** â€” Archived 2026-09-12 â†’ `context/archive/2026-09-12-photo-upload-component/`. Lesson: â€”.
+- **S-02: user can create a draft build with watch attributes, parts list, and main photo; the draft stays private.** â€” Archived 2026-09-13 â†’ `context/archive/2026-09-13-create-draft-build/`. Lesson: â€”.
+- **F-04: (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library so the public listing can be composed from them.** â€” Archived 2026-09-13 â†’ `context/archive/2026-09-13-listing-ui-components/`. Lesson: â€”.
+- **S-03: user can publish a draft they own so it is eligible for the public listing.** â€” Archived 2026-09-14 â†’ `context/archive/2026-09-14-publish-draft-build/`. Lesson: â€”.

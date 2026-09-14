@@ -7,6 +7,8 @@ import {
   isPartCategory,
   isStrapType,
   isWatchStyle,
+  CASE_SIZE_MAX_MM,
+  CASE_SIZE_MIN_MM,
 } from "./options";
 import type { DraftBuildInput, DraftPartInput, ValidatedDraft, ValidatedPart } from "./types";
 
@@ -14,8 +16,6 @@ export const NAME_MAX_LENGTH = 120;
 export const STORY_MAX_LENGTH = 4000;
 export const PART_NAME_MAX_LENGTH = 120;
 export const PRODUCT_URL_MAX_LENGTH = 2048;
-export const CASE_SIZE_MIN_MM = 20;
-export const CASE_SIZE_MAX_MM = 70;
 export const PRICE_AMOUNT_MINOR_MAX = 2_147_483_647;
 
 // eslint-disable-next-line no-control-regex -- reject ASCII control characters in product URLs

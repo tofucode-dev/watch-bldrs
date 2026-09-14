@@ -4,10 +4,16 @@ export type { BuildFormInitialDraft, BuildFormInitialPart } from "./presentation
 export { ownedDraftToFormInitial } from "./presentation/build-form-types";
 export {
   CURRENCY_OPTIONS,
+  CASE_SIZE_MAX_MM,
+  CASE_SIZE_MIN_MM,
   DIAL_COLOUR_OPTIONS,
   HANDS_STYLE_OPTIONS,
   MOVEMENT_OPTIONS,
   PART_CATEGORY_OPTIONS,
   STRAP_TYPE_OPTIONS,
   WATCH_STYLE_OPTIONS,
+  isDialColour,
+  isMovement,
+  isStrapType,
+  isWatchStyle,
 } from "./domain/options";
