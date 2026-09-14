@@ -19,6 +19,7 @@ export interface BuildFormInitialPart {
 
 export interface BuildFormInitialDraft {
   id: string;
+  status: "draft" | "published";
   name: string | null;
   story: string | null;
   watchStyle: WatchStyle | null;
@@ -35,6 +36,7 @@ export interface BuildFormInitialDraft {
 export function ownedDraftToFormInitial(draft: OwnedDraft): BuildFormInitialDraft {
   return {
     id: draft.id,
+    status: draft.status,
     name: draft.name,
     story: draft.story,
     watchStyle: draft.watchStyle,

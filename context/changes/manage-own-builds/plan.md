@@ -346,29 +346,29 @@ Low volume expected. Page size 12, select only card projection fields, sign imag
 
 #### Automated
 
-- [x] 1.1 Owned-build cursor and use-case unit tests pass
-- [x] 1.2 Store unit tests cover list boundaries and delete Storage ordering
-- [x] 1.3 Integration tests pass for owned list and delete authorization
-- [x] 1.4 Lint passes
+- [x] 1.1 Owned-build cursor and use-case unit tests pass — 0a51eea
+- [x] 1.2 Store unit tests cover list boundaries and delete Storage ordering — 0a51eea
+- [x] 1.3 Integration tests pass for owned list and delete authorization — 0a51eea
+- [x] 1.4 Lint passes — 0a51eea
 
 #### Manual
 
-- [x] 1.5 None required — backend only
+- [x] 1.5 None required — backend only — 0a51eea
 
 ### Phase 2: Published Edit Enablement and Route Migration
 
 #### Automated
 
-- [ ] 2.1 Migration applies locally and types regenerated
-- [ ] 2.2 Build form tests cover published mode and delete flow
-- [ ] 2.3 Use-case tests cover published get/save
-- [ ] 2.4 Integration test for published update passes
-- [ ] 2.5 Lint passes
+- [x] 2.1 Migration applies locally and types regenerated
+- [x] 2.2 Build form tests cover published mode and delete flow
+- [x] 2.3 Use-case tests cover published get/save
+- [x] 2.4 Integration test for published update passes
+- [x] 2.5 Lint passes
 
 #### Manual
 
-- [ ] 2.6 Author can edit and save a published build
-- [ ] 2.7 Remove on edit page deletes build and returns to dashboard
+- [x] 2.6 Author can edit and save a published build
+- [x] 2.7 Remove on edit page deletes build and returns to dashboard
 
 ### Phase 3: Dashboard Listing UI and Navigation
 

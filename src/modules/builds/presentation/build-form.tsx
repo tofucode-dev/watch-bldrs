@@ -208,26 +208,31 @@ function statusMessage(
   hasSavedDraft: boolean,
   isDirty: boolean,
   publishConfirming: boolean,
+  deleteConfirming: boolean,
+  isPublished: boolean,
 ): string {
   if (message) {
     return message;
   }
+  if (deleteConfirming) {
+    return "This permanently removes the build and its photo. This cannot be undone.";
+  }
   if (publishConfirming) {
-    return "Publishing makes this build public. Editing and unpublishing are unavailable in this MVP.";
+    return "Publishing makes this build public. Unpublishing is unavailable in this MVP.";
   }
   if (hasSavedDraft && isDirty) {
-    return "Save changes before publishing.";
+    return isPublished ? "Save your changes." : "Save changes before publishing.";
   }
   switch (status) {
     case "saving":
       return "Saving…";
     case "saved":
-      return "Draft saved";
+      return isPublished ? "Changes saved" : "Draft saved";
     case "error":
       return "Something went wrong";
     case "idle":
     default:
-      return hasSavedDraft ? "Draft loaded" : "Nothing saved yet";
+      return hasSavedDraft ? (isPublished ? "Build loaded" : "Draft loaded") : "Nothing saved yet";
   }
 }
 
@@ -263,6 +268,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialDraft?.mainImageUrl ?? null);
   const [photoCleared, setPhotoCleared] = useState(false);
   const [publishConfirming, setPublishConfirming] = useState(false);
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [savedFormSnapshot, setSavedFormSnapshot] = useState<BuildFormState>(() => cloneFormState(initialState));
   const [savedPhotoSnapshot, setSavedPhotoSnapshot] = useState<PhotoSnapshot>(() => initialPhotoSnapshot(initialDraft));
 
@@ -270,10 +276,13 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
   const draftIdRef = useRef<string | null>(initialDraft?.id ?? null);
 
   const hasSavedDraft = draftId !== null;
+  const isPublished = initialDraft?.status === "published";
   const isDirty =
     !formStatesEqual(formState, savedFormSnapshot) || isPhotoDirty(mainImageFile, photoCleared, savedPhotoSnapshot);
-  const publishEnabled = hasSavedDraft && !isPending && !isDirty;
+  const publishEnabled = hasSavedDraft && !isPending && !isDirty && !isPublished;
   const showPublishConfirmation = publishConfirming && !isDirty;
+  const showDeleteConfirmation = deleteConfirming && !isDirty;
+  const saveLabel = isPublished ? "Save changes" : "Save Draft";
 
   const updateField = useCallback(<K extends keyof BuildFormState>(key: K, value: BuildFormState[K]) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
@@ -366,15 +375,17 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     setBarStatus("idle");
     setBarMessage(null);
     setPublishConfirming(false);
+    setDeleteConfirming(false);
   }, [savedFormSnapshot, savedPhotoSnapshot]);
 
   const handlePublishClick = useCallback(() => {
-    if (!publishEnabled) {
+    if (!publishEnabled || deleteConfirming) {
       return;
     }
     setPublishConfirming(true);
+    setDeleteConfirming(false);
     setBarMessage(null);
-  }, [publishEnabled]);
+  }, [deleteConfirming, publishEnabled]);
 
   const handleCancelPublish = useCallback(() => {
     if (isPending) {
@@ -383,6 +394,57 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     setPublishConfirming(false);
     setBarMessage(null);
   }, [isPending]);
+
+  const handleRemoveClick = useCallback(() => {
+    if (!hasSavedDraft || isPending || isDirty) {
+      return;
+    }
+    setDeleteConfirming(true);
+    setPublishConfirming(false);
+    setBarMessage(null);
+  }, [hasSavedDraft, isDirty, isPending]);
+
+  const handleCancelDelete = useCallback(() => {
+    if (isPending) {
+      return;
+    }
+    setDeleteConfirming(false);
+    setBarMessage(null);
+  }, [isPending]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    const currentId = draftIdRef.current;
+    if (!currentId || inFlight.current) {
+      return;
+    }
+
+    inFlight.current = true;
+    setIsPending(true);
+    setBarStatus("saving");
+    setBarMessage(null);
+
+    try {
+      const result = await actions.builds.delete({ id: currentId });
+      if (result.error) {
+        if (result.error.code === "UNAUTHORIZED") {
+          setBarStatus("error");
+          setBarMessage("You must be signed in to remove this build");
+          return;
+        }
+        setBarStatus("error");
+        setBarMessage("Something went wrong");
+        return;
+      }
+
+      window.location.assign("/dashboard");
+    } catch {
+      setBarStatus("error");
+      setBarMessage("Something went wrong");
+    } finally {
+      inFlight.current = false;
+      setIsPending(false);
+    }
+  }, []);
 
   const handleConfirmPublish = useCallback(async () => {
     const currentId = draftIdRef.current;
@@ -456,7 +518,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       if (!currentId) {
         draftIdRef.current = nextId;
         setDraftId(nextId);
-        window.history.replaceState(null, "", `/account/builds/${nextId}/edit`);
+        window.history.replaceState(null, "", `/dashboard/builds/edit/${nextId}`);
       }
 
       const nextSavedFormSnapshot = cloneFormState(formState);
@@ -513,7 +575,9 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
     <div className="flex min-h-full flex-col">
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         <div className="mb-8">
-          <p className="font-script text-primary text-xl">{draftId ? "Edit draft" : "New build"}</p>
+          <p className="font-script text-primary text-xl">
+            {draftId ? (isPublished ? "Edit build" : "Edit draft") : "New build"}
+          </p>
           <h1 className="font-heading mt-1 text-3xl font-extrabold tracking-tight uppercase">
             {draftId ? "Build form" : "Create draft"}
           </h1>
@@ -808,31 +872,63 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
       </div>
 
       <StickyActionBar
-        status={statusMessage(barStatus, barMessage, hasSavedDraft, isDirty, showPublishConfirmation)}
+        status={statusMessage(
+          barStatus,
+          barMessage,
+          hasSavedDraft,
+          isDirty,
+          showPublishConfirmation,
+          showDeleteConfirmation,
+          isPublished,
+        )}
         secondary={
-          showPublishConfirmation ? (
+          showDeleteConfirmation ? (
+            <Button type="button" variant="outline" onClick={handleCancelDelete} disabled={isPending}>
+              Cancel
+            </Button>
+          ) : showPublishConfirmation ? (
             <Button type="button" variant="outline" onClick={handleCancelPublish} disabled={isPending}>
               Cancel
             </Button>
           ) : (
-            <Button type="button" variant="outline" onClick={handleDiscard} disabled={isPending}>
-              Discard
-            </Button>
+            <>
+              <Button type="button" variant="outline" onClick={handleDiscard} disabled={isPending}>
+                Discard
+              </Button>
+              {hasSavedDraft ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-destructive border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Remove build"
+                  onClick={handleRemoveClick}
+                  disabled={isPending || isDirty}
+                >
+                  Remove
+                </Button>
+              ) : null}
+            </>
           )
         }
         primary={
-          showPublishConfirmation ? (
+          showDeleteConfirmation ? (
+            <Button type="button" variant="destructive" onClick={handleConfirmDelete} disabled={isPending}>
+              Remove build
+            </Button>
+          ) : showPublishConfirmation ? (
             <Button type="button" onClick={handleConfirmPublish} disabled={isPending}>
               Publish build
             </Button>
           ) : (
             <>
               <Button type="button" onClick={handleSave} disabled={isPending}>
-                Save Draft
+                {saveLabel}
               </Button>
-              <Button type="button" variant="secondary" onClick={handlePublishClick} disabled={!publishEnabled}>
-                Publish
-              </Button>
+              {!isPublished ? (
+                <Button type="button" variant="secondary" onClick={handlePublishClick} disabled={!publishEnabled}>
+                  Publish
+                </Button>
+              ) : null}
             </>
           )
         }

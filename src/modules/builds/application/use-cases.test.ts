@@ -48,7 +48,7 @@ class FakeBuildStore implements BuildStore {
     }
 
     const existing = this.drafts.get(input.id);
-    if (existing?.authorId !== input.authorId || existing.status !== "draft") {
+    if (existing?.authorId !== input.authorId) {
       return Promise.resolve(null);
     }
 
@@ -70,7 +70,7 @@ class FakeBuildStore implements BuildStore {
 
   getOwnedDraft(authorId: string, id: string): Promise<OwnedDraft | null> {
     const existing = this.drafts.get(id);
-    if (existing?.authorId !== authorId || existing.status !== "draft") {
+    if (existing?.authorId !== authorId) {
       return Promise.resolve(null);
     }
     return Promise.resolve(existing);
@@ -78,7 +78,7 @@ class FakeBuildStore implements BuildStore {
 
   attachMainImage(authorId: string, id: string, path: string | null): Promise<{ id: string } | null> {
     const existing = this.drafts.get(id);
-    if (existing?.authorId !== authorId || existing.status !== "draft") {
+    if (existing?.authorId !== authorId) {
       return Promise.resolve(null);
     }
     existing.mainImagePath = path;
@@ -238,7 +238,7 @@ describe("draft build use cases", () => {
     ).rejects.toBeInstanceOf(DraftNotFoundError);
   });
 
-  it("treats a published id as not found", async () => {
+  it("loads, updates, and attaches images on a published build owned by the author", async () => {
     const store = new FakeBuildStore();
     const created = await createDraftBuild(authorA, { name: "Live" }, store);
     const stored = store.drafts.get(created.id);
@@ -246,14 +246,21 @@ describe("draft build use cases", () => {
       throw new Error("expected seeded draft");
     }
     stored.status = "published";
+    stored.publishedAt = new Date().toISOString();
 
-    await expect(updateDraftBuild(authorA, created.id, { name: "Edit" }, store)).rejects.toBeInstanceOf(
-      DraftNotFoundError,
-    );
-    await expect(getOwnedDraft(authorA, created.id, store)).rejects.toBeInstanceOf(DraftNotFoundError);
-    await expect(
-      attachMainImage(authorA, created.id, `${authorA.userId}/${created.id}/main.jpg`, store),
-    ).rejects.toBeInstanceOf(DraftNotFoundError);
+    const updated = await updateDraftBuild(authorA, created.id, { name: "Edited published" }, store);
+    expect(updated.id).toBe(created.id);
+    expect(store.drafts.get(created.id)?.name).toBe("Edited published");
+    expect(store.drafts.get(created.id)?.status).toBe("published");
+
+    const draft = await getOwnedDraft(authorA, created.id, store);
+    expect(draft.name).toBe("Edited published");
+    expect(draft.status).toBe("published");
+
+    const path = `${authorA.userId}/${created.id}/main.jpg`;
+    const attached = await attachMainImage(authorA, created.id, path, store);
+    expect(attached.id).toBe(created.id);
+    expect(store.drafts.get(created.id)?.mainImagePath).toBe(path);
   });
 
   it("returns a signed display URL separately from the stored path", async () => {

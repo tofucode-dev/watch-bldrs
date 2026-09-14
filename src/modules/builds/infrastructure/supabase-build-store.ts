@@ -28,6 +28,7 @@ const OWNED_CARD_SELECT =
 
 interface DraftRow {
   id: string;
+  status: string;
   name: string | null;
   story: string | null;
   watch_style: string | null;
@@ -140,6 +141,10 @@ function mapPart(row: PartRow): OwnedDraftPart | null {
 }
 
 function mapDraft(row: DraftRow): OwnedDraft | null {
+  if (!isBuildStatus(row.status)) {
+    return null;
+  }
+
   const watchStyle = row.watch_style;
   const movement = row.movement;
   const dialColour = row.dial_colour;
@@ -169,6 +174,7 @@ function mapDraft(row: DraftRow): OwnedDraft | null {
 
   return {
     id: row.id,
+    status: row.status,
     name: row.name,
     story: row.story,
     watchStyle,
@@ -214,11 +220,10 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
       const { data, error } = await client
         .from("builds")
         .select(
-          "id, name, story, watch_style, movement, dial_colour, strap_type, hands_style, case_size_mm, main_image_path, build_parts(category, name, product_url, price_amount_minor, currency, position)",
+          "id, status, name, story, watch_style, movement, dial_colour, strap_type, hands_style, case_size_mm, main_image_path, build_parts(category, name, product_url, price_amount_minor, currency, position)",
         )
         .eq("id", id)
         .eq("author_id", authorId)
-        .eq("status", "draft")
         .maybeSingle();
 
       if (error) {
@@ -234,15 +239,26 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
         return null;
       }
 
-      const mainImageUrl = await previewUrlForOwnedMainImagePath(mapped.mainImagePath, async (path, expiresIn) => {
-        const { data: signed, error: signError } = await client.storage
-          .from("build-images")
-          .createSignedUrl(path, expiresIn);
-        if (signError) {
-          return null;
-        }
-        return signed.signedUrl;
-      });
+      const mainImageUrl =
+        mapped.status === "published"
+          ? await publicImageUrlForPath(mapped.mainImagePath, async (path, expiresIn) => {
+              const { data: signed, error: signError } = await client.storage
+                .from("build-images")
+                .createSignedUrl(path, expiresIn);
+              if (signError) {
+                return null;
+              }
+              return signed.signedUrl;
+            })
+          : await previewUrlForOwnedMainImagePath(mapped.mainImagePath, async (path, expiresIn) => {
+              const { data: signed, error: signError } = await client.storage
+                .from("build-images")
+                .createSignedUrl(path, expiresIn);
+              if (signError) {
+                return null;
+              }
+              return signed.signedUrl;
+            });
 
       return { ...mapped, mainImageUrl };
     },
@@ -253,7 +269,6 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
         .update({ main_image_path: path })
         .eq("id", id)
         .eq("author_id", authorId)
-        .eq("status", "draft")
         .select("id")
         .maybeSingle();
 

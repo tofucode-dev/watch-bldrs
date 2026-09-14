@@ -146,7 +146,7 @@ describe("save_draft_build identity matrix", () => {
     expect(parts).toEqual([{ name: "Replacement dial", category: "dial", position: 0 }]);
   });
 
-  it("does not update a published row via save_draft_build", async () => {
+  it("updates a published row via save_draft_build without changing status or published_at", async () => {
     const buildId = await saveAuthorDraft({ p_name: "Soon published" });
 
     const { error: publishError } = await identities.authorA.client
@@ -163,29 +163,13 @@ describe("save_draft_build identity matrix", () => {
     expect(before?.status).toBe("published");
     expect(before?.published_at).not.toBeNull();
 
-    const { data: partsBefore } = await identities.authorA.client
-      .from("build_parts")
-      .select("name, category, position")
-      .eq("build_id", buildId)
-      .order("position");
-
     const { data, error } = await identities.authorA.client.rpc("save_draft_build", {
       p_id: buildId,
-      p_name: "Should not land",
-      p_parts: [
-        {
-          category: "dial",
-          name: "Hijack dial",
-          product_url: "https://example.com/hijack",
-          price_amount_minor: 1,
-          currency: "USD",
-          position: 0,
-        },
-      ],
+      p_name: "Published name updated",
     });
 
-    expect(data).toBeNull();
-    expect(error).not.toBeNull();
+    expect(error).toBeNull();
+    expect(data).toBe(buildId);
 
     const { data: after } = await identities.authorA.client
       .from("builds")
@@ -193,14 +177,7 @@ describe("save_draft_build identity matrix", () => {
       .eq("id", buildId)
       .single();
     expect(after?.status).toBe("published");
-    expect(after?.name).toBe("Soon published");
+    expect(after?.name).toBe("Published name updated");
     expect(after?.published_at).toBe(before?.published_at);
-
-    const { data: partsAfter } = await identities.authorA.client
-      .from("build_parts")
-      .select("name, category, position")
-      .eq("build_id", buildId)
-      .order("position");
-    expect(partsAfter).toEqual(partsBefore);
   });
 });

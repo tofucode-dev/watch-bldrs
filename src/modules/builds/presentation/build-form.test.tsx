@@ -69,6 +69,7 @@ beforeEach(() => {
   vi.mocked(actions.builds.update).mockReset();
   vi.mocked(actions.builds.attachMainImage).mockReset();
   vi.mocked(actions.builds.publish).mockReset();
+  vi.mocked(actions.builds.delete).mockReset();
   vi.mocked(uploadMainImage).mockReset();
   vi.mocked(createBrowserSupabaseClient).mockReset();
   vi.mocked(createBrowserSupabaseClient).mockReturnValue(null);
@@ -119,7 +120,7 @@ describe("BuildForm", () => {
       expect(actions.builds.createDraft).toHaveBeenCalledOnce();
     });
     expect(actions.builds.update).not.toHaveBeenCalled();
-    expect(replaceState).toHaveBeenCalledWith(null, "", "/account/builds/draft-1/edit");
+    expect(replaceState).toHaveBeenCalledWith(null, "", "/dashboard/builds/edit/draft-1");
   });
 
   it("does not create two drafts when Save is clicked twice before the first save settles", async () => {
@@ -275,6 +276,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: "existing-draft",
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -405,7 +407,7 @@ describe("BuildForm", () => {
     });
     expect(actions.builds.createDraft).toHaveBeenCalledOnce();
     expect(actions.builds.attachMainImage).not.toHaveBeenCalled();
-    expect(replaceState).toHaveBeenCalledWith(null, "", `/account/builds/${DRAFT_ID}/edit`);
+    expect(replaceState).toHaveBeenCalledWith(null, "", `/dashboard/builds/edit/${DRAFT_ID}`);
   });
 
   it("renders an accessible Publish control", () => {
@@ -483,6 +485,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -557,6 +560,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -605,6 +609,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -637,6 +642,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -677,6 +683,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -715,6 +722,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -754,6 +762,7 @@ describe("BuildForm", () => {
       <BuildForm
         initialDraft={{
           id: DRAFT_ID,
+          status: "draft",
           name: "Loaded draft",
           story: null,
           watchStyle: null,
@@ -782,5 +791,91 @@ describe("BuildForm", () => {
     });
     expect(uploadMainImage).not.toHaveBeenCalled();
     expect(actions.builds.createDraft).not.toHaveBeenCalled();
+  });
+
+  it("hides Publish and shows Save changes for a published build", () => {
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          status: "published",
+          name: "Published build",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: "Publish" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeInTheDocument();
+    expect(screen.getByText("Build loaded")).toBeInTheDocument();
+  });
+
+  it("enters delete confirmation and removes the build", async () => {
+    vi.mocked(actions.builds.delete).mockResolvedValue({ data: { ok: true }, error: undefined });
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          status: "draft",
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Remove build" }));
+    expect(screen.getByRole("button", { name: "Remove build" })).toBeInTheDocument();
+    expect(actions.builds.delete).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Remove build" }));
+
+    await waitFor(() => {
+      expect(actions.builds.delete).toHaveBeenCalledWith({ id: DRAFT_ID });
+    });
+    expect(assignLocation).toHaveBeenCalledWith("/dashboard");
+  });
+
+  it("cancels delete confirmation without calling delete", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          status: "draft",
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Remove build" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.getByRole("button", { name: "Remove build" })).toBeInTheDocument();
+    expect(actions.builds.delete).not.toHaveBeenCalled();
   });
 });

@@ -5,12 +5,12 @@ import { safeRedirect } from "./safe-redirect";
 const ORIGIN = "https://watch-bldrs.example";
 
 describe("safeRedirect", () => {
-  it("keeps a same-origin account path", () => {
-    expect(safeRedirect("/account/builds/new", ORIGIN)).toBe("/account/builds/new");
+  it("keeps a same-origin dashboard path", () => {
+    expect(safeRedirect("/dashboard/builds/new", ORIGIN)).toBe("/dashboard/builds/new");
   });
 
   it("keeps a query string on a relative path", () => {
-    expect(safeRedirect("/account/builds/new?from=dash", ORIGIN)).toBe("/account/builds/new?from=dash");
+    expect(safeRedirect("/dashboard/builds/new?from=dash", ORIGIN)).toBe("/dashboard/builds/new?from=dash");
   });
 
   it("rejects protocol-relative URLs", () => {
