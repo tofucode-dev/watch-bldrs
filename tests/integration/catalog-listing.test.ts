@@ -37,9 +37,7 @@ describe("catalog listing identity matrix", () => {
         status: "published" as const,
         name: `Published ${index + 1}`,
         publishedAt:
-          index < 2
-            ? sharedTimestamp
-            : new Date(Date.UTC(2026, 8, 13, 12, 0, 0) - index * 3_600_000).toISOString(),
+          index < 2 ? sharedTimestamp : new Date(Date.UTC(2026, 8, 13, 12, 0, 0) - index * 3_600_000).toISOString(),
       })),
     ];
 

@@ -113,7 +113,7 @@ export function createSupabaseCatalogStore(client: CatalogClient): CatalogStore 
         throw new CatalogUnavailableError();
       }
 
-      const rows = (data ?? []) as CatalogRow[];
+      const rows = data as CatalogRow[];
       const hasMore = rows.length > input.pageSize;
       const boundedRows = hasMore ? rows.slice(0, input.pageSize) : rows;
       const displayRows = input.direction === "before" ? [...boundedRows].reverse() : boundedRows;
