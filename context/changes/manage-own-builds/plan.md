@@ -374,30 +374,30 @@ Low volume expected. Page size 12, select only card projection fields, sign imag
 
 #### Automated
 
-- [x] 3.1 BuildCard tests cover status label and hidden likes
-- [x] 3.2 OwnedBuildsListing tests cover CTA wiring and states
-- [x] 3.3 Storybook build passes
-- [x] 3.4 Lint passes
+- [x] 3.1 BuildCard tests cover status label and hidden likes — 6fd8a70
+- [x] 3.2 OwnedBuildsListing tests cover CTA wiring and states — 6fd8a70
+- [x] 3.3 Storybook build passes — 6fd8a70
+- [x] 3.4 Lint passes — 6fd8a70
 
 #### Manual
 
-- [x] 3.5 Dashboard grid matches mockup at phone and desktop (accepted gaps recorded)
-- [x] 3.6 Draft shows Edit only; published shows Edit + View
-- [x] 3.7 Pagination works for more than twelve builds
-- [x] 3.8 Topbar Dashboard active on dashboard subroutes
+- [x] 3.5 Dashboard grid matches mockup at phone and desktop (accepted gaps recorded) — 6fd8a70
+- [x] 3.6 Draft shows Edit only; published shows Edit + View — 6fd8a70
+- [x] 3.7 Pagination works for more than twelve builds — 6fd8a70
+- [x] 3.8 Topbar Dashboard active on dashboard subroutes — 6fd8a70
 
 ### Phase 4: Production and Verification
 
 #### Automated
 
-- [ ] 4.1 Full unit and component test suite passes
-- [ ] 4.2 Integration tests pass
-- [ ] 4.3 Lint passes
-- [ ] 4.4 Production build passes
-- [ ] 4.5 No server-only code in client bundles
+- [x] 4.1 Full unit and component test suite passes
+- [x] 4.2 Integration tests pass
+- [x] 4.3 Lint passes
+- [x] 4.4 Production build passes
+- [x] 4.5 No server-only code in client bundles
 
 #### Manual
 
-- [ ] 4.6 End-to-end proving flow: list, create, publish, edit published, delete
-- [ ] 4.7 User B cannot access or delete author A builds
-- [ ] 4.8 Accepted visual gaps recorded in change.md
+- [x] 4.6 End-to-end proving flow: list, create, publish, edit published, delete
+- [x] 4.7 User B cannot access or delete author A builds
+- [x] 4.8 Accepted visual gaps recorded in change.md

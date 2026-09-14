@@ -21,4 +21,13 @@ Account Navigation should be renamed to Dashboard.
 
 YOu can use the same pagination logic as in the listing page for now. But that view is unlikely to have much items.
 
+### Accepted visual gaps (Phase 4)
+
+Compared to [user-dashboard.png](./user-dashboard.png), the implementation intentionally omits:
+
+- Subtitle, story blurb, and author handle on dashboard cards (out of MVP scope).
+- Whole-card link — cards use explicit footer CTAs only (Edit; Edit + View for published).
+- Like count on dashboard cards (`showLikeCount={false}`).
+- **View** on published cards links to `/builds/{id}` but returns 404 until S-06 (public build details).
+
 <!-- Free-form notes for this change: links, ad-hoc context, decisions that don't belong in research/frame/plan. -->
