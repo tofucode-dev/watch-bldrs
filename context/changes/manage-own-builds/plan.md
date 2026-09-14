@@ -359,32 +359,32 @@ Low volume expected. Page size 12, select only card projection fields, sign imag
 
 #### Automated
 
-- [x] 2.1 Migration applies locally and types regenerated
-- [x] 2.2 Build form tests cover published mode and delete flow
-- [x] 2.3 Use-case tests cover published get/save
-- [x] 2.4 Integration test for published update passes
-- [x] 2.5 Lint passes
+- [x] 2.1 Migration applies locally and types regenerated — e0cc277
+- [x] 2.2 Build form tests cover published mode and delete flow — e0cc277
+- [x] 2.3 Use-case tests cover published get/save — e0cc277
+- [x] 2.4 Integration test for published update passes — e0cc277
+- [x] 2.5 Lint passes — e0cc277
 
 #### Manual
 
-- [x] 2.6 Author can edit and save a published build
-- [x] 2.7 Remove on edit page deletes build and returns to dashboard
+- [x] 2.6 Author can edit and save a published build — e0cc277
+- [x] 2.7 Remove on edit page deletes build and returns to dashboard — e0cc277
 
 ### Phase 3: Dashboard Listing UI and Navigation
 
 #### Automated
 
-- [ ] 3.1 BuildCard tests cover status label and hidden likes
-- [ ] 3.2 OwnedBuildsListing tests cover CTA wiring and states
-- [ ] 3.3 Storybook build passes
-- [ ] 3.4 Lint passes
+- [x] 3.1 BuildCard tests cover status label and hidden likes
+- [x] 3.2 OwnedBuildsListing tests cover CTA wiring and states
+- [x] 3.3 Storybook build passes
+- [x] 3.4 Lint passes
 
 #### Manual
 
-- [ ] 3.5 Dashboard grid matches mockup at phone and desktop (accepted gaps recorded)
-- [ ] 3.6 Draft shows Edit only; published shows Edit + View
-- [ ] 3.7 Pagination works for more than twelve builds
-- [ ] 3.8 Topbar Dashboard active on dashboard subroutes
+- [x] 3.5 Dashboard grid matches mockup at phone and desktop (accepted gaps recorded)
+- [x] 3.6 Draft shows Edit only; published shows Edit + View
+- [x] 3.7 Pagination works for more than twelve builds
+- [x] 3.8 Topbar Dashboard active on dashboard subroutes
 
 ### Phase 4: Production and Verification
 

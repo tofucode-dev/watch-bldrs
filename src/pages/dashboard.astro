@@ -1,43 +1,48 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { OwnedBuildsListing } from "@/modules/builds/presentation/owned-builds-listing";
+import { resolveOwnedBuildsListing } from "@/modules/builds/server";
 
-const { user } = Astro.locals;
+export const prerender = false;
+
+const listingState = await resolveOwnedBuildsListing(Astro.request, Astro.cookies, Astro.locals.user);
 const showPublishedConfirmation = Astro.url.searchParams.get("published") === "1";
+
+if (listingState.status === "invalid-cursor") {
+  Astro.response.status = 400;
+} else if (listingState.status === "unavailable") {
+  Astro.response.status = 503;
+}
+
+Astro.response.headers.set("Cache-Control", "private, no-store");
 ---
 
-<Layout title="Dashboard">
-  <div class="flex flex-1 items-center justify-center p-4 py-12">
-    <div class="border-border bg-card shadow-paper w-full max-w-md border p-8 text-center">
-      {
-        showPublishedConfirmation ? (
-          <p
-            role="status"
-            class="mb-6 rounded border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
-          >
-            Your build was published and is now eligible for the public catalog.
-          </p>
-        ) : null
-      }
-      <p class="font-script text-primary text-xl">Your bench</p>
-      <h1 class="font-heading mt-1 mb-4 text-3xl font-extrabold tracking-tight uppercase">Dashboard</h1>
-      <p class="text-muted-foreground">
-        Welcome, <span class="text-foreground font-semibold">{user?.email}</span>
-      </p>
-      <p class="text-muted-foreground mt-2 text-sm">This page is only for authenticated users.</p>
+<Layout title="My builds">
+  <section class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    {
+      showPublishedConfirmation ? (
+        <p
+          role="status"
+          class="mb-6 rounded border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+        >
+          Your build was published and is now eligible for the public catalog.
+        </p>
+      ) : null
+    }
+
+    <header class="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="font-script text-primary text-xl">Your bench</p>
+        <h1 class="font-heading mt-1 text-3xl font-extrabold tracking-tight uppercase">My builds</h1>
+      </div>
       <a
         href="/dashboard/builds/new"
-        class="bg-primary text-primary-foreground font-heading hover:bg-primary/90 mt-6 inline-flex px-4 py-2 text-sm font-bold tracking-widest uppercase transition-colors"
+        class="bg-primary text-primary-foreground font-heading hover:bg-primary/90 inline-flex px-4 py-2 text-sm font-bold tracking-widest uppercase transition-colors"
       >
-        New build
+        + New build
       </a>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="border-border bg-background font-heading hover:bg-muted border px-4 py-2 text-sm font-bold tracking-widest uppercase transition-colors"
-        >
-          Sign out
-        </button>
-      </form>
-    </div>
-  </div>
+    </header>
+
+    <OwnedBuildsListing state={listingState} />
+  </section>
 </Layout>

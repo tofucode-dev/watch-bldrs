@@ -149,6 +149,59 @@ export const WithFooterAction: Story = {
   },
 };
 
+export const DashboardDraft: Story = {
+  args: {
+    href: undefined,
+    name: "Weekend Explorer",
+    statusLabel: "Draft",
+    showLikeCount: false,
+    likeCount: 0,
+  },
+  render: function DashboardDraftCard(args) {
+    return (
+      <div className="w-full max-w-sm">
+        <BuildCard
+          {...args}
+          footerAction={
+            <Button asChild variant="outline" size="sm">
+              <a href="/dashboard/builds/edit/example-id">Edit</a>
+            </Button>
+          }
+        />
+      </div>
+    );
+  },
+};
+
+export const DashboardPublished: Story = {
+  args: {
+    href: undefined,
+    name: "Weekend Explorer",
+    statusLabel: "Published",
+    showLikeCount: false,
+    likeCount: 0,
+  },
+  render: function DashboardPublishedCard(args) {
+    return (
+      <div className="w-full max-w-sm">
+        <BuildCard
+          {...args}
+          footerAction={
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline" size="sm">
+                <a href="/dashboard/builds/edit/example-id">Edit</a>
+              </Button>
+              <Button asChild variant="outline" size="sm">
+                <a href="/builds/example-id">View</a>
+              </Button>
+            </div>
+          }
+        />
+      </div>
+    );
+  },
+};
+
 export const PaperTheme: Story = {
   parameters: {
     globals: {
