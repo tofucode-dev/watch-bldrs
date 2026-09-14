@@ -299,21 +299,21 @@ No database migration. Existing published rows with NULL filter attributes simpl
 
 #### Automated
 
-- [x] 2.1 `server.test.ts` covers `{ state, filters }` return shape, filter preservation in pagination URLs, filtered-empty vs global empty, invalid-filter mapping with `filters: {}`
-- [x] 2.2 `catalog-listing.test.tsx` covers filtered-empty copy, invalid-filter recovery, and paginated-empty link with filters
-- [x] 2.3 `npm run test -- src/modules/catalog/server.test.ts src/modules/catalog/presentation/catalog-listing.test.tsx` passes
-- [x] 2.4 `npm run build` passes
+- [x] 2.1 `server.test.ts` covers `{ state, filters }` return shape, filter preservation in pagination URLs, filtered-empty vs global empty, invalid-filter mapping with `filters: {}` — 4e6b33d
+- [x] 2.2 `catalog-listing.test.tsx` covers filtered-empty copy, invalid-filter recovery, and paginated-empty link with filters — 4e6b33d
+- [x] 2.3 `npm run test -- src/modules/catalog/server.test.ts src/modules/catalog/presentation/catalog-listing.test.tsx` passes — 4e6b33d
+- [x] 2.4 `npm run build` passes — 4e6b33d
 
 ### Phase 3: Filter Toolbar, Page Wiring, and Integration Proof
 
 #### Automated
 
-- [ ] 3.1 `catalog-filter-bar.test.tsx` proves dimension change strips cursors and builds correct href; clear all → `/builds`
-- [ ] 3.2 Filter island imports only named vocab from `@/modules/builds` (no `BuildForm`, no `astro:actions`)
-- [ ] 3.3 Integration tests pass: `npm run test:integration -- tests/integration/catalog-filters.test.ts`
-- [ ] 3.4 `npm run test`, `npm run lint`, and `npm run build` pass
+- [x] 3.1 `catalog-filter-bar.test.tsx` proves dimension change strips cursors and builds correct href; clear all → `/builds`
+- [x] 3.2 Filter island imports only named vocab from `@/modules/builds` (no `BuildForm`, no `astro:actions`)
+- [x] 3.3 Integration tests pass: `npm run test:integration -- tests/integration/catalog-filters.test.ts`
+- [x] 3.4 `npm run test`, `npm run lint`, and `npm run build` pass
 
 #### Manual
 
-- [ ] 3.5 `/builds` filter + pagination flow verified at phone and desktop widths
-- [ ] 3.6 Filtered empty, invalid filter 400, and draft exclusion verified manually
+- [x] 3.5 `/builds` filter + pagination flow verified at phone and desktop widths
+- [x] 3.6 Filtered empty, invalid filter 400, and draft exclusion verified manually

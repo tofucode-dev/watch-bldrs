@@ -15,6 +15,6 @@ describe("/builds route contract", () => {
     expect(routeSource).toContain("@/modules/catalog/server");
     expect(routeSource).not.toMatch(/@\/lib\/supabase/);
     expect(routeSource).not.toMatch(/createClient/);
-    expect(routeSource).not.toMatch(/client:/);
+    expect(routeSource).toContain("CatalogFilterBar client:load");
   });
 });

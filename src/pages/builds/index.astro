@@ -1,11 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { CatalogListing } from "@/modules/catalog";
+import { CatalogFilterBar, CatalogListing } from "@/modules/catalog";
 import { resolveCatalogListing } from "@/modules/catalog/server";
 
 export const prerender = false;
 
-const { state } = await resolveCatalogListing(Astro.request, Astro.cookies);
+const { state, filters } = await resolveCatalogListing(Astro.request, Astro.cookies);
 
 if (state.status === "invalid-cursor" || state.status === "invalid-filter") {
   Astro.response.status = 400;
@@ -17,5 +17,6 @@ Astro.response.headers.set("Cache-Control", "no-store");
 ---
 
 <Layout title="Builds">
+  <CatalogFilterBar client:load initialFilters={filters} />
   <CatalogListing state={state} />
 </Layout>
