@@ -4,12 +4,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase";
 
+import { buildCatalogListingHref } from "./application/catalog-url";
 import { parseCatalogPaginationParams } from "./application/catalog-cursor";
+import { hasActiveCatalogFilters, parseCatalogFilterParams } from "./application/catalog-filters";
 import { listPublishedBuilds } from "./application/list-published-builds";
-import type { CatalogPage } from "./application/catalog-types";
 import { createSupabaseCatalogStore } from "./infrastructure/supabase-catalog-store";
 import type { CatalogListingState } from "./presentation/catalog-listing";
-import { InvalidCatalogCursorError, CatalogUnavailableError } from "./domain/errors";
+import { InvalidCatalogCursorError, InvalidCatalogFilterError } from "./domain/errors";
+import type { CatalogFilters } from "./application/catalog-filters";
 
 export { createSupabaseCatalogStore } from "./infrastructure/supabase-catalog-store";
 export type { CatalogStore } from "./application/ports/catalog-store";
@@ -25,63 +27,91 @@ export function createCatalogStoreForRequest(request: Request, cookies: AstroCoo
   return createSupabaseCatalogStore(client as SupabaseClient<Database>);
 }
 
-function catalogPageUrls(page: CatalogPage): { previousUrl: string | null; nextUrl: string | null } {
+interface CatalogListingResolution {
+  state: CatalogListingState;
+  filters: CatalogFilters;
+}
+
+function catalogPageUrls(
+  filters: CatalogFilters,
+  page: { previousCursor: string | null; nextCursor: string | null },
+): { previousUrl: string | null; nextUrl: string | null } {
   return {
-    previousUrl: page.previousCursor ? `/builds?before=${page.previousCursor}` : null,
-    nextUrl: page.nextCursor ? `/builds?after=${page.nextCursor}` : null,
+    previousUrl: page.previousCursor
+      ? buildCatalogListingHref(filters, { kind: "before", cursor: page.previousCursor })
+      : null,
+    nextUrl: page.nextCursor ? buildCatalogListingHref(filters, { kind: "after", cursor: page.nextCursor }) : null,
   };
 }
 
-export async function listPublishedBuildsForRequest(request: Request, cookies: AstroCookies): Promise<CatalogPage> {
-  const store = createCatalogStoreForRequest(request, cookies);
-  if (!store) {
-    throw new CatalogUnavailableError();
+export async function resolveCatalogListing(
+  request: Request,
+  cookies: AstroCookies,
+): Promise<CatalogListingResolution> {
+  const searchParams = new URL(request.url).searchParams;
+  let filters: CatalogFilters;
+
+  try {
+    filters = parseCatalogFilterParams(searchParams);
+  } catch (error) {
+    if (error instanceof InvalidCatalogFilterError) {
+      return { state: { status: "invalid-filter" }, filters: {} };
+    }
+    return { state: { status: "unavailable" }, filters: {} };
   }
 
-  const pagination = parseCatalogPaginationParams(new URL(request.url).searchParams);
-  return listPublishedBuilds(
-    {
-      direction: pagination.direction,
-      boundary: pagination.boundary,
-    },
-    store,
-  );
-}
-
-export async function resolveCatalogListing(request: Request, cookies: AstroCookies): Promise<CatalogListingState> {
   const store = createCatalogStoreForRequest(request, cookies);
   if (!store) {
-    return { status: "unavailable" };
+    return { state: { status: "unavailable" }, filters };
   }
 
   try {
-    const pagination = parseCatalogPaginationParams(new URL(request.url).searchParams);
+    const pagination = parseCatalogPaginationParams(searchParams);
     const page = await listPublishedBuilds(
       {
         direction: pagination.direction,
         boundary: pagination.boundary,
+        filters,
       },
       store,
     );
 
     if (page.items.length === 0) {
       if (pagination.direction === "first") {
-        return { status: "empty" };
+        if (hasActiveCatalogFilters(filters)) {
+          return { state: { status: "filtered-empty", clearFiltersUrl: "/builds" }, filters };
+        }
+        return { state: { status: "empty" }, filters };
       }
-      return { status: "paginated-empty" };
+      return {
+        state: {
+          status: "paginated-empty",
+          firstPageUrl: buildCatalogListingHref(filters),
+        },
+        filters,
+      };
     }
 
-    const urls = catalogPageUrls(page);
+    const urls = catalogPageUrls(filters, page);
     return {
-      status: "success",
-      items: page.items,
-      previousUrl: urls.previousUrl,
-      nextUrl: urls.nextUrl,
+      state: {
+        status: "success",
+        items: page.items,
+        previousUrl: urls.previousUrl,
+        nextUrl: urls.nextUrl,
+      },
+      filters,
     };
   } catch (error) {
     if (error instanceof InvalidCatalogCursorError) {
-      return { status: "invalid-cursor" };
+      return {
+        state: {
+          status: "invalid-cursor",
+          firstPageUrl: buildCatalogListingHref(filters),
+        },
+        filters,
+      };
     }
-    return { status: "unavailable" };
+    return { state: { status: "unavailable" }, filters };
   }
 }

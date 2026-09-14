@@ -2,7 +2,7 @@ import type { AstroCookies } from "astro";
 import { describe, expect, it, vi } from "vitest";
 
 import { encodeCatalogCursor } from "./application/catalog-cursor";
-import { CatalogUnavailableError, InvalidCatalogCursorError } from "./domain/errors";
+import { CatalogUnavailableError, InvalidCatalogCursorError, InvalidCatalogFilterError } from "./domain/errors";
 import { resolveCatalogListing } from "./server";
 
 const cookies = {} as AstroCookies;
@@ -51,10 +51,47 @@ describe("resolveCatalogListing", () => {
     const result = await resolveCatalogListing(makeRequest(), cookies);
 
     expect(result).toEqual({
-      status: "success",
-      items: [sampleItem],
-      previousUrl: null,
-      nextUrl: `/builds?after=${nextCursor}`,
+      state: {
+        status: "success",
+        items: [sampleItem],
+        previousUrl: null,
+        nextUrl: `/builds?after=${nextCursor}`,
+      },
+      filters: {},
+    });
+  });
+
+  it("passes filters to the store and preserves them in pagination URLs", async () => {
+    const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
+    const nextCursor = encodeCatalogCursor({
+      publishedAt: "2026-09-14T12:00:00.000Z",
+      id: sampleItem.id,
+    });
+    const listPublished = vi.fn().mockResolvedValue({
+      items: [{ publishedAt: "2026-09-14T12:00:00.000Z", card: sampleItem }],
+      hasMore: true,
+    });
+
+    vi.mocked(createSupabaseCatalogStore).mockReturnValue({ listPublished });
+
+    const result = await resolveCatalogListing(
+      makeRequest("https://example.com/builds?movement=nh35&watch_style=diver"),
+      cookies,
+    );
+
+    expect(listPublished).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filters: { watch_style: "diver", movement: "nh35" },
+      }),
+    );
+    expect(result).toEqual({
+      state: {
+        status: "success",
+        items: [sampleItem],
+        previousUrl: null,
+        nextUrl: `/builds?watch_style=diver&movement=nh35&after=${nextCursor}`,
+      },
+      filters: { watch_style: "diver", movement: "nh35" },
     });
   });
 
@@ -66,7 +103,22 @@ describe("resolveCatalogListing", () => {
     });
 
     const result = await resolveCatalogListing(makeRequest(), cookies);
-    expect(result).toEqual({ status: "empty" });
+    expect(result).toEqual({ state: { status: "empty" }, filters: {} });
+  });
+
+  it("returns filtered-empty instead of global empty when active filters match no rows", async () => {
+    const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
+
+    vi.mocked(createSupabaseCatalogStore).mockReturnValue({
+      listPublished: vi.fn().mockResolvedValue({ items: [], hasMore: false }),
+    });
+
+    const result = await resolveCatalogListing(makeRequest("https://example.com/builds?watch_style=diver"), cookies);
+
+    expect(result).toEqual({
+      state: { status: "filtered-empty", clearFiltersUrl: "/builds" },
+      filters: { watch_style: "diver" },
+    });
   });
 
   it("returns paginated-empty for a valid cursor with no rows", async () => {
@@ -81,7 +133,32 @@ describe("resolveCatalogListing", () => {
     });
 
     const result = await resolveCatalogListing(makeRequest(`https://example.com/builds?after=${after}`), cookies);
-    expect(result).toEqual({ status: "paginated-empty" });
+    expect(result).toEqual({
+      state: { status: "paginated-empty", firstPageUrl: "/builds" },
+      filters: {},
+    });
+  });
+
+  it("preserves active filters in paginated-empty recovery", async () => {
+    const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
+    const after = encodeCatalogCursor({
+      publishedAt: "2026-09-14T12:00:00.000Z",
+      id: sampleItem.id,
+    });
+
+    vi.mocked(createSupabaseCatalogStore).mockReturnValue({
+      listPublished: vi.fn().mockResolvedValue({ items: [], hasMore: false }),
+    });
+
+    const result = await resolveCatalogListing(
+      makeRequest(`https://example.com/builds?movement=nh35&after=${after}`),
+      cookies,
+    );
+
+    expect(result).toEqual({
+      state: { status: "paginated-empty", firstPageUrl: "/builds?movement=nh35" },
+      filters: { movement: "nh35" },
+    });
   });
 
   it("returns invalid-cursor for malformed pagination input", async () => {
@@ -92,7 +169,22 @@ describe("resolveCatalogListing", () => {
     });
 
     const result = await resolveCatalogListing(makeRequest("https://example.com/builds?after=not-a-cursor"), cookies);
-    expect(result).toEqual({ status: "invalid-cursor" });
+    expect(result).toEqual({
+      state: { status: "invalid-cursor", firstPageUrl: "/builds" },
+      filters: {},
+    });
+  });
+
+  it("returns invalid-filter with empty filters for malformed filter input", async () => {
+    const { createSupabaseCatalogStore } = await import("./infrastructure/supabase-catalog-store");
+
+    vi.mocked(createSupabaseCatalogStore).mockReturnValue({
+      listPublished: vi.fn().mockRejectedValue(new InvalidCatalogFilterError()),
+    });
+
+    const result = await resolveCatalogListing(makeRequest("https://example.com/builds?watch_style=invalid"), cookies);
+
+    expect(result).toEqual({ state: { status: "invalid-filter" }, filters: {} });
   });
 
   it("returns unavailable when the catalog store cannot be created", async () => {
@@ -100,7 +192,7 @@ describe("resolveCatalogListing", () => {
     vi.mocked(createClient).mockReturnValueOnce(null);
 
     const result = await resolveCatalogListing(makeRequest(), cookies);
-    expect(result).toEqual({ status: "unavailable" });
+    expect(result).toEqual({ state: { status: "unavailable" }, filters: {} });
   });
 
   it("returns unavailable when the store rejects with CatalogUnavailableError", async () => {
@@ -111,7 +203,7 @@ describe("resolveCatalogListing", () => {
     });
 
     const result = await resolveCatalogListing(makeRequest(), cookies);
-    expect(result).toEqual({ status: "unavailable" });
+    expect(result).toEqual({ state: { status: "unavailable" }, filters: {} });
   });
 
   it("returns unavailable for unexpected store failures", async () => {
@@ -122,6 +214,6 @@ describe("resolveCatalogListing", () => {
     });
 
     const result = await resolveCatalogListing(makeRequest(), cookies);
-    expect(result).toEqual({ status: "unavailable" });
+    expect(result).toEqual({ state: { status: "unavailable" }, filters: {} });
   });
 });

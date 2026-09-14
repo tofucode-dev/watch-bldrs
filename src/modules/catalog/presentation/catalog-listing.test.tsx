@@ -125,11 +125,31 @@ describe("CatalogListing", () => {
     expect(screen.getByRole("link", { name: "Back to first page" })).toHaveAttribute("href", CATALOG_FIRST_PAGE_HREF);
   });
 
+  it("renders paginated-empty recovery with active filters", () => {
+    render(<CatalogListing state={{ status: "paginated-empty", firstPageUrl: "/builds?movement=nh35" }} />);
+
+    expect(screen.getByRole("link", { name: "Back to first page" })).toHaveAttribute("href", "/builds?movement=nh35");
+  });
+
+  it("renders filtered-empty copy with a clear-filters link", () => {
+    render(<CatalogListing state={{ status: "filtered-empty", clearFiltersUrl: "/builds" }} />);
+
+    expect(screen.getByText("No published builds match the selected filters.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/builds");
+  });
+
   it("renders invalid-cursor recovery copy and link", () => {
     render(<CatalogListing state={{ status: "invalid-cursor" }} />);
 
     expect(screen.getByText("That page link is invalid.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to first page" })).toHaveAttribute("href", CATALOG_FIRST_PAGE_HREF);
+  });
+
+  it("renders invalid-filter recovery copy and link", () => {
+    render(<CatalogListing state={{ status: "invalid-filter" }} />);
+
+    expect(screen.getByText("Those filters are invalid.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", CATALOG_FIRST_PAGE_HREF);
   });
 
   it("renders unavailable copy with a retry link and no infrastructure details", () => {

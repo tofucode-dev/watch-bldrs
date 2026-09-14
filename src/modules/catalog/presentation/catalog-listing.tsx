@@ -12,8 +12,10 @@ export type CatalogListingState =
       nextUrl: string | null;
     }
   | { status: "empty" }
-  | { status: "paginated-empty" }
-  | { status: "invalid-cursor" }
+  | { status: "filtered-empty"; clearFiltersUrl: string }
+  | { status: "paginated-empty"; firstPageUrl?: string }
+  | { status: "invalid-cursor"; firstPageUrl?: string }
+  | { status: "invalid-filter" }
   | { status: "unavailable" };
 
 export interface CatalogListingProps {
@@ -53,10 +55,10 @@ function CatalogPagination({ previousUrl, nextUrl }: { previousUrl: string | nul
   );
 }
 
-function RecoveryLink({ children }: { children: string }) {
+function RecoveryLink({ children, href = CATALOG_FIRST_PAGE_HREF }: { children: string; href?: string }) {
   return (
     <a
-      href={CATALOG_FIRST_PAGE_HREF}
+      href={href}
       className="font-heading bg-primary text-primary-foreground hover:bg-primary/90 mt-4 inline-flex px-4 py-2 text-xs font-bold tracking-widest uppercase"
     >
       {children}
@@ -81,7 +83,17 @@ export function CatalogListing({ state }: CatalogListingProps) {
         <p className="text-muted-foreground mt-4 text-base">
           This page is empty. The builds here may have moved or are no longer published.
         </p>
-        <RecoveryLink>Back to first page</RecoveryLink>
+        <RecoveryLink href={state.firstPageUrl}>Back to first page</RecoveryLink>
+      </section>
+    );
+  }
+
+  if (state.status === "filtered-empty") {
+    return (
+      <section data-slot="catalog-filtered-empty" className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+        <h1 className="font-heading text-3xl font-extrabold tracking-tight uppercase">Builds</h1>
+        <p className="text-muted-foreground mt-4 text-base">No published builds match the selected filters.</p>
+        <RecoveryLink href={state.clearFiltersUrl}>Clear filters</RecoveryLink>
       </section>
     );
   }
@@ -91,7 +103,17 @@ export function CatalogListing({ state }: CatalogListingProps) {
       <section data-slot="catalog-invalid-cursor" className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
         <h1 className="font-heading text-3xl font-extrabold tracking-tight uppercase">Builds</h1>
         <p className="text-muted-foreground mt-4 text-base">That page link is invalid.</p>
-        <RecoveryLink>Back to first page</RecoveryLink>
+        <RecoveryLink href={state.firstPageUrl}>Back to first page</RecoveryLink>
+      </section>
+    );
+  }
+
+  if (state.status === "invalid-filter") {
+    return (
+      <section data-slot="catalog-invalid-filter" className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+        <h1 className="font-heading text-3xl font-extrabold tracking-tight uppercase">Builds</h1>
+        <p className="text-muted-foreground mt-4 text-base">Those filters are invalid.</p>
+        <RecoveryLink>Clear filters</RecoveryLink>
       </section>
     );
   }

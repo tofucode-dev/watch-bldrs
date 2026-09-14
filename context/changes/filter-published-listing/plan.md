@@ -289,20 +289,20 @@ No database migration. Existing published rows with NULL filter attributes simpl
 
 #### Automated
 
-- [x] 1.1 Filter parse rejects unknown enum values and out-of-range case sizes
-- [x] 1.2 `buildCatalogListingHref` emits stable param order and omits empty filters
-- [x] 1.3 Store adapter tests prove AND `.eq()` chaining before keyset boundaries
-- [x] 1.4 `npm run test -- src/modules/catalog/application/catalog-filters.test.ts src/modules/catalog/application/catalog-url.test.ts src/modules/catalog/infrastructure/supabase-catalog-store.test.ts src/modules/catalog/application/list-published-builds.test.ts` passes
-- [x] 1.5 `npm run lint` passes
+- [x] 1.1 Filter parse rejects unknown enum values and out-of-range case sizes — c3582e2
+- [x] 1.2 `buildCatalogListingHref` emits stable param order and omits empty filters — c3582e2
+- [x] 1.3 Store adapter tests prove AND `.eq()` chaining before keyset boundaries — c3582e2
+- [x] 1.4 `npm run test -- src/modules/catalog/application/catalog-filters.test.ts src/modules/catalog/application/catalog-url.test.ts src/modules/catalog/infrastructure/supabase-catalog-store.test.ts src/modules/catalog/application/list-published-builds.test.ts` passes — c3582e2
+- [x] 1.5 `npm run lint` passes — c3582e2
 
 ### Phase 2: Server Adapter and Listing States
 
 #### Automated
 
-- [ ] 2.1 `server.test.ts` covers `{ state, filters }` return shape, filter preservation in pagination URLs, filtered-empty vs global empty, invalid-filter mapping with `filters: {}`
-- [ ] 2.2 `catalog-listing.test.tsx` covers filtered-empty copy, invalid-filter recovery, and paginated-empty link with filters
-- [ ] 2.3 `npm run test -- src/modules/catalog/server.test.ts src/modules/catalog/presentation/catalog-listing.test.tsx` passes
-- [ ] 2.4 `npm run build` passes
+- [x] 2.1 `server.test.ts` covers `{ state, filters }` return shape, filter preservation in pagination URLs, filtered-empty vs global empty, invalid-filter mapping with `filters: {}`
+- [x] 2.2 `catalog-listing.test.tsx` covers filtered-empty copy, invalid-filter recovery, and paginated-empty link with filters
+- [x] 2.3 `npm run test -- src/modules/catalog/server.test.ts src/modules/catalog/presentation/catalog-listing.test.tsx` passes
+- [x] 2.4 `npm run build` passes
 
 ### Phase 3: Filter Toolbar, Page Wiring, and Integration Proof
 

@@ -5,11 +5,11 @@ import { resolveCatalogListing } from "@/modules/catalog/server";
 
 export const prerender = false;
 
-const listingState = await resolveCatalogListing(Astro.request, Astro.cookies);
+const { state } = await resolveCatalogListing(Astro.request, Astro.cookies);
 
-if (listingState.status === "invalid-cursor") {
+if (state.status === "invalid-cursor" || state.status === "invalid-filter") {
   Astro.response.status = 400;
-} else if (listingState.status === "unavailable") {
+} else if (state.status === "unavailable") {
   Astro.response.status = 503;
 }
 
@@ -17,5 +17,5 @@ Astro.response.headers.set("Cache-Control", "no-store");
 ---
 
 <Layout title="Builds">
-  <CatalogListing state={listingState} />
+  <CatalogListing state={state} />
 </Layout>
