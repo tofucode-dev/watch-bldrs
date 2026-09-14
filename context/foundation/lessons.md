@@ -22,3 +22,10 @@
 - **Problem**: A details card that puts both the media and the title in separate links to the same destination can produce an unnamed navigation stop. When the image is missing, the media `<a>` wraps an `aria-hidden` placeholder. When the build is untitled, image alt falls back to empty, so the media link has no accessible name. When the name is present, alt defaults to the same string as the title, so keyboard and AT users get two consecutive identical links. Tests that only count two `href`s will lock this in.
 - **Rule**:
 - **Applies to**:
+
+## Prefer keyset cursor pagination for SSR catalogs
+
+- **Context**: Public catalog/listing routes (`/builds` and future filtered variants) that SSR without client hydration, use URL state, and serve changing result sets (publish/unpublish, later AND filters).
+- **Problem**: Offset or page-number paging skips or duplicates rows when the catalog changes between requests. Infinite scroll / load-more needs client fetch, accumulated state, and fights short-lived signed URLs plus `no-store` responses. Opaque `before`/`after` cursors solve stability but give no “page N of M” unless you add a separate count query. Cursors reused after filter changes can point at the wrong slice.
+- **Rule**: Use composite keyset cursors (`published_at` + `id`) with `before`/`after` links for catalog paging, not offset page numbers or infinite scroll, unless the plan explicitly opts into client hydration. When filters land, apply the same AND filters on every request, preserve them in every pagination URL, and reset to the first page when filters change. Do not promise total page counts without an explicit count. Prefer orientation copy (“Newer builds” / “Older builds”, optional “Showing 13–24”) over fake page numbers.
+- **Applies to**: frame, plan, plan-review, implement, impl-review

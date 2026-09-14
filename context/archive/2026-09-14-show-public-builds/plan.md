@@ -346,53 +346,53 @@ S-04 can be implemented and released with directly seeded or otherwise existing 
 
 #### Automated
 
-- [ ] 1.1 Catalog cursor tests reject malformed, partial, conflicting, non-UUID, and non-date boundaries
-- [ ] 1.2 Catalog use-case and adapter tests cover empty, twelve/thirteen, previous/next, equal-timestamp, error, display-label, zero-like, and per-image fallback behavior
-- [ ] 1.3 Catalog integration tests prove anonymous, author A, and user B receive identical published-only deterministic pages and never their own drafts
-- [ ] 1.4 Catalog query source explicitly constrains published status and timestamp while selecting only the card projection
-- [ ] 1.5 Browser-safe catalog exports contain no Worker-only, Supabase-infrastructure, or deep cross-module imports
-- [ ] 1.6 Phase 1 repository lint passes
-- [ ] 1.7 Phase 1 unit and component tests pass
-- [ ] 1.8 Phase 1 Cloudflare Workers build passes
+- [x] 1.1 Catalog cursor tests reject malformed, partial, conflicting, non-UUID, and non-date boundaries — 7e2379a
+- [x] 1.2 Catalog use-case and adapter tests cover empty, twelve/thirteen, previous/next, equal-timestamp, error, display-label, zero-like, and per-image fallback behavior — 7e2379a
+- [x] 1.3 Catalog integration tests prove anonymous, author A, and user B receive identical published-only deterministic pages and never their own drafts — 7e2379a
+- [x] 1.4 Catalog query source explicitly constrains published status and timestamp while selecting only the card projection — 7e2379a
+- [x] 1.5 Browser-safe catalog exports contain no Worker-only, Supabase-infrastructure, or deep cross-module imports — 7e2379a
+- [x] 1.6 Phase 1 repository lint passes — 7e2379a
+- [x] 1.7 Phase 1 unit and component tests pass — 7e2379a
+- [x] 1.8 Phase 1 Cloudflare Workers build passes — 7e2379a
 
 #### Manual
 
-- [ ] 1.9 Clean local reset and catalog integration run pass without leaving seeded rows
-- [ ] 1.10 Representative catalog query plan is inspected and its MVP indexing conclusion recorded
-- [ ] 1.11 Logs and test output contain no cookies, keys, signed URLs, or sensitive image data
+- [x] 1.9 Clean local reset and catalog integration run pass without leaving seeded rows — 7e2379a
+- [x] 1.10 Representative catalog query plan is inspected and its MVP indexing conclusion recorded — 7e2379a
+- [x] 1.11 Logs and test output contain no cookies, keys, signed URLs, or sensitive image data — 7e2379a
 
 ### Phase 2: Accessible SSR Catalog Surface
 
 #### Automated
 
-- [ ] 2.1 BuildCard tests prove non-linked cards and exactly one named link with footer separation
-- [ ] 2.2 Catalog presentation tests cover success, empty, invalid, unavailable, sparse, ordered, and cursor-navigation states
-- [ ] 2.3 Public catalog route is SSR-only and contains no direct Supabase query or client hydration
-- [ ] 2.4 Desktop and mobile Topbar navigation resolve Builds to the active catalog route
-- [ ] 2.5 Revised BuildCard stories compile in the Storybook production bundle
-- [ ] 2.17 Valid out-of-range and disappeared-page cursors render paginated-empty recovery without a false global-empty claim
+- [x] 2.1 BuildCard tests prove non-linked cards and exactly one named link with footer separation — 64681d4
+- [x] 2.2 Catalog presentation tests cover success, empty, invalid, unavailable, sparse, ordered, and cursor-navigation states — 64681d4
+- [x] 2.3 Public catalog route is SSR-only and contains no direct Supabase query or client hydration — 64681d4
+- [x] 2.4 Desktop and mobile Topbar navigation resolve Builds to the active catalog route — 64681d4
+- [x] 2.5 Revised BuildCard stories compile in the Storybook production bundle — 64681d4
+- [x] 2.17 Valid out-of-range and disappeared-page cursors render paginated-empty recovery without a false global-empty claim — 64681d4
 
 #### Manual
 
-- [ ] 2.10 Phone catalog has one readable column, stable media, reachable paging, and no horizontal overflow
-- [ ] 2.14 Empty, malformed-cursor, query-failure, and image-signing-failure states behave distinctly and safely
-- [ ] 2.16 Paper and Ink BuildCard stories are reviewed and accepted visual gaps recorded
+- [x] 2.10 Phone catalog has one readable column, stable media, reachable paging, and no horizontal overflow — 64681d4
+- [x] 2.14 Empty, malformed-cursor, query-failure, and image-signing-failure states behave distinctly and safely — 64681d4
+- [x] 2.16 Paper and Ink BuildCard stories are reviewed and accepted visual gaps recorded — 64681d4
 
 ### Phase 3: Production and Responsive Verification
 
 #### Automated
 
-- [ ] 3.1 Final repository lint passes
-- [ ] 3.2 Final unit and component test suite passes
-- [ ] 3.3 Final Storybook production build passes
-- [ ] 3.4 Final Cloudflare Workers production build passes
-- [ ] 3.5 Clean-reset catalog integration suite passes
-- [ ] 3.6 Browser/server boundary review finds no server-only catalog code or sensitive values in client-facing imports
-- [ ] 3.7 Cross-module review finds no infrastructure deep imports or circular dependency
-- [ ] 3.8 Foundation docs name S-04 for catalog exclusion and S-07 for likes persistence
+- [x] 3.1 Final repository lint passes — 73f10b7
+- [x] 3.2 Final unit and component test suite passes — 73f10b7
+- [x] 3.3 Final Storybook production build passes — 73f10b7
+- [x] 3.4 Final Cloudflare Workers production build passes — 73f10b7
+- [x] 3.5 Clean-reset catalog integration suite passes — 73f10b7
+- [x] 3.6 Browser/server boundary review finds no server-only catalog code or sensitive values in client-facing imports — 73f10b7
+- [x] 3.7 Cross-module review finds no infrastructure deep imports or circular dependency — 73f10b7
+- [x] 3.8 Foundation docs name S-04 for catalog exclusion and S-07 for likes persistence — 73f10b7
 
 #### Manual
 
-- [ ] 3.9 Final phone and desktop proving subset passes across paging and zero-card states
-- [ ] 3.10 Published refresh visibility and draft exclusion are confirmed for every public identity
-- [ ] 3.11 Verification evidence, query-plan conclusion, and accepted visual gaps are recorded in change.md
+- [x] 3.9 Final phone and desktop proving subset passes across paging and zero-card states — 73f10b7
+- [x] 3.10 Published refresh visibility and draft exclusion are confirmed for every public identity — 73f10b7
+- [x] 3.11 Verification evidence, query-plan conclusion, and accepted visual gaps are recorded in change.md — 73f10b7

@@ -63,7 +63,7 @@ Enforce that price and currency are either both present or both absent. Do not c
 
 ### `build_likes`
 
-Deferred to S-04 (`like-published-build`). Not created in F-01.
+Deferred to S-07 (`like-published-build`). Not created in F-01.
 
 | Column | Suggested type | Notes |
 | --- | --- | --- |
