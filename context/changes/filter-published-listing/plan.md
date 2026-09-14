@@ -308,12 +308,12 @@ No database migration. Existing published rows with NULL filter attributes simpl
 
 #### Automated
 
-- [x] 3.1 `catalog-filter-bar.test.tsx` proves dimension change strips cursors and builds correct href; clear all → `/builds`
-- [x] 3.2 Filter island imports only named vocab from `@/modules/builds` (no `BuildForm`, no `astro:actions`)
-- [x] 3.3 Integration tests pass: `npm run test:integration -- tests/integration/catalog-filters.test.ts`
-- [x] 3.4 `npm run test`, `npm run lint`, and `npm run build` pass
+- [x] 3.1 `catalog-filter-bar.test.tsx` proves dimension change strips cursors and builds correct href; clear all → `/builds` — 337dd7d
+- [x] 3.2 Filter island imports only named vocab from `@/modules/builds` (no `BuildForm`, no `astro:actions`) — 337dd7d
+- [x] 3.3 Integration tests pass: `npm run test:integration -- tests/integration/catalog-filters.test.ts` — 337dd7d
+- [x] 3.4 `npm run test`, `npm run lint`, and `npm run build` pass — 337dd7d
 
 #### Manual
 
-- [x] 3.5 `/builds` filter + pagination flow verified at phone and desktop widths
-- [x] 3.6 Filtered empty, invalid filter 400, and draft exclusion verified manually
+- [x] 3.5 `/builds` filter + pagination flow verified at phone and desktop widths — 337dd7d
+- [x] 3.6 Filtered empty, invalid filter 400, and draft exclusion verified manually — 337dd7d
