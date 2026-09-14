@@ -133,17 +133,10 @@ describe("publish draft build identity matrix", () => {
     const hijack = await storeForB.publishBuild(identities.userB.id, buildId);
     expect(hijack).toBeNull();
 
-    const missing = await storeForA.publishBuild(
-      identities.authorA.id,
-      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-    );
+    const missing = await storeForA.publishBuild(identities.authorA.id, "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
     expect(missing).toBeNull();
 
-    const { data: row } = await identities.authorA.client
-      .from("builds")
-      .select("status")
-      .eq("id", buildId)
-      .single();
+    const { data: row } = await identities.authorA.client.from("builds").select("status").eq("id", buildId).single();
     expect(row?.status).toBe("draft");
   });
 });

@@ -46,10 +46,14 @@ interface ActionResultShape {
 
 function mapActionFailure(
   result: ActionResultShape,
+  action: "save" | "publish" = "save",
 ): { errorMessage: string } | { data: NonNullable<ActionResultShape["data"]> } {
   if (result.error) {
     if (result.error.code === "UNAUTHORIZED") {
-      return { errorMessage: "You must be signed in to save a draft" };
+      return {
+        errorMessage:
+          action === "publish" ? "You must be signed in to publish" : "You must be signed in to save a draft",
+      };
     }
     if (result.error.code === "NOT_FOUND") {
       return { errorMessage: "Draft not found" };
@@ -393,7 +397,7 @@ export default function BuildForm({ initialDraft }: BuildFormProps) {
 
     try {
       const result = await actions.builds.publish({ id: currentId });
-      const mapped = mapActionFailure(result);
+      const mapped = mapActionFailure(result, "publish");
 
       if ("errorMessage" in mapped) {
         setBarStatus("error");

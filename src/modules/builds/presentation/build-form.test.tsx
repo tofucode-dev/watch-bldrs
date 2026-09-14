@@ -546,6 +546,40 @@ describe("BuildForm", () => {
     expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
   });
 
+  it("disables Publish after a failed save until the change is saved or discarded", async () => {
+    vi.mocked(actions.builds.update).mockResolvedValue({
+      data: undefined,
+      error: { code: "INTERNAL", message: "Save failed" },
+    });
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    await user.type(screen.getByLabelText("Name"), "Changed");
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
   it("restores Publish eligibility when Discard reverts unsaved changes", async () => {
     vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
     const user = userEvent.setup();
