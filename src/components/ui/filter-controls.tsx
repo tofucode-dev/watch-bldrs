@@ -42,7 +42,7 @@ export function FilterControls({
   const showActiveFilters = activeDimensions.length > 0;
 
   return (
-    <div data-slot="filter-controls" className={cn("flex flex-col gap-3", className)} {...props}>
+    <div data-slot="filter-controls" className={cn("flex w-full max-w-6xl flex-col gap-3 px-4", className)} {...props}>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {dimensions.map((dimension) => {
           const triggerId = `filter-${dimension.id}`;

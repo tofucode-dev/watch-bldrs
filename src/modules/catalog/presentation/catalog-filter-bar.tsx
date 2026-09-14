@@ -45,7 +45,7 @@ export function CatalogFilterBar({
   }
 
   return (
-    <section data-slot="catalog-filter-bar" className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
+    <section data-slot="catalog-filter-bar" className="flex w-full justify-center px-4 pt-6 sm:px-6">
       <FilterControls
         dimensions={dimensions}
         onDimensionChange={handleDimensionChange}
