@@ -141,7 +141,21 @@ Run: `npm run test:integration` (or a single file: `npm run test:integration -- 
 
 ### 6.4 Adding a test for a new Astro Action
 
-- TBD — see §3 Phase 2 for Actions + Supabase integration pattern.
+Actions are gated mutations — authorization must be proven at the application seam before wiring HTTP.
+
+**Today (use-case + real store):** `tests/integration/build-ownership-mutations.test.ts` seeds author A draft and published builds, then asserts user B gets `DraftNotFoundError` on `updateDraftBuild`, `publishBuild`, and `attachMainImage`, while `deleteBuild` resolves without deleting the row. Mirror this matrix when adding a new build mutation.
+
+Pattern:
+
+1. **Harness** — `createTestIdentities()`; seed targets with author A (`save_draft_build` RPC + `publishBuild` via `createSupabaseBuildStore(authorA.client)`).
+2. **Actor** — `{ kind: "authenticated", userId: userB.id }` with `createSupabaseBuildStore(userB.client)`.
+3. **Denial contract** — mutations throw `DraftNotFoundError`; delete is idempotent (row survives). Assert row unchanged via author A client.
+4. **RPC parity** — for save paths, also assert `save_draft_build` returns an error when user B targets author A's id (draft and published).
+5. **Cleanup** — `cleanupBuild(serviceRole, id)` in `afterAll`.
+
+**Deferred (HTTP Action invocation):** Phase 4 adds `tests/integration/helpers/http-session.ts` for cookie-based sign-in. Once that harness exists, add an Action-level test that POSTs the same mutation with session cookies and expects the mapped `NOT_FOUND` / safe success contract — do not duplicate the use-case matrix at the HTTP layer until the harness ships.
+
+Run: `npm run test:integration -- build-ownership-mutations`.
 
 ### 6.5 Adding a test for a catalog query change
 

@@ -377,20 +377,20 @@ Close Risks #4, #6, #7. Adds minimal HTTP infrastructure — the only phase that
 
 #### Automated
 
-- [x] 1.1 `npm run test:integration` passes with owned-draft-read, catalog-unpublish, extended catalog-listing
-- [x] 1.2 `npm run test` passes
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 `npm run test:integration` passes with owned-draft-read, catalog-unpublish, extended catalog-listing — e865a32
+- [x] 1.2 `npm run test` passes — e865a32
+- [x] 1.3 `npm run lint` passes — e865a32
 
 #### Manual
 
-- [ ] 1.4 Clean `db reset` + full integration suite verified locally
+- [x] 1.4 Clean `db reset` + full integration suite verified locally — e865a32
 
 ### Phase 2: Ownership & Mutation Denial Matrix
 
 #### Automated
 
-- [ ] 2.1 `npm run test:integration` passes with build-ownership-mutations and extended build-delete
-- [ ] 2.2 `npm run test` and `npm run lint` pass
+- [x] 2.1 `npm run test:integration` passes with build-ownership-mutations and extended build-delete
+- [x] 2.2 `npm run test` and `npm run lint` pass
 
 ### Phase 3: Catalog Keyset & Filter Edge Cases
 

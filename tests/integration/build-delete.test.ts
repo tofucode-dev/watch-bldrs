@@ -64,4 +64,43 @@ describe("build delete authorization matrix", () => {
       store.deleteBuild(identities.authorA.id, "00000000-0000-4000-8000-000000000001"),
     ).resolves.toBeUndefined();
   });
+
+  // Non-owner delete is intentionally a silent no-op at the store layer — data stays protected
+  // even though a future Action may still return { ok: true } to the caller.
+  it("user B delete on author A published build leaves row intact", async () => {
+    const { data: seeded, error: seedError } = await identities.authorA.client.rpc("save_draft_build", {
+      p_name: "Published delete target",
+      p_story: null,
+    });
+    expect(seedError).toBeNull();
+    if (typeof seeded !== "string" || seeded === "") {
+      throw new Error("Failed to seed published delete target");
+    }
+
+    const authorStore = createSupabaseBuildStore(identities.authorA.client);
+    await authorStore.publishBuild(identities.authorA.id, seeded);
+
+    const userBStore = createSupabaseBuildStore(identities.userB.client);
+    await expect(userBStore.deleteBuild(identities.userB.id, seeded)).resolves.toBeUndefined();
+
+    const { data: afterStoreDelete } = await identities.authorA.client
+      .from("builds")
+      .select("id, status")
+      .eq("id", seeded)
+      .maybeSingle();
+    expect(afterStoreDelete).not.toBeNull();
+    expect(afterStoreDelete?.status).toBe("published");
+
+    const { error: rlsDeleteError } = await identities.userB.client.from("builds").delete().eq("id", seeded);
+    expect(rlsDeleteError).toBeNull();
+
+    const { data: afterRlsDelete } = await identities.authorA.client
+      .from("builds")
+      .select("id")
+      .eq("id", seeded)
+      .maybeSingle();
+    expect(afterRlsDelete).not.toBeNull();
+
+    await cleanupBuild(identities.serviceRole, seeded);
+  });
 });
