@@ -49,4 +49,46 @@ Reviewed Paper and Ink linked/unlinked BuildCard stories on 2026-09-14. No accep
 
 ## Catalog pagination note (Phase 2 manual)
 
-Keyset `before`/`after` cursor URLs are intentional for SSR stability and future filter compatibility. Cursor paging does not expose “page N of M”; orientation copy improvements are deferred. Captured as a recurring rule in `context/foundation/lessons.md`.
+Keyset `before`/`after` cursor URLs are intentional for SSR stability and future filter compatibility. Cursor paging does not expose "page N of M"; orientation copy improvements are deferred. Captured as a recurring rule in `context/foundation/lessons.md`.
+
+## Phase 3 verification evidence (2026-09-14)
+
+### Automated repository gates
+
+| Gate | Result |
+| --- | --- |
+| `npm run lint` | pass |
+| `npm run test` | pass (30 files, 174 tests) |
+| `npm run storybook:build` | pass |
+| `npm run build` (`output: "server"`, Cloudflare Workers) | pass |
+| `npx supabase db reset` + `npm run test:integration` | pass (4 files, 24 tests) |
+
+### Browser/server boundary review (3.6)
+
+- `@/modules/catalog/index.ts` exports only types and `CatalogListing` presentation; no `server.ts`, infrastructure, `astro:env/server`, or Supabase imports.
+- `/builds` route imports `resolveCatalogListing` from `@/modules/catalog/server` in the Astro frontmatter only; presentation comes from `@/modules/catalog`.
+- No `@/modules/*/infrastructure` deep imports outside allowed module layers.
+- Server-only env usage remains confined to `src/lib/supabase.ts` and `src/lib/config-status.ts`.
+
+### Cross-module import review (3.7)
+
+- No catalog/builds infrastructure deep imports in pages, components, or client bundles.
+- ESLint module-boundary rule enforces `@/modules/<name>` / `@/modules/<name>/server` entrypoints.
+- No circular dependency surfaced in lint, test, or build output.
+
+### Foundation documentation (3.8)
+
+- `context/foundation/architecture/testing.md`: catalog draft exclusion coverage now references S-04.
+- `context/foundation/architecture/data-model.md`: deferred `build_likes` owner now references S-07.
+
+### Query-plan conclusion
+
+Unchanged from Phase 1.10: accept bounded sequential scan at MVP catalog volume; no speculative ordering index in S-04.
+
+### Accepted visual gaps
+
+Unchanged from Phase 2.16: none recorded.
+
+### Manual proving subset (3.9–3.10)
+
+Confirmed on 2026-09-14 at phone (~390px) and desktop widths: `/builds` paging forward/back preserves tuple order without duplicate or skipped IDs; empty, invalid-cursor, and unavailable states remain distinct. Seeded published builds appear after refresh; the demo draft stays absent for anonymous, author A, and user B browsing.

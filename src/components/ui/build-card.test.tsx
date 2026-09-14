@@ -14,13 +14,7 @@ afterEach(() => {
 describe("BuildCard", () => {
   it("renders no anchors when href is omitted", () => {
     render(
-      <BuildCard
-        name="Deepwater Explorer"
-        imageUrl={FIXTURE_IMAGE}
-        imageWidth={400}
-        imageHeight={300}
-        likeCount={3}
-      />,
+      <BuildCard name="Deepwater Explorer" imageUrl={FIXTURE_IMAGE} imageWidth={400} imageHeight={300} likeCount={3} />,
     );
 
     expect(screen.queryAllByRole("link")).toHaveLength(0);

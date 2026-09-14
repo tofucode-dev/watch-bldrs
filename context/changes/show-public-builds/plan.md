@@ -365,34 +365,34 @@ S-04 can be implemented and released with directly seeded or otherwise existing 
 
 #### Automated
 
-- [x] 2.1 BuildCard tests prove non-linked cards and exactly one named link with footer separation
-- [x] 2.2 Catalog presentation tests cover success, empty, invalid, unavailable, sparse, ordered, and cursor-navigation states
-- [x] 2.3 Public catalog route is SSR-only and contains no direct Supabase query or client hydration
-- [x] 2.4 Desktop and mobile Topbar navigation resolve Builds to the active catalog route
-- [x] 2.5 Revised BuildCard stories compile in the Storybook production bundle
-- [x] 2.17 Valid out-of-range and disappeared-page cursors render paginated-empty recovery without a false global-empty claim
+- [x] 2.1 BuildCard tests prove non-linked cards and exactly one named link with footer separation — 64681d4
+- [x] 2.2 Catalog presentation tests cover success, empty, invalid, unavailable, sparse, ordered, and cursor-navigation states — 64681d4
+- [x] 2.3 Public catalog route is SSR-only and contains no direct Supabase query or client hydration — 64681d4
+- [x] 2.4 Desktop and mobile Topbar navigation resolve Builds to the active catalog route — 64681d4
+- [x] 2.5 Revised BuildCard stories compile in the Storybook production bundle — 64681d4
+- [x] 2.17 Valid out-of-range and disappeared-page cursors render paginated-empty recovery without a false global-empty claim — 64681d4
 
 #### Manual
 
-- [x] 2.10 Phone catalog has one readable column, stable media, reachable paging, and no horizontal overflow
-- [x] 2.14 Empty, malformed-cursor, query-failure, and image-signing-failure states behave distinctly and safely
-- [x] 2.16 Paper and Ink BuildCard stories are reviewed and accepted visual gaps recorded
+- [x] 2.10 Phone catalog has one readable column, stable media, reachable paging, and no horizontal overflow — 64681d4
+- [x] 2.14 Empty, malformed-cursor, query-failure, and image-signing-failure states behave distinctly and safely — 64681d4
+- [x] 2.16 Paper and Ink BuildCard stories are reviewed and accepted visual gaps recorded — 64681d4
 
 ### Phase 3: Production and Responsive Verification
 
 #### Automated
 
-- [ ] 3.1 Final repository lint passes
-- [ ] 3.2 Final unit and component test suite passes
-- [ ] 3.3 Final Storybook production build passes
-- [ ] 3.4 Final Cloudflare Workers production build passes
-- [ ] 3.5 Clean-reset catalog integration suite passes
-- [ ] 3.6 Browser/server boundary review finds no server-only catalog code or sensitive values in client-facing imports
-- [ ] 3.7 Cross-module review finds no infrastructure deep imports or circular dependency
-- [ ] 3.8 Foundation docs name S-04 for catalog exclusion and S-07 for likes persistence
+- [x] 3.1 Final repository lint passes
+- [x] 3.2 Final unit and component test suite passes
+- [x] 3.3 Final Storybook production build passes
+- [x] 3.4 Final Cloudflare Workers production build passes
+- [x] 3.5 Clean-reset catalog integration suite passes
+- [x] 3.6 Browser/server boundary review finds no server-only catalog code or sensitive values in client-facing imports
+- [x] 3.7 Cross-module review finds no infrastructure deep imports or circular dependency
+- [x] 3.8 Foundation docs name S-04 for catalog exclusion and S-07 for likes persistence
 
 #### Manual
 
-- [ ] 3.9 Final phone and desktop proving subset passes across paging and zero-card states
-- [ ] 3.10 Published refresh visibility and draft exclusion are confirmed for every public identity
-- [ ] 3.11 Verification evidence, query-plan conclusion, and accepted visual gaps are recorded in change.md
+- [x] 3.9 Final phone and desktop proving subset passes across paging and zero-card states
+- [x] 3.10 Published refresh visibility and draft exclusion are confirmed for every public identity
+- [x] 3.11 Verification evidence, query-plan conclusion, and accepted visual gaps are recorded in change.md

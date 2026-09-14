@@ -138,7 +138,9 @@ export function BuildCard({
         styleLabelTone={styleLabelTone}
       />
       <div className="flex flex-col gap-3 p-4">
-        <CardTitle id={href ? titleId : undefined} className="text-base">{displayName}</CardTitle>
+        <CardTitle id={href ? titleId : undefined} className="text-base">
+          {displayName}
+        </CardTitle>
         {metadataTags.length > 0 ? (
           <div data-slot="build-card-metadata" className="flex flex-wrap gap-2">
             {metadataTags.map((tag) => (

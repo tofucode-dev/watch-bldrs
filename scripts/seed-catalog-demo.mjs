@@ -243,7 +243,10 @@ async function findDemoUserId(serviceRole) {
 }
 
 async function clearDemoData(serviceRole, authorId) {
-  const { data: builds, error } = await serviceRole.from("builds").select("id, main_image_path").eq("author_id", authorId);
+  const { data: builds, error } = await serviceRole
+    .from("builds")
+    .select("id, main_image_path")
+    .eq("author_id", authorId);
   if (error) {
     throw new Error(`Failed to list demo builds: ${error.message}`);
   }

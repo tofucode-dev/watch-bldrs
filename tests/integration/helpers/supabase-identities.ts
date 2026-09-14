@@ -163,7 +163,7 @@ export async function clearCatalogDemoData(serviceRole: SupabaseClient<Database>
     throw new Error(`Failed to list catalog demo builds: ${buildsError.message}`);
   }
 
-  const imagePaths = (builds ?? [])
+  const imagePaths = builds
     .map((build) => build.main_image_path)
     .filter((value): value is string => typeof value === "string" && value.length > 0);
 

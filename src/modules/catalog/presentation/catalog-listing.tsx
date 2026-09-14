@@ -20,13 +20,7 @@ export interface CatalogListingProps {
   state: CatalogListingState;
 }
 
-function CatalogPagination({
-  previousUrl,
-  nextUrl,
-}: {
-  previousUrl: string | null;
-  nextUrl: string | null;
-}) {
+function CatalogPagination({ previousUrl, nextUrl }: { previousUrl: string | null; nextUrl: string | null }) {
   if (!previousUrl && !nextUrl) {
     return null;
   }
@@ -106,7 +100,9 @@ export function CatalogListing({ state }: CatalogListingProps) {
     return (
       <section data-slot="catalog-unavailable" className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
         <h1 className="font-heading text-3xl font-extrabold tracking-tight uppercase">Builds</h1>
-        <p className="text-muted-foreground mt-4 text-base">The catalog is temporarily unavailable. Please try again.</p>
+        <p className="text-muted-foreground mt-4 text-base">
+          The catalog is temporarily unavailable. Please try again.
+        </p>
         <a
           href={CATALOG_FIRST_PAGE_HREF}
           className="font-heading bg-primary text-primary-foreground hover:bg-primary/90 mt-4 inline-flex px-4 py-2 text-xs font-bold tracking-widest uppercase"

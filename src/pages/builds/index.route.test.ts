@@ -12,7 +12,7 @@ describe("/builds route contract", () => {
   });
 
   it("uses the catalog server entrypoint without direct Supabase imports", () => {
-    expect(routeSource).toContain('@/modules/catalog/server');
+    expect(routeSource).toContain("@/modules/catalog/server");
     expect(routeSource).not.toMatch(/@\/lib\/supabase/);
     expect(routeSource).not.toMatch(/createClient/);
     expect(routeSource).not.toMatch(/client:/);

@@ -76,6 +76,27 @@ const astroConfig = tseslint.config({
   },
 });
 
+const nodeScriptConfig = tseslint.config({
+  files: ["scripts/**/*.mjs"],
+  languageOptions: {
+    globals: {
+      console: "readonly",
+      process: "readonly",
+    },
+  },
+  rules: {
+    "no-console": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
+  },
+});
+
 const moduleBoundaryConfig = tseslint.config({
   files: ["src/**/*.{ts,tsx,astro}"],
   ignores: ["src/modules/*/infrastructure/**", "src/modules/*/server.ts", "src/modules/*/actions.ts"],
@@ -102,6 +123,7 @@ export default tseslint.config(
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
+  nodeScriptConfig,
   moduleBoundaryConfig,
   eslintPluginPrettier,
   storybook.configs["flat/recommended"],

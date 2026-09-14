@@ -2,7 +2,6 @@ import type { AstroCookies } from "astro";
 import { describe, expect, it, vi } from "vitest";
 
 import { encodeCatalogCursor } from "./application/catalog-cursor";
-import type { CatalogPage } from "./application/catalog-types";
 import { CatalogUnavailableError, InvalidCatalogCursorError } from "./domain/errors";
 import { resolveCatalogListing } from "./server";
 
@@ -10,10 +9,6 @@ const cookies = {} as AstroCookies;
 
 function makeRequest(url = "https://example.com/builds"): Request {
   return new Request(url);
-}
-
-function makePage(items: CatalogPage["items"], previousCursor: string | null = null, nextCursor: string | null = null): CatalogPage {
-  return { items, previousCursor, nextCursor };
 }
 
 const sampleItem = {
