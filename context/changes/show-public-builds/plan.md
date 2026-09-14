@@ -346,37 +346,37 @@ S-04 can be implemented and released with directly seeded or otherwise existing 
 
 #### Automated
 
-- [x] 1.1 Catalog cursor tests reject malformed, partial, conflicting, non-UUID, and non-date boundaries
-- [x] 1.2 Catalog use-case and adapter tests cover empty, twelve/thirteen, previous/next, equal-timestamp, error, display-label, zero-like, and per-image fallback behavior
-- [x] 1.3 Catalog integration tests prove anonymous, author A, and user B receive identical published-only deterministic pages and never their own drafts
-- [x] 1.4 Catalog query source explicitly constrains published status and timestamp while selecting only the card projection
-- [x] 1.5 Browser-safe catalog exports contain no Worker-only, Supabase-infrastructure, or deep cross-module imports
-- [x] 1.6 Phase 1 repository lint passes
-- [x] 1.7 Phase 1 unit and component tests pass
-- [x] 1.8 Phase 1 Cloudflare Workers build passes
+- [x] 1.1 Catalog cursor tests reject malformed, partial, conflicting, non-UUID, and non-date boundaries — 7e2379a
+- [x] 1.2 Catalog use-case and adapter tests cover empty, twelve/thirteen, previous/next, equal-timestamp, error, display-label, zero-like, and per-image fallback behavior — 7e2379a
+- [x] 1.3 Catalog integration tests prove anonymous, author A, and user B receive identical published-only deterministic pages and never their own drafts — 7e2379a
+- [x] 1.4 Catalog query source explicitly constrains published status and timestamp while selecting only the card projection — 7e2379a
+- [x] 1.5 Browser-safe catalog exports contain no Worker-only, Supabase-infrastructure, or deep cross-module imports — 7e2379a
+- [x] 1.6 Phase 1 repository lint passes — 7e2379a
+- [x] 1.7 Phase 1 unit and component tests pass — 7e2379a
+- [x] 1.8 Phase 1 Cloudflare Workers build passes — 7e2379a
 
 #### Manual
 
-- [x] 1.9 Clean local reset and catalog integration run pass without leaving seeded rows
-- [x] 1.10 Representative catalog query plan is inspected and its MVP indexing conclusion recorded
-- [x] 1.11 Logs and test output contain no cookies, keys, signed URLs, or sensitive image data
+- [x] 1.9 Clean local reset and catalog integration run pass without leaving seeded rows — 7e2379a
+- [x] 1.10 Representative catalog query plan is inspected and its MVP indexing conclusion recorded — 7e2379a
+- [x] 1.11 Logs and test output contain no cookies, keys, signed URLs, or sensitive image data — 7e2379a
 
 ### Phase 2: Accessible SSR Catalog Surface
 
 #### Automated
 
-- [ ] 2.1 BuildCard tests prove non-linked cards and exactly one named link with footer separation
-- [ ] 2.2 Catalog presentation tests cover success, empty, invalid, unavailable, sparse, ordered, and cursor-navigation states
-- [ ] 2.3 Public catalog route is SSR-only and contains no direct Supabase query or client hydration
-- [ ] 2.4 Desktop and mobile Topbar navigation resolve Builds to the active catalog route
-- [ ] 2.5 Revised BuildCard stories compile in the Storybook production bundle
-- [ ] 2.17 Valid out-of-range and disappeared-page cursors render paginated-empty recovery without a false global-empty claim
+- [x] 2.1 BuildCard tests prove non-linked cards and exactly one named link with footer separation
+- [x] 2.2 Catalog presentation tests cover success, empty, invalid, unavailable, sparse, ordered, and cursor-navigation states
+- [x] 2.3 Public catalog route is SSR-only and contains no direct Supabase query or client hydration
+- [x] 2.4 Desktop and mobile Topbar navigation resolve Builds to the active catalog route
+- [x] 2.5 Revised BuildCard stories compile in the Storybook production bundle
+- [x] 2.17 Valid out-of-range and disappeared-page cursors render paginated-empty recovery without a false global-empty claim
 
 #### Manual
 
-- [ ] 2.10 Phone catalog has one readable column, stable media, reachable paging, and no horizontal overflow
-- [ ] 2.14 Empty, malformed-cursor, query-failure, and image-signing-failure states behave distinctly and safely
-- [ ] 2.16 Paper and Ink BuildCard stories are reviewed and accepted visual gaps recorded
+- [x] 2.10 Phone catalog has one readable column, stable media, reachable paging, and no horizontal overflow
+- [x] 2.14 Empty, malformed-cursor, query-failure, and image-signing-failure states behave distinctly and safely
+- [x] 2.16 Paper and Ink BuildCard stories are reviewed and accepted visual gaps recorded
 
 ### Phase 3: Production and Responsive Verification
 

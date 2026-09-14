@@ -1,0 +1,21 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { CatalogListing } from "@/modules/catalog";
+import { resolveCatalogListing } from "@/modules/catalog/server";
+
+export const prerender = false;
+
+const listingState = await resolveCatalogListing(Astro.request, Astro.cookies);
+
+if (listingState.status === "invalid-cursor") {
+  Astro.response.status = 400;
+} else if (listingState.status === "unavailable") {
+  Astro.response.status = 503;
+}
+
+Astro.response.headers.set("Cache-Control", "no-store");
+---
+
+<Layout title="Builds">
+  <CatalogListing state={listingState} />
+</Layout>

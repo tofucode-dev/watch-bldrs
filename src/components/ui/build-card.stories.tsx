@@ -34,8 +34,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Complete: Story = {
-  render: function CompleteBuildCard(args) {
+export const CompleteLinked: Story = {
+  render: function CompleteLinkedBuildCard(args) {
     return (
       <div className="w-full max-w-sm">
         <BuildCard {...args} />
@@ -44,7 +44,20 @@ export const Complete: Story = {
   },
 };
 
-export const Sparse: Story = {
+export const CompleteUnlinked: Story = {
+  args: {
+    href: undefined,
+  },
+  render: function CompleteUnlinkedBuildCard(args) {
+    return (
+      <div className="w-full max-w-sm">
+        <BuildCard {...args} />
+      </div>
+    );
+  },
+};
+
+export const SparseLinked: Story = {
   args: {
     name: null,
     imageUrl: null,
@@ -55,7 +68,28 @@ export const Sparse: Story = {
     caseSizeMm: null,
     likeCount: 0,
   },
-  render: function SparseBuildCard(args) {
+  render: function SparseLinkedBuildCard(args) {
+    return (
+      <div className="w-full max-w-sm">
+        <BuildCard {...args} />
+      </div>
+    );
+  },
+};
+
+export const SparseUnlinked: Story = {
+  args: {
+    href: undefined,
+    name: null,
+    imageUrl: null,
+    styleLabel: null,
+    movement: null,
+    dialColour: null,
+    strapType: null,
+    caseSizeMm: null,
+    likeCount: 0,
+  },
+  render: function SparseUnlinkedBuildCard(args) {
     return (
       <div className="w-full max-w-sm">
         <BuildCard {...args} />

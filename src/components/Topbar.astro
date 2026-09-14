@@ -3,10 +3,11 @@ const { user } = Astro.locals;
 const path = Astro.url.pathname;
 const isHome = path === "/";
 const isDashboard = path === "/dashboard";
+const isCatalog = path === "/builds" || path.startsWith("/builds/");
 
 const navItems = [
   { href: "/", label: "Home", active: isHome },
-  { href: "/#from-the-bench", label: "Builds", active: false },
+  { href: "/builds", label: "Builds", active: isCatalog },
   { href: user ? "/dashboard" : "/auth/signin", label: "Account", active: isDashboard },
 ];
 ---

@@ -42,3 +42,11 @@ Execution Time: 0.209 ms
 Indexes present on `builds`: `builds_pkey (id)`, `builds_author_id_idx (author_id)` only — no catalog ordering index.
 
 **MVP indexing conclusion:** accept the bounded sequential scan at current catalog volume. Execution stayed sub-millisecond with all buffers served from cache on a tiny table. Do **not** add a speculative `(status, published_at DESC, id DESC)` index in S-04; revisit only if a representative production plan shows sustained latency or large-row sequential scans after real catalog growth.
+
+## BuildCard Storybook review (Phase 2.16)
+
+Reviewed Paper and Ink linked/unlinked BuildCard stories on 2026-09-14. No accepted visual gaps recorded.
+
+## Catalog pagination note (Phase 2 manual)
+
+Keyset `before`/`after` cursor URLs are intentional for SSR stability and future filter compatibility. Cursor paging does not expose “page N of M”; orientation copy improvements are deferred. Captured as a recurring rule in `context/foundation/lessons.md`.

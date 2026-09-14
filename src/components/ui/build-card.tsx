@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from "react";
+import { useId, type ComponentProps, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import type { VariantProps } from "class-variance-authority";
 const UNTITLED_BUILD = "Untitled build";
 
 export interface BuildCardProps extends Omit<ComponentProps<"div">, "children"> {
-  href: string;
+  href?: string;
   name?: string | null;
   imageUrl?: string | null;
   imageAlt?: string;
@@ -45,7 +45,6 @@ function resolveImageAlt(displayName: string, imageAlt?: string): string {
 }
 
 function BuildCardMedia({
-  href,
   imageUrl,
   imageAlt,
   imageWidth,
@@ -56,7 +55,6 @@ function BuildCardMedia({
   styleLabelTone = "olive",
 }: Pick<
   BuildCardProps,
-  | "href"
   | "imageUrl"
   | "imageAlt"
   | "imageWidth"
@@ -70,25 +68,23 @@ function BuildCardMedia({
 
   return (
     <div className="relative">
-      <a href={href} className="focus-visible:ring-ring/50 block focus-visible:ring-[3px] focus-visible:outline-none">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={imageAlt}
-            width={imageWidth}
-            height={imageHeight}
-            loading={imageLoading}
-            decoding={imageDecoding}
-            className="aspect-[4/3] w-full object-cover"
-          />
-        ) : (
-          <div
-            data-slot="build-card-image-placeholder"
-            aria-hidden="true"
-            className="bg-muted flex aspect-[4/3] w-full items-center justify-center"
-          />
-        )}
-      </a>
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={imageAlt}
+          width={imageWidth}
+          height={imageHeight}
+          loading={imageLoading}
+          decoding={imageDecoding}
+          className="aspect-[4/3] w-full object-cover"
+        />
+      ) : (
+        <div
+          data-slot="build-card-image-placeholder"
+          aria-hidden="true"
+          className="bg-muted flex aspect-[4/3] w-full items-center justify-center"
+        />
+      )}
       {trimmedStyleLabel ? (
         <PaperLabel tone={styleLabelTone} rotation="left" className="pointer-events-none absolute top-3 left-3">
           {trimmedStyleLabel}
@@ -118,8 +114,10 @@ export function BuildCard({
   className,
   ...props
 }: BuildCardProps) {
+  const titleId = useId();
   const displayName = resolveDisplayName(name);
   const resolvedImageAlt = resolveImageAlt(displayName, imageAlt);
+  const mediaImageAlt = href ? "" : resolvedImageAlt;
   const metadataTags = [
     movement?.trim() ? { key: "movement", label: movement.trim(), variant: "olive" as const } : null,
     caseSizeMm != null ? { key: "case-size", label: `${caseSizeMm}mm`, variant: "field" as const } : null,
@@ -127,39 +125,47 @@ export function BuildCard({
     dialColour?.trim() ? { key: "dial", label: dialColour.trim(), variant: "pilot" as const } : null,
   ].filter((tag): tag is NonNullable<typeof tag> => tag !== null);
 
+  const cardBody = (
+    <>
+      <BuildCardMedia
+        imageUrl={imageUrl}
+        imageAlt={mediaImageAlt}
+        imageWidth={imageWidth}
+        imageHeight={imageHeight}
+        imageLoading={imageLoading}
+        imageDecoding={imageDecoding}
+        styleLabel={styleLabel}
+        styleLabelTone={styleLabelTone}
+      />
+      <div className="flex flex-col gap-3 p-4">
+        <CardTitle id={href ? titleId : undefined} className="text-base">{displayName}</CardTitle>
+        {metadataTags.length > 0 ? (
+          <div data-slot="build-card-metadata" className="flex flex-wrap gap-2">
+            {metadataTags.map((tag) => (
+              <Badge key={tag.key} variant={tag.variant}>
+                {tag.label}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+
   return (
     <Card data-slot="build-card" className={cn(className)} {...props}>
       <CardContent className="flex flex-col gap-0 p-0">
-        <BuildCardMedia
-          href={href}
-          imageUrl={imageUrl}
-          imageAlt={resolvedImageAlt}
-          imageWidth={imageWidth}
-          imageHeight={imageHeight}
-          imageLoading={imageLoading}
-          imageDecoding={imageDecoding}
-          styleLabel={styleLabel}
-          styleLabelTone={styleLabelTone}
-        />
-        <div className="flex flex-col gap-3 p-4">
-          <CardTitle className="text-base">
-            <a
-              href={href}
-              className="hover:text-primary focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none"
-            >
-              {displayName}
-            </a>
-          </CardTitle>
-          {metadataTags.length > 0 ? (
-            <div data-slot="build-card-metadata" className="flex flex-wrap gap-2">
-              {metadataTags.map((tag) => (
-                <Badge key={tag.key} variant={tag.variant}>
-                  {tag.label}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
-        </div>
+        {href ? (
+          <a
+            href={href}
+            aria-labelledby={titleId}
+            className="text-card-foreground hover:text-primary focus-visible:ring-ring/50 block no-underline focus-visible:ring-[3px] focus-visible:outline-none"
+          >
+            {cardBody}
+          </a>
+        ) : (
+          cardBody
+        )}
       </CardContent>
       <CardFooter className="border-border justify-between gap-2 border-t pt-4">
         <span data-slot="build-card-like-count" className="text-muted-foreground text-sm">
