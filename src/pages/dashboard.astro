@@ -2,11 +2,22 @@
 import Layout from "@/layouts/Layout.astro";
 
 const { user } = Astro.locals;
+const showPublishedConfirmation = Astro.url.searchParams.get("published") === "1";
 ---
 
 <Layout title="Dashboard">
   <div class="flex flex-1 items-center justify-center p-4 py-12">
     <div class="border-border bg-card shadow-paper w-full max-w-md border p-8 text-center">
+      {
+        showPublishedConfirmation ? (
+          <p
+            role="status"
+            class="mb-6 rounded border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+          >
+            Your build was published and is now eligible for the public catalog.
+          </p>
+        ) : null
+      }
       <p class="font-script text-primary text-xl">Your bench</p>
       <h1 class="font-heading mt-1 mb-4 text-3xl font-extrabold tracking-tight uppercase">Dashboard</h1>
       <p class="text-muted-foreground">

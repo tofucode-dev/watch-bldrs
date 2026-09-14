@@ -322,43 +322,43 @@ No migration or generated database-type change is expected. The existing `publis
 
 #### Automated
 
-- [ ] 1.1 Publication use-case unit tests pass, including anonymous, owner, non-owner, missing, and idempotent retry cases
-- [ ] 1.2 Focused local-Supabase publication tests pass after a clean local schema reset
-- [ ] 1.3 Production source contains no service-role import, browser server-entrypoint import, or new migration for publication
+- [x] 1.1 Publication use-case unit tests pass, including anonymous, owner, non-owner, missing, and idempotent retry cases — 0fccc15
+- [x] 1.2 Focused local-Supabase publication tests pass after a clean local schema reset — 0fccc15
+- [x] 1.3 Production source contains no service-role import, browser server-entrypoint import, or new migration for publication — 0fccc15
 
 #### Manual
 
-- [ ] 1.4 Adapter update and retry lookup both constrain ID and author, with draft status on the update
-- [ ] 1.5 Published and updated timestamps remain unchanged after a repeated publication request
+- [x] 1.4 Adapter update and retry lookup both constrain ID and author, with draft status on the update — 0fccc15
+- [x] 1.5 Published and updated timestamps remain unchanged after a repeated publication request — 0fccc15
 
 ### Phase 2: Author Publish Experience
 
 #### Automated
 
-- [ ] 2.1 BuildForm component tests pass for eligibility, confirmation, pending, error, retry, and navigation behavior
-- [ ] 2.2 Shared sticky-action changes retain Storybook type and build compatibility
-- [ ] 2.3 Browser-facing build form imports no server-only build, Astro environment, or Supabase dependency
+- [x] 2.1 BuildForm component tests pass for eligibility, confirmation, pending, error, retry, and navigation behavior — f3b5e3a
+- [x] 2.2 Shared sticky-action changes retain Storybook type and build compatibility — f3b5e3a
+- [x] 2.3 Browser-facing build form imports no server-only build, Astro environment, or Supabase dependency — f3b5e3a
 
 #### Manual
 
-- [ ] 2.4 Phone layout keeps status and all publish controls readable, reachable, and free of horizontal overflow
-- [ ] 2.5 Desktop sticky actions retain stable order and visible keyboard focus through the full interaction
-- [ ] 2.6 Failed save or photo attachment blocks publication until the change is saved or discarded
-- [ ] 2.7 Successful publication lands on a refresh-safe dashboard confirmation
+- [x] 2.4 Phone layout keeps status and all publish controls readable, reachable, and free of horizontal overflow — f3b5e3a
+- [x] 2.5 Desktop sticky actions retain stable order and visible keyboard focus through the full interaction — f3b5e3a
+- [x] 2.6 Failed save or photo attachment blocks publication until the change is saved or discarded — f3b5e3a
+- [x] 2.7 Successful publication lands on a refresh-safe dashboard confirmation — f3b5e3a
 
 ### Phase 3: Cross-Cutting Verification
 
 #### Automated
 
-- [ ] 3.1 Full unit and component suite passes
-- [ ] 3.2 Full local Supabase identity and Storage suite passes
-- [ ] 3.3 ESLint passes
-- [ ] 3.4 Static Storybook build passes
-- [ ] 3.5 Cloudflare Workers production build passes
+- [x] 3.1 Full unit and component suite passes — bcef629
+- [x] 3.2 Full local Supabase identity and Storage suite passes — bcef629
+- [x] 3.3 ESLint passes — bcef629
+- [x] 3.4 Static Storybook build passes — bcef629
+- [x] 3.5 Cloudflare Workers production build passes — bcef629
 
 #### Manual
 
-- [ ] 3.6 Author publishes an empty or populated saved draft and sees confirmation at phone and desktop widths
-- [ ] 3.7 Every unsaved or failed-to-persist form and photo state blocks Publish with understandable guidance
-- [ ] 3.8 Anonymous and non-author attempts cannot publish or learn protected record state
-- [ ] 3.9 No unpublish, catalog, details, account-list, or published-edit surface was added
+- [x] 3.6 Author publishes an empty or populated saved draft and sees confirmation at phone and desktop widths - 3bb121b
+- [x] 3.7 Every unsaved or failed-to-persist form and photo state blocks Publish with understandable guidance - 3bb121b
+- [x] 3.8 Anonymous and non-author attempts cannot publish or learn protected record state - 3bb121b
+- [x] 3.9 No unpublish, catalog, details, account-list, or published-edit surface was added - 3bb121b

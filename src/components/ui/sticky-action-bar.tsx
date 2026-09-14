@@ -27,9 +27,16 @@ export function StickyActionBar({ status, secondary, primary, className, ...prop
       <div data-slot="sticky-action-bar-status" className="text-muted-foreground text-sm">
         {status}
       </div>
-      <div className="ms-auto flex items-center gap-2">
-        <div data-slot="sticky-action-bar-secondary">{secondary}</div>
-        <div data-slot="sticky-action-bar-primary">{primary}</div>
+      <div className="ms-auto flex flex-wrap items-center justify-end gap-2">
+        <div data-slot="sticky-action-bar-secondary" className="flex flex-wrap items-center gap-2">
+          {secondary}
+        </div>
+        <div
+          data-slot="sticky-action-bar-primary"
+          className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto"
+        >
+          {primary}
+        </div>
       </div>
     </div>
   );

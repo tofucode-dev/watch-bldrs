@@ -20,6 +20,7 @@ vi.mock("@/lib/supabase-browser", () => ({
 }));
 
 const replaceState = vi.fn();
+const assignLocation = vi.fn();
 const AUTHOR_ID = "11111111-1111-4111-8111-111111111111";
 const DRAFT_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const IMAGE_PATH = `${AUTHOR_ID}/${DRAFT_ID}/main.jpg`;
@@ -67,11 +68,17 @@ beforeEach(() => {
   vi.mocked(actions.builds.createDraft).mockReset();
   vi.mocked(actions.builds.update).mockReset();
   vi.mocked(actions.builds.attachMainImage).mockReset();
+  vi.mocked(actions.builds.publish).mockReset();
   vi.mocked(uploadMainImage).mockReset();
   vi.mocked(createBrowserSupabaseClient).mockReset();
   vi.mocked(createBrowserSupabaseClient).mockReturnValue(null);
   replaceState.mockReset();
+  assignLocation.mockReset();
   vi.stubGlobal("history", { replaceState });
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    value: { assign: assignLocation },
+  });
   Object.defineProperty(URL, "createObjectURL", {
     configurable: true,
     writable: true,
@@ -399,6 +406,343 @@ describe("BuildForm", () => {
     expect(actions.builds.createDraft).toHaveBeenCalledOnce();
     expect(actions.builds.attachMainImage).not.toHaveBeenCalled();
     expect(replaceState).toHaveBeenCalledWith(null, "", `/account/builds/${DRAFT_ID}/edit`);
+  });
+
+  it("renders an accessible Publish control", () => {
+    render(<BuildForm />);
+    expect(screen.getByRole("button", { name: "Publish" })).toBeInTheDocument();
+  });
+
+  it("keeps Publish disabled before the first save", () => {
+    render(<BuildForm />);
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("enables Publish after the first successful save without remounting", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(<BuildForm />);
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    });
+  });
+
+  it("disables Publish and shows guidance when the form is dirty", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(<BuildForm />);
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    });
+
+    await user.type(screen.getByLabelText("Name"), "Changed");
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+    expect(screen.getByText("Save changes before publishing.")).toBeInTheDocument();
+  });
+
+  it("disables Publish when a part row changes", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(<BuildForm />);
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Add part" }));
+    const nameFields = screen.getAllByLabelText("Name");
+    await user.type(nameFields[nameFields.length - 1], "Dial");
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("disables Publish when a photo is selected but not saved", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    const { container } = render(<BuildForm />);
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    });
+
+    await user.upload(fileInput(container), jpegFile());
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("disables Publish when a saved photo is cleared but not saved", async () => {
+    vi.mocked(actions.builds.update).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          mainImagePath: IMAGE_PATH,
+          mainImageUrl: "https://example.test/signed-main.jpg",
+          parts: [],
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("disables Publish after a photo upload failure until the change is saved or discarded", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    vi.mocked(createBrowserSupabaseClient).mockReturnValue(
+      mockBrowserClient() as unknown as ReturnType<typeof createBrowserSupabaseClient>,
+    );
+    vi.mocked(uploadMainImage).mockRejectedValue(new MainImageUploadError("storage"));
+    const user = userEvent.setup();
+
+    const { container } = render(<BuildForm />);
+    await user.upload(fileInput(container), jpegFile());
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Draft saved, but the photo could not be uploaded.")).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("disables Publish after a photo attach failure until the change is saved or discarded", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    vi.mocked(actions.builds.attachMainImage).mockResolvedValue(
+      mockActionData({
+        ok: false,
+        error: "validation",
+        fields: { path: "Invalid image path" },
+      }),
+    );
+    vi.mocked(createBrowserSupabaseClient).mockReturnValue(
+      mockBrowserClient() as unknown as ReturnType<typeof createBrowserSupabaseClient>,
+    );
+    vi.mocked(uploadMainImage).mockResolvedValue({ path: IMAGE_PATH });
+    const user = userEvent.setup();
+
+    const { container } = render(<BuildForm />);
+    await user.upload(fileInput(container), jpegFile());
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Draft saved, but the photo could not be attached.")).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("disables Publish after a failed save until the change is saved or discarded", async () => {
+    vi.mocked(actions.builds.update).mockResolvedValue({
+      data: undefined,
+      error: { code: "INTERNAL", message: "Save failed" },
+    });
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    await user.type(screen.getByLabelText("Name"), "Changed");
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+  });
+
+  it("restores Publish eligibility when Discard reverts unsaved changes", async () => {
+    vi.mocked(actions.builds.createDraft).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(<BuildForm />);
+    await user.click(screen.getByRole("button", { name: "Save Draft" }));
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+    });
+
+    await user.type(screen.getByLabelText("Name"), "Dirty");
+    expect(screen.getByRole("button", { name: "Publish" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Discard" }));
+    expect(screen.getByRole("button", { name: "Publish" })).toBeEnabled();
+  });
+
+  it("enters inline confirmation and can cancel without calling publish", async () => {
+    vi.mocked(actions.builds.update).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+    expect(screen.getByRole("button", { name: "Publish build" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+    expect(actions.builds.publish).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.getByRole("button", { name: "Publish" })).toBeInTheDocument();
+    expect(actions.builds.publish).not.toHaveBeenCalled();
+  });
+
+  it("publishes with only the draft UUID and navigates to the dashboard confirmation", async () => {
+    vi.mocked(actions.builds.update).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    vi.mocked(actions.builds.publish).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Publish build" }));
+
+    await waitFor(() => {
+      expect(actions.builds.publish).toHaveBeenCalledWith({ id: DRAFT_ID });
+    });
+    expect(actions.builds.createDraft).not.toHaveBeenCalled();
+    expect(actions.builds.update).not.toHaveBeenCalled();
+    expect(actions.builds.attachMainImage).not.toHaveBeenCalled();
+    expect(assignLocation).toHaveBeenCalledWith("/dashboard?published=1");
+  });
+
+  it("suppresses duplicate publish requests while confirmation is pending", async () => {
+    let resolvePublish: (value: ReturnType<typeof mockActionData>) => void = () => {
+      /* assigned below */
+    };
+    vi.mocked(actions.builds.update).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    vi.mocked(actions.builds.publish).mockReturnValue(
+      new Promise((resolve) => {
+        resolvePublish = resolve;
+      }),
+    );
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Publish" }));
+    const confirmButton = screen.getByRole("button", { name: "Publish build" });
+    fireEvent.click(confirmButton);
+    fireEvent.click(confirmButton);
+
+    expect(actions.builds.publish).toHaveBeenCalledOnce();
+
+    resolvePublish(mockActionData({ ok: true, id: DRAFT_ID }));
+    await waitFor(() => {
+      expect(assignLocation).toHaveBeenCalledWith("/dashboard?published=1");
+    });
+  });
+
+  it("preserves form values and allows retry after a publish failure", async () => {
+    vi.mocked(actions.builds.update).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    vi.mocked(actions.builds.publish).mockResolvedValue({
+      data: undefined,
+      error: { code: "NOT_FOUND" },
+    });
+    const user = userEvent.setup();
+
+    render(
+      <BuildForm
+        initialDraft={{
+          id: DRAFT_ID,
+          name: "Loaded draft",
+          story: null,
+          watchStyle: null,
+          movement: null,
+          dialColour: null,
+          strapType: null,
+          handsStyle: null,
+          caseSizeMm: null,
+          parts: [],
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Publish build" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Draft not found")).toBeInTheDocument();
+    });
+    expect(screen.getByLabelText("Name")).toHaveValue("Loaded draft");
+    expect(screen.getByRole("button", { name: "Publish build" })).toBeEnabled();
+
+    vi.mocked(actions.builds.publish).mockResolvedValue(mockActionData({ ok: true, id: DRAFT_ID }));
+    await user.click(screen.getByRole("button", { name: "Publish build" }));
+
+    await waitFor(() => {
+      expect(assignLocation).toHaveBeenCalledWith("/dashboard?published=1");
+    });
   });
 
   it("clears the stored path on save without uploading or deleting storage", async () => {
