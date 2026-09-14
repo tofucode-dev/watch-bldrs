@@ -179,6 +179,18 @@ describe("createSupabaseCatalogStore", () => {
     expect(result.items[0]?.card.mainImageUrl).toBeNull();
   });
 
+  it("drops rows with null published_at even when the query returns them", async () => {
+    const row = {
+      ...baseRow,
+      published_at: null as unknown as string,
+    };
+    const { client } = createMockClient([row]);
+    const store = createSupabaseCatalogStore(client as never);
+
+    const result = await store.listPublished({ direction: "first", boundary: null, pageSize: 12 });
+    expect(result.items).toHaveLength(0);
+  });
+
   it("maps query failures to catalog unavailable errors", async () => {
     const { client } = createMockClient([], { message: "db down" } as never);
     const store = createSupabaseCatalogStore(client as never);

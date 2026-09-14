@@ -215,3 +215,62 @@ describe("catalog listing empty catalog", () => {
     expect(page.nextCursor).toBeNull();
   });
 });
+
+describe("catalog listing unpublished build with preserved published_at", () => {
+  let identities: TestIdentities;
+  let buildId: string;
+
+  beforeAll(async () => {
+    identities = await createTestIdentities();
+
+    const { data, error } = await identities.authorA.client
+      .from("builds")
+      .insert({ author_id: identities.authorA.id, status: "draft", name: "Unpublished with stamp" })
+      .select("id")
+      .single();
+    if (error) {
+      throw new Error(`Failed to seed build: ${error.message}`);
+    }
+    buildId = data.id;
+
+    const { error: publishError } = await identities.authorA.client
+      .from("builds")
+      .update({ status: "published" })
+      .eq("id", buildId);
+    if (publishError) {
+      throw new Error(`Failed to publish build: ${publishError.message}`);
+    }
+
+    const { error: unpublishError } = await identities.authorA.client
+      .from("builds")
+      .update({ status: "draft" })
+      .eq("id", buildId);
+    if (unpublishError) {
+      throw new Error(`Failed to unpublish build: ${unpublishError.message}`);
+    }
+
+    const { data: row, error: rowError } = await identities.authorA.client
+      .from("builds")
+      .select("status, published_at")
+      .eq("id", buildId)
+      .single();
+    if (rowError) {
+      throw new Error(`Failed to verify unpublished build: ${rowError.message}`);
+    }
+    if (row.status !== "draft" || row.published_at === null) {
+      throw new Error("Expected draft status with preserved published_at after unpublish");
+    }
+  });
+
+  afterAll(async () => {
+    await cleanupBuild(identities.serviceRole, buildId);
+  });
+
+  it("never lists an unpublished build even when published_at is still set", async () => {
+    for (const client of [identities.anon, identities.authorA.client, identities.userB.client]) {
+      const store = createSupabaseCatalogStore(client);
+      const page = await listPublishedBuilds({ direction: "first", boundary: null }, store);
+      expect(page.items.some((item) => item.id === buildId)).toBe(false);
+    }
+  });
+});
