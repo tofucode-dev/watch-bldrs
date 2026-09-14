@@ -52,6 +52,7 @@ export interface OwnedDraftPart {
 
 export interface OwnedDraft {
   id: string;
+  status: "draft" | "published";
   name: string | null;
   story: string | null;
   watchStyle: WatchStyle | null;

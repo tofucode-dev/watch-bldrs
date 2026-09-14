@@ -24,6 +24,8 @@ export interface BuildCardProps extends Omit<ComponentProps<"div">, "children"> 
   strapType?: string | null;
   caseSizeMm?: number | null;
   likeCount: number;
+  statusLabel?: "Draft" | "Published" | null;
+  showLikeCount?: boolean;
   footerAction?: ReactNode;
 }
 
@@ -110,6 +112,8 @@ export function BuildCard({
   strapType,
   caseSizeMm,
   likeCount,
+  statusLabel,
+  showLikeCount = true,
   footerAction,
   className,
   ...props
@@ -138,9 +142,16 @@ export function BuildCard({
         styleLabelTone={styleLabelTone}
       />
       <div className="flex flex-col gap-3 p-4">
-        <CardTitle id={href ? titleId : undefined} className="text-base">
-          {displayName}
-        </CardTitle>
+        <div className="flex flex-col gap-1">
+          <CardTitle id={href ? titleId : undefined} className="text-base">
+            {displayName}
+          </CardTitle>
+          {statusLabel ? (
+            <p data-slot="build-card-status-label" className="text-muted-foreground text-sm">
+              {statusLabel}
+            </p>
+          ) : null}
+        </div>
         {metadataTags.length > 0 ? (
           <div data-slot="build-card-metadata" className="flex flex-wrap gap-2">
             {metadataTags.map((tag) => (
@@ -169,10 +180,14 @@ export function BuildCard({
           cardBody
         )}
       </CardContent>
-      <CardFooter className="border-border justify-between gap-2 border-t pt-4">
-        <span data-slot="build-card-like-count" className="text-muted-foreground text-sm">
-          {likeCount} {likeCount === 1 ? "like" : "likes"}
-        </span>
+      <CardFooter
+        className={cn("border-border gap-2 border-t pt-4", showLikeCount ? "justify-between" : "justify-end")}
+      >
+        {showLikeCount ? (
+          <span data-slot="build-card-like-count" className="text-muted-foreground text-sm">
+            {likeCount} {likeCount === 1 ? "like" : "likes"}
+          </span>
+        ) : null}
         {footerAction ? <div data-slot="build-card-footer-action">{footerAction}</div> : null}
       </CardFooter>
     </Card>

@@ -190,4 +190,40 @@ describe("BuildCard", () => {
 
     expect(screen.getByRole("img", { name: "Lazy build" })).toHaveAttribute("loading", "lazy");
   });
+
+  it("renders a status label near the title when provided", () => {
+    render(
+      <BuildCard
+        name="Weekend Explorer"
+        imageUrl={FIXTURE_IMAGE}
+        likeCount={0}
+        statusLabel="Published"
+        showLikeCount={false}
+      />,
+    );
+
+    expect(screen.getByText("Published")).toHaveAttribute("data-slot", "build-card-status-label");
+    expect(screen.getByRole("heading", { name: "Weekend Explorer" })).toBeInTheDocument();
+  });
+
+  it("hides the like count when showLikeCount is false", () => {
+    render(
+      <BuildCard
+        name="Draft build"
+        imageUrl={FIXTURE_IMAGE}
+        likeCount={5}
+        showLikeCount={false}
+        footerAction={<button type="button">Edit</button>}
+      />,
+    );
+
+    expect(screen.queryByText("5 likes")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
+  });
+
+  it("shows the like count by default", () => {
+    render(<BuildCard href={DETAILS_HREF} name="Liked build" imageUrl={FIXTURE_IMAGE} likeCount={3} />);
+
+    expect(screen.getByText("3 likes")).toBeInTheDocument();
+  });
 });

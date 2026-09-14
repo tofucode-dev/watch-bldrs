@@ -16,10 +16,11 @@ Mixing these is the usual production-auth failure (empty catalog + silent login 
 | --- | --- | --- |
 | Local (gitignored) | `.dev.vars.local` + `.env.local` = Docker; `.dev.vars` + `.env` = hosted | `npm run dev` loads `.dev.vars.local`; `npm run dev:hosted` loads `.dev.vars`. Never set `CLOUDFLARE_ENV` on `npm run deploy`. |
 | GitHub Actions | `SUPABASE_URL`, `SUPABASE_KEY` | `astro build` only. Never reach the Worker |
+| GitHub Actions (deploy job only) | `SUPABASE_SERVICE_ROLE_KEY` | Post-deploy catalog demo seed (`npm run db:seed-catalog-demo -- --allow-remote`). Clears all builds, then re-seeds demo catalog. Never use in the `ci` build job or Wrangler |
 | GitHub Actions / `.env` (build-time) | `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_KEY` | Optional client-public anon pair inlined by `astro build` for browser Storage. Must match `SUPABASE_*`. Never `wrangler secret put`, never `secrets.required`, never `service_role` |
 | Cloudflare Worker runtime | `SUPABASE_URL`, `SUPABASE_KEY` | Live SSR, cookies, Auth |
 
-Use the hosted **anon / publishable** key only. Never put `service_role` in Wrangler, GitHub Actions, client code, or source control. Never put secret values in `wrangler.jsonc` `vars`. Do not add `account_id` to git unless you explicitly want it there; CI can use `CLOUDFLARE_ACCOUNT_ID`.
+Use the hosted **anon / publishable** key for Worker runtime and build jobs. The only GitHub Actions exception is `SUPABASE_SERVICE_ROLE_KEY` in the deploy seed step (see table above). Never put `service_role` in Wrangler, client code, or source control. Never put secret values in `wrangler.jsonc` `vars`. Do not add `account_id` to git unless you explicitly want it there; CI can use `CLOUDFLARE_ACCOUNT_ID`.
 
 `wrangler.jsonc` declares `secrets.required`: `SUPABASE_URL` and `SUPABASE_KEY`. A deploy without those Worker secrets fails instead of shipping a dead auth client.
 
@@ -54,7 +55,7 @@ npx wrangler secret list
 
 If `secret put` fails because the Worker does not exist yet: deploy once **without** `secrets.required`, put the secrets, restore `secrets.required`, deploy again.
 
-7. Set GitHub Actions secrets `SUPABASE_URL` and `SUPABASE_KEY` (build only).
+7. Set GitHub Actions secrets `SUPABASE_URL` and `SUPABASE_KEY` (build only), plus `SUPABASE_SERVICE_ROLE_KEY` (deploy seed only — clears all builds and re-seeds demo catalog after each `main` deploy).
 8. After the first live URL exists, set hosted Auth → URL Configuration:
    - Site URL = `https://watch-bldrs.<subdomain>.workers.dev` (no trailing slash)
    - Additional Redirect URLs: that origin `/**` plus `http://127.0.0.1:4321/**`

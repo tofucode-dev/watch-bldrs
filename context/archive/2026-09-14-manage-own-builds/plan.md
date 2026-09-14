@@ -346,58 +346,58 @@ Low volume expected. Page size 12, select only card projection fields, sign imag
 
 #### Automated
 
-- [ ] 1.1 Owned-build cursor and use-case unit tests pass
-- [ ] 1.2 Store unit tests cover list boundaries and delete Storage ordering
-- [ ] 1.3 Integration tests pass for owned list and delete authorization
-- [ ] 1.4 Lint passes
+- [x] 1.1 Owned-build cursor and use-case unit tests pass — 0a51eea
+- [x] 1.2 Store unit tests cover list boundaries and delete Storage ordering — 0a51eea
+- [x] 1.3 Integration tests pass for owned list and delete authorization — 0a51eea
+- [x] 1.4 Lint passes — 0a51eea
 
 #### Manual
 
-- [ ] 1.5 None required — backend only
+- [x] 1.5 None required — backend only — 0a51eea
 
 ### Phase 2: Published Edit Enablement and Route Migration
 
 #### Automated
 
-- [ ] 2.1 Migration applies locally and types regenerated
-- [ ] 2.2 Build form tests cover published mode and delete flow
-- [ ] 2.3 Use-case tests cover published get/save
-- [ ] 2.4 Integration test for published update passes
-- [ ] 2.5 Lint passes
+- [x] 2.1 Migration applies locally and types regenerated — e0cc277
+- [x] 2.2 Build form tests cover published mode and delete flow — e0cc277
+- [x] 2.3 Use-case tests cover published get/save — e0cc277
+- [x] 2.4 Integration test for published update passes — e0cc277
+- [x] 2.5 Lint passes — e0cc277
 
 #### Manual
 
-- [ ] 2.6 Author can edit and save a published build
-- [ ] 2.7 Remove on edit page deletes build and returns to dashboard
+- [x] 2.6 Author can edit and save a published build — e0cc277
+- [x] 2.7 Remove on edit page deletes build and returns to dashboard — e0cc277
 
 ### Phase 3: Dashboard Listing UI and Navigation
 
 #### Automated
 
-- [ ] 3.1 BuildCard tests cover status label and hidden likes
-- [ ] 3.2 OwnedBuildsListing tests cover CTA wiring and states
-- [ ] 3.3 Storybook build passes
-- [ ] 3.4 Lint passes
+- [x] 3.1 BuildCard tests cover status label and hidden likes — 6fd8a70
+- [x] 3.2 OwnedBuildsListing tests cover CTA wiring and states — 6fd8a70
+- [x] 3.3 Storybook build passes — 6fd8a70
+- [x] 3.4 Lint passes — 6fd8a70
 
 #### Manual
 
-- [ ] 3.5 Dashboard grid matches mockup at phone and desktop (accepted gaps recorded)
-- [ ] 3.6 Draft shows Edit only; published shows Edit + View
-- [ ] 3.7 Pagination works for more than twelve builds
-- [ ] 3.8 Topbar Dashboard active on dashboard subroutes
+- [x] 3.5 Dashboard grid matches mockup at phone and desktop (accepted gaps recorded) — 6fd8a70
+- [x] 3.6 Draft shows Edit only; published shows Edit + View — 6fd8a70
+- [x] 3.7 Pagination works for more than twelve builds — 6fd8a70
+- [x] 3.8 Topbar Dashboard active on dashboard subroutes — 6fd8a70
 
 ### Phase 4: Production and Verification
 
 #### Automated
 
-- [ ] 4.1 Full unit and component test suite passes
-- [ ] 4.2 Integration tests pass
-- [ ] 4.3 Lint passes
-- [ ] 4.4 Production build passes
-- [ ] 4.5 No server-only code in client bundles
+- [x] 4.1 Full unit and component test suite passes — 4dd1ec3
+- [x] 4.2 Integration tests pass — 4dd1ec3
+- [x] 4.3 Lint passes — 4dd1ec3
+- [x] 4.4 Production build passes — 4dd1ec3
+- [x] 4.5 No server-only code in client bundles — 4dd1ec3
 
 #### Manual
 
-- [ ] 4.6 End-to-end proving flow: list, create, publish, edit published, delete
-- [ ] 4.7 User B cannot access or delete author A builds
-- [ ] 4.8 Accepted visual gaps recorded in change.md
+- [x] 4.6 End-to-end proving flow: list, create, publish, edit published, delete — 4dd1ec3
+- [x] 4.7 User B cannot access or delete author A builds — 4dd1ec3
+- [x] 4.8 Accepted visual gaps recorded in change.md — 4dd1ec3

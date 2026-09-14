@@ -6,5 +6,6 @@ export const actions = {
     update: vi.fn(),
     attachMainImage: vi.fn(),
     publish: vi.fn(),
+    delete: vi.fn(),
   },
 };

@@ -53,7 +53,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 | S-05 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination | F-05, S-04 | US-03, FR-002, FR-006 | done |
 | S-06 | view-published-details | user can open a published buildâ€™s details and see main photo, name, author, story, watch attributes, parts list, and like count | S-04 | US-04, FR-002, FR-010 | proposed |
 | S-07 | like-published-build | authenticated user can like and unlike a published build at most once; like count is visible | S-01, S-06 | US-05, FR-007 | proposed |
-| S-08 | manage-own-builds | authenticated user can open an account area of only their drafts and published builds, start a new draft, and delete a build they own (including from details when they are the author) | S-02, S-04 | US-07, FR-003, FR-008 | planning |
+| S-08 | manage-own-builds | authenticated user can open an account area of only their drafts and published builds, start a new draft, and delete a build they own (including from details when they are the author) | S-02, S-04 | US-07, FR-003, FR-008 | done |
 | S-09 | edit-own-build | authenticated user can edit a build they own using the same form and photo-upload path as create, including from details when they are the author | F-02, F-03, S-02, S-08 | US-07, FR-003, FR-004, FR-005 | proposed |
 | F-06 | home-page-components | (foundation) Nav bar, Hero, Quick Filters, and home-page sections are in the shared UI library | F-04, F-05 | FR-009 | proposed |
 | S-10 | home-recent-builds | user landing on the home page sees recently published builds and can reach the listing, including by watch style | F-06, S-04, S-05 | US-06, FR-009 | proposed |
@@ -330,8 +330,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** â€”
 - **Unknowns:** â€”
 - **Risk:** Reuse S-04â€™s listing components; this is the authorâ€™s list, not a second card kit. Editing is S-09 so this slice stays list-and-delete. Another user must still be unable to delete. After publish, the author still sees the build here as published.
-- **Status:** planning
-
+- **Status:** done
 ### S-09: Edit own build
 
 - **Outcome:** authenticated user can edit a build they own using the same form and photo-upload path as create, including from details when they are the author.
@@ -403,6 +402,7 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 ## Done
 - **S-05: user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination.** — Archived 2026-09-14 → `context/archive/2026-09-14-filter-published-listing/`. Lesson: —.
 
+- **S-08: authenticated user can open an account area of only their drafts and published builds, start a new draft, and delete a build they own (including from details when they are the author)** — Archived 2026-09-14 → `context/archive/2026-09-14-manage-own-builds/`. Lesson: —.
 - **S-04: user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden.** â€” Archived 2026-09-14 â†’ `context/archive/2026-09-14-show-public-builds/`. Lesson: â€”.
 - **F-05: (foundation) filter components that attach to an existing listing are in the shared UI library** â€” Archived 2026-09-13 â†’ `context/archive/2026-09-13-filter-ui-components/`. Lesson: â€”.
 - **F-01: (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage** â€” Archived 2026-09-11 â†’ `context/archive/2026-09-09-build-visibility-and-storage/`. Lesson: â€”.

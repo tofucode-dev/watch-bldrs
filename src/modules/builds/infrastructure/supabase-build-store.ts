@@ -4,6 +4,10 @@ import type { Database, Json } from "@/lib/database.types";
 
 import type { BuildStore } from "../application/ports/build-store";
 import { previewUrlForOwnedMainImagePath } from "./main-image-preview";
+import { removeBuildImageBestEffort } from "./delete-build-image";
+import { dialColourLabel, movementLabel, strapTypeLabel, watchStyleLabel } from "./display-labels";
+import { applyAfterUpdatedAtBoundary, applyBeforeUpdatedAtBoundary } from "./owned-build-query";
+import { publicImageUrlForPath } from "./public-image-url";
 import {
   isCurrencyCode,
   isDialColour,
@@ -14,12 +18,17 @@ import {
   isWatchStyle,
 } from "../domain/options";
 import type { OwnedDraft, OwnedDraftPart, ValidatedDraft } from "../domain/types";
+import { UnexpectedStoreError } from "../domain/errors";
 import { mapStoreError } from "./map-store-error";
 
 type BuildsClient = SupabaseClient<Database>;
 
+const OWNED_CARD_SELECT =
+  "id, name, status, main_image_path, watch_style, movement, dial_colour, strap_type, case_size_mm, updated_at";
+
 interface DraftRow {
   id: string;
+  status: string;
   name: string | null;
   story: string | null;
   watch_style: string | null;
@@ -39,6 +48,67 @@ interface PartRow {
   price_amount_minor: number | null;
   currency: string | null;
   position: number;
+}
+
+interface OwnedBuildRow {
+  id: string;
+  name: string | null;
+  status: string;
+  main_image_path: string | null;
+  watch_style: string | null;
+  movement: string | null;
+  dial_colour: string | null;
+  strap_type: string | null;
+  case_size_mm: number | null;
+  updated_at: string;
+}
+
+function isBuildStatus(value: string): value is "draft" | "published" {
+  return value === "draft" || value === "published";
+}
+
+async function mainImageUrlForOwnedBuild(client: BuildsClient, row: OwnedBuildRow): Promise<string | null> {
+  if (row.status === "published") {
+    return publicImageUrlForPath(row.main_image_path, async (path, expiresIn) => {
+      const { data, error } = await client.storage.from("build-images").createSignedUrl(path, expiresIn);
+      if (error) {
+        return null;
+      }
+      return data.signedUrl;
+    });
+  }
+
+  return previewUrlForOwnedMainImagePath(row.main_image_path, async (path, expiresIn) => {
+    const { data, error } = await client.storage.from("build-images").createSignedUrl(path, expiresIn);
+    if (error) {
+      return null;
+    }
+    return data.signedUrl;
+  });
+}
+
+async function mapOwnedBuildRow(client: BuildsClient, row: OwnedBuildRow) {
+  if (!isBuildStatus(row.status)) {
+    return null;
+  }
+
+  const mainImageUrl = await mainImageUrlForOwnedBuild(client, row);
+
+  return {
+    updatedAt: row.updated_at,
+    card: {
+      id: row.id,
+      name: row.name,
+      status: row.status,
+      mainImageUrl,
+      watchStyle: watchStyleLabel(row.watch_style),
+      movement: movementLabel(row.movement),
+      dialColour: dialColourLabel(row.dial_colour),
+      strapType: strapTypeLabel(row.strap_type),
+      caseSizeMm: row.case_size_mm,
+      updatedAt: row.updated_at,
+    },
+  };
 }
 
 function toRpcParts(draft: ValidatedDraft): Json {
@@ -71,6 +141,10 @@ function mapPart(row: PartRow): OwnedDraftPart | null {
 }
 
 function mapDraft(row: DraftRow): OwnedDraft | null {
+  if (!isBuildStatus(row.status)) {
+    return null;
+  }
+
   const watchStyle = row.watch_style;
   const movement = row.movement;
   const dialColour = row.dial_colour;
@@ -100,6 +174,7 @@ function mapDraft(row: DraftRow): OwnedDraft | null {
 
   return {
     id: row.id,
+    status: row.status,
     name: row.name,
     story: row.story,
     watchStyle,
@@ -145,11 +220,10 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
       const { data, error } = await client
         .from("builds")
         .select(
-          "id, name, story, watch_style, movement, dial_colour, strap_type, hands_style, case_size_mm, main_image_path, build_parts(category, name, product_url, price_amount_minor, currency, position)",
+          "id, status, name, story, watch_style, movement, dial_colour, strap_type, hands_style, case_size_mm, main_image_path, build_parts(category, name, product_url, price_amount_minor, currency, position)",
         )
         .eq("id", id)
         .eq("author_id", authorId)
-        .eq("status", "draft")
         .maybeSingle();
 
       if (error) {
@@ -165,15 +239,26 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
         return null;
       }
 
-      const mainImageUrl = await previewUrlForOwnedMainImagePath(mapped.mainImagePath, async (path, expiresIn) => {
-        const { data: signed, error: signError } = await client.storage
-          .from("build-images")
-          .createSignedUrl(path, expiresIn);
-        if (signError) {
-          return null;
-        }
-        return signed.signedUrl;
-      });
+      const mainImageUrl =
+        mapped.status === "published"
+          ? await publicImageUrlForPath(mapped.mainImagePath, async (path, expiresIn) => {
+              const { data: signed, error: signError } = await client.storage
+                .from("build-images")
+                .createSignedUrl(path, expiresIn);
+              if (signError) {
+                return null;
+              }
+              return signed.signedUrl;
+            })
+          : await previewUrlForOwnedMainImagePath(mapped.mainImagePath, async (path, expiresIn) => {
+              const { data: signed, error: signError } = await client.storage
+                .from("build-images")
+                .createSignedUrl(path, expiresIn);
+              if (signError) {
+                return null;
+              }
+              return signed.signedUrl;
+            });
 
       return { ...mapped, mainImageUrl };
     },
@@ -184,7 +269,6 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
         .update({ main_image_path: path })
         .eq("id", id)
         .eq("author_id", authorId)
-        .eq("status", "draft")
         .select("id")
         .maybeSingle();
 
@@ -234,6 +318,72 @@ export function createSupabaseBuildStore(client: BuildsClient): BuildStore {
       }
 
       return { id: published.id };
+    },
+
+    async listOwnedBuilds(authorId, input) {
+      const limit = input.pageSize + 1;
+
+      let query = client.from("builds").select(OWNED_CARD_SELECT).eq("author_id", authorId);
+
+      if (input.direction === "first") {
+        query = query.order("updated_at", { ascending: false }).order("id", { ascending: false });
+      } else if (input.direction === "after") {
+        if (!input.boundary) {
+          throw new UnexpectedStoreError();
+        }
+        query = applyAfterUpdatedAtBoundary(query, input.boundary)
+          .order("updated_at", { ascending: false })
+          .order("id", { ascending: false });
+      } else {
+        if (!input.boundary) {
+          throw new UnexpectedStoreError();
+        }
+        query = applyBeforeUpdatedAtBoundary(query, input.boundary)
+          .order("updated_at", { ascending: true })
+          .order("id", { ascending: true });
+      }
+
+      const { data, error } = await query.limit(limit);
+      if (error) {
+        mapStoreError(error);
+      }
+
+      const rows = data as OwnedBuildRow[];
+      const hasMore = rows.length > input.pageSize;
+      const boundedRows = hasMore ? rows.slice(0, input.pageSize) : rows;
+      const displayRows = input.direction === "before" ? [...boundedRows].reverse() : boundedRows;
+
+      const mapped = await Promise.all(displayRows.map((row) => mapOwnedBuildRow(client, row)));
+      const items = mapped.filter((item): item is NonNullable<(typeof mapped)[number]> => item !== null);
+
+      return {
+        items,
+        hasMore,
+      };
+    },
+
+    async deleteBuild(authorId, id) {
+      const { data: existing, error: readError } = await client
+        .from("builds")
+        .select("main_image_path")
+        .eq("id", id)
+        .eq("author_id", authorId)
+        .maybeSingle();
+
+      if (readError) {
+        mapStoreError(readError);
+      }
+
+      if (!existing) {
+        return;
+      }
+
+      await removeBuildImageBestEffort(client, existing.main_image_path);
+
+      const { error: deleteError } = await client.from("builds").delete().eq("id", id).eq("author_id", authorId);
+      if (deleteError) {
+        mapStoreError(deleteError);
+      }
     },
   };
 }

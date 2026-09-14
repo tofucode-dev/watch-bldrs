@@ -9,6 +9,7 @@ describe("ownedDraftToFormInitial", () => {
     const previewUrl = "https://example.supabase.co/storage/v1/object/sign/build-images/main.jpg?token=abc";
     const draft: OwnedDraft = {
       id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      status: "draft",
       name: "SKX",
       story: null,
       watchStyle: null,
@@ -27,5 +28,25 @@ describe("ownedDraftToFormInitial", () => {
     expect(initial.mainImagePath).toBe(path);
     expect(initial.mainImageUrl).toBe(previewUrl);
     expect(initial.mainImagePath).not.toBe(initial.mainImageUrl);
+  });
+
+  it("copies status through to the form initial draft", () => {
+    const draft: OwnedDraft = {
+      id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      status: "published",
+      name: "Live build",
+      story: null,
+      watchStyle: null,
+      movement: null,
+      dialColour: null,
+      strapType: null,
+      handsStyle: null,
+      caseSizeMm: null,
+      mainImagePath: null,
+      mainImageUrl: null,
+      parts: [],
+    };
+
+    expect(ownedDraftToFormInitial(draft).status).toBe("published");
   });
 });

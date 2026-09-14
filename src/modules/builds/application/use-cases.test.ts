@@ -6,7 +6,7 @@ import type { Actor } from "@/types";
 import { attachMainImage } from "./attach-main-image";
 import { createDraftBuild } from "./create-draft-build";
 import { getOwnedDraft } from "./get-owned-draft";
-import type { BuildStore } from "./ports/build-store";
+import type { BuildStore, ListOwnedBuildsInput, ListOwnedBuildsResult } from "./ports/build-store";
 import { publishBuild } from "./publish-build";
 import { updateDraftBuild } from "./update-draft-build";
 import { DraftNotFoundError, DraftValidationError, UnauthenticatedError } from "../domain/errors";
@@ -48,7 +48,7 @@ class FakeBuildStore implements BuildStore {
     }
 
     const existing = this.drafts.get(input.id);
-    if (existing?.authorId !== input.authorId || existing.status !== "draft") {
+    if (existing?.authorId !== input.authorId) {
       return Promise.resolve(null);
     }
 
@@ -70,7 +70,7 @@ class FakeBuildStore implements BuildStore {
 
   getOwnedDraft(authorId: string, id: string): Promise<OwnedDraft | null> {
     const existing = this.drafts.get(id);
-    if (existing?.authorId !== authorId || existing.status !== "draft") {
+    if (existing?.authorId !== authorId) {
       return Promise.resolve(null);
     }
     return Promise.resolve(existing);
@@ -78,7 +78,7 @@ class FakeBuildStore implements BuildStore {
 
   attachMainImage(authorId: string, id: string, path: string | null): Promise<{ id: string } | null> {
     const existing = this.drafts.get(id);
-    if (existing?.authorId !== authorId || existing.status !== "draft") {
+    if (existing?.authorId !== authorId) {
       return Promise.resolve(null);
     }
     existing.mainImagePath = path;
@@ -101,6 +101,78 @@ class FakeBuildStore implements BuildStore {
     existing.publishedAt = new Date().toISOString();
     existing.updatedAt = new Date().toISOString();
     return Promise.resolve({ id });
+  }
+
+  listOwnedBuilds(authorId: string, input: ListOwnedBuildsInput): Promise<ListOwnedBuildsResult> {
+    const owned = [...this.drafts.values()]
+      .filter((draft) => draft.authorId === authorId)
+      .sort((left, right) => {
+        const timeCompare = right.updatedAt.localeCompare(left.updatedAt);
+        if (timeCompare !== 0) {
+          return timeCompare;
+        }
+        return right.id.localeCompare(left.id);
+      });
+
+    if (owned.length === 0) {
+      return Promise.resolve({ items: [], hasMore: false });
+    }
+
+    let startIndex = 0;
+    let endIndex = owned.length;
+
+    if (input.direction === "after" && input.boundary) {
+      const boundaryIndex = owned.findIndex(
+        (draft) => draft.updatedAt === input.boundary?.updatedAt && draft.id === input.boundary.id,
+      );
+      if (boundaryIndex === -1) {
+        return Promise.resolve({ items: [], hasMore: false });
+      }
+      startIndex = boundaryIndex + 1;
+      endIndex = Math.min(startIndex + input.pageSize + 1, owned.length);
+    } else if (input.direction === "before" && input.boundary) {
+      const boundaryIndex = owned.findIndex(
+        (draft) => draft.updatedAt === input.boundary?.updatedAt && draft.id === input.boundary.id,
+      );
+      if (boundaryIndex === -1) {
+        return Promise.resolve({ items: [], hasMore: false });
+      }
+      endIndex = boundaryIndex;
+      startIndex = Math.max(0, endIndex - input.pageSize - 1);
+    } else {
+      endIndex = Math.min(input.pageSize + 1, owned.length);
+    }
+
+    const slice = owned.slice(startIndex, endIndex);
+    const hasMore = slice.length > input.pageSize;
+    const pageItems = hasMore ? slice.slice(0, input.pageSize) : slice;
+
+    return Promise.resolve({
+      items: pageItems.map((draft) => ({
+        updatedAt: draft.updatedAt,
+        card: {
+          id: draft.id,
+          name: draft.name,
+          status: draft.status,
+          mainImageUrl: draft.mainImageUrl,
+          watchStyle: draft.watchStyle,
+          movement: draft.movement,
+          dialColour: draft.dialColour,
+          strapType: draft.strapType,
+          caseSizeMm: draft.caseSizeMm,
+          updatedAt: draft.updatedAt,
+        },
+      })),
+      hasMore,
+    });
+  }
+
+  deleteBuild(authorId: string, id: string): Promise<void> {
+    const existing = this.drafts.get(id);
+    if (existing?.authorId === authorId) {
+      this.drafts.delete(id);
+    }
+    return Promise.resolve();
   }
 }
 
@@ -166,7 +238,7 @@ describe("draft build use cases", () => {
     ).rejects.toBeInstanceOf(DraftNotFoundError);
   });
 
-  it("treats a published id as not found", async () => {
+  it("loads, updates, and attaches images on a published build owned by the author", async () => {
     const store = new FakeBuildStore();
     const created = await createDraftBuild(authorA, { name: "Live" }, store);
     const stored = store.drafts.get(created.id);
@@ -174,14 +246,21 @@ describe("draft build use cases", () => {
       throw new Error("expected seeded draft");
     }
     stored.status = "published";
+    stored.publishedAt = new Date().toISOString();
 
-    await expect(updateDraftBuild(authorA, created.id, { name: "Edit" }, store)).rejects.toBeInstanceOf(
-      DraftNotFoundError,
-    );
-    await expect(getOwnedDraft(authorA, created.id, store)).rejects.toBeInstanceOf(DraftNotFoundError);
-    await expect(
-      attachMainImage(authorA, created.id, `${authorA.userId}/${created.id}/main.jpg`, store),
-    ).rejects.toBeInstanceOf(DraftNotFoundError);
+    const updated = await updateDraftBuild(authorA, created.id, { name: "Edited published" }, store);
+    expect(updated.id).toBe(created.id);
+    expect(store.drafts.get(created.id)?.name).toBe("Edited published");
+    expect(store.drafts.get(created.id)?.status).toBe("published");
+
+    const draft = await getOwnedDraft(authorA, created.id, store);
+    expect(draft.name).toBe("Edited published");
+    expect(draft.status).toBe("published");
+
+    const path = `${authorA.userId}/${created.id}/main.jpg`;
+    const attached = await attachMainImage(authorA, created.id, path, store);
+    expect(attached.id).toBe(created.id);
+    expect(store.drafts.get(created.id)?.mainImagePath).toBe(path);
   });
 
   it("returns a signed display URL separately from the stored path", async () => {

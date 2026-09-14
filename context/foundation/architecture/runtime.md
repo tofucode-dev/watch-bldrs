@@ -54,9 +54,9 @@ Exact URLs may follow existing repository conventions, but the responsibilities 
 | `/builds` or `/`            | Public published-build catalog and filters   |
 | `/builds/[id]`              | Public details for a published build         |
 | `/sign-in`                  | Passwordless/OAuth sign-in entry             |
-| `/account`                  | Current author's drafts and published builds |
-| `/account/builds/new`       | Create/edit a draft                          |
-| `/account/builds/[id]/edit` | Author-only editor                           |
+| `/dashboard`                  | Current author's drafts and published builds |
+| `/dashboard/builds/new`       | Create a draft                               |
+| `/dashboard/builds/edit/[id]` | Author-only editor for drafts and published  |
 | `/api/auth/*`               | Auth submission/callback/logout as required  |
 
 Routes parse HTTP concerns and call module APIs. They must not orchestrate use cases or run Supabase queries; delegate to `@/modules/<name>/server`.
