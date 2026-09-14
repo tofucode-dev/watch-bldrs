@@ -48,7 +48,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 | S-02 | create-draft-build | user can create a draft build with watch attributes, parts list, and main photo; the draft stays private | F-01, F-02, F-03, S-01 | US-02, FR-003, FR-004, FR-005 | done |
 | S-03 | publish-draft-build | user can publish a draft they own so it is eligible for the public listing | S-02 | US-02, FR-004 | done |
 | F-04 | listing-ui-components | (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library | — | FR-002 | done |
-| S-04 | show-public-builds | user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden | F-04, S-03 | US-02, FR-002 | in-progress |
+| S-04 | show-public-builds | user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden | F-04, S-03 | US-02, FR-002 | done |
 | F-05 | filter-ui-components | (foundation) filter components that attach to an existing listing are in the shared UI library | F-04 | FR-006 | done |
 | S-05 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination | F-05, S-04 | US-03, FR-002, FR-006 | proposed |
 | S-06 | view-published-details | user can open a published build’s details and see main photo, name, author, story, watch attributes, parts list, and like count | S-04 | US-04, FR-002, FR-010 | proposed |
@@ -282,7 +282,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Pagination, infinite load, or scroll-load for the listing? — Owner: user. Block: no.
 - **Risk:** This is the north star — if a published structured build cannot be browsed in a dedicated listing, filters and likes have nothing to show. Five-filter AND behavior waits for S-05; details wait for S-06. Empty catalog is an empty state, not other people’s drafts.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-05: Filter the published listing
 
@@ -402,6 +402,7 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 
 ## Done
 
+- **S-04: user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden.** — Archived 2026-09-14 → `context/archive/2026-09-14-show-public-builds/`. Lesson: —.
 - **F-05: (foundation) filter components that attach to an existing listing are in the shared UI library** — Archived 2026-09-13 → `context/archive/2026-09-13-filter-ui-components/`. Lesson: —.
 - **F-01: (foundation) builds and parts persist with author ownership, author-only drafts, SQL-allowed unpublish (no MVP UI control), and private main-image storage** — Archived 2026-09-11 → `context/archive/2026-09-09-build-visibility-and-storage/`. Lesson: —.
 - **F-02: (foundation) every UI component needed to implement the authoring form is in the shared UI library, so the create-draft slice can compose the form without inventing widgets. Photo upload is owned by F-03, not this foundation.** — Archived 2026-09-12 → `context/archive/2026-09-11-authoring-form-components/`. Lesson: —.

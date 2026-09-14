@@ -1,10 +1,10 @@
 ---
 change_id: show-public-builds
 title: Show public builds
-status: impl_reviewed
+status: archived
 created: 2026-09-14
 updated: 2026-09-14
-archived_at: null
+archived_at: 2026-09-14T03:01:03Z
 ---
 
 ## Notes
