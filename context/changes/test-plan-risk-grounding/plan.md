@@ -404,12 +404,12 @@ Close Risks #4, #6, #7. Adds minimal HTTP infrastructure — the only phase that
 
 #### Automated
 
-- [x] 4.1 `tests/integration/helpers/http-session.ts` and `auth-session-chain.test.ts` added
-- [x] 4.2 `scripts/preview-smoke.mjs` and `preview:smoke` script added
-- [x] 4.3 `npm run test:integration`, `npm run test`, `npm run lint`, `npm run build` pass
-- [x] 4.4 `npm run preview:smoke` passes against running preview
+- [x] 4.1 `tests/integration/helpers/http-session.ts` and `auth-session-chain.test.ts` added — 90ed00f
+- [x] 4.2 `scripts/preview-smoke.mjs` and `preview:smoke` script added — 90ed00f
+- [x] 4.3 `npm run test:integration`, `npm run test`, `npm run lint`, `npm run build` pass — 90ed00f
+- [x] 4.4 `npm run preview:smoke` passes against running preview — 90ed00f
 
 #### Manual
 
-- [x] 4.5 Full local chain verified: preview + auth-session-chain + preview:smoke
-- [x] 4.6 README and test-plan §5/§6 cookbook updates committed
+- [x] 4.5 Full local chain verified: preview + auth-session-chain + preview:smoke — 90ed00f
+- [x] 4.6 README and test-plan §5/§6 cookbook updates committed — 90ed00f
