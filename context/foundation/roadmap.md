@@ -50,7 +50,7 @@ Custom-watch builds already exist on forums and Reddit, but they are hard to fin
 | F-04 | listing-ui-components | (foundation) listing Cards, Labels, Badges, Tags, and Buttons are in the shared UI library | â€” | FR-002 | done |
 | S-04 | show-public-builds | user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden | F-04, S-03 | US-02, FR-002 | done |
 | F-05 | filter-ui-components | (foundation) filter components that attach to an existing listing are in the shared UI library | F-04 | FR-006 | done |
-| S-05 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination | F-05, S-04 | US-03, FR-002, FR-006 | in-progress |
+| S-05 | filter-published-listing | user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination | F-05, S-04 | US-03, FR-002, FR-006 | done |
 | S-06 | view-published-details | user can open a published buildâ€™s details and see main photo, name, author, story, watch attributes, parts list, and like count | S-04 | US-04, FR-002, FR-010 | proposed |
 | S-07 | like-published-build | authenticated user can like and unlike a published build at most once; like count is visible | S-01, S-06 | US-05, FR-007 | proposed |
 | S-08 | manage-own-builds | authenticated user can open an account area of only their drafts and published builds, start a new draft, and delete a build they own (including from details when they are the author) | S-02, S-04 | US-07, FR-003, FR-008 | planning |
@@ -294,7 +294,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** â€”
 - **Unknowns:** â€”
 - **Risk:** Empty combined results are an accepted PRD risk â€” handle as an empty state, do not drop filters. Drafts must never leak into results. Must reuse S-04â€™s listing and load-more behavior rather than replacing it.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-06: View a published buildâ€™s details
 
@@ -401,6 +401,7 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 (No closed milestones yet.)
 
 ## Done
+- **S-05: user can filter the published listing by watch style, movement, dial colour, strap type, and case size with AND semantics, without breaking existing pagination.** — Archived 2026-09-14 → `context/archive/2026-09-14-filter-published-listing/`. Lesson: —.
 
 - **S-04: user can browse published builds on the public listing with pagination or infinite scroll; drafts stay hidden.** â€” Archived 2026-09-14 â†’ `context/archive/2026-09-14-show-public-builds/`. Lesson: â€”.
 - **F-05: (foundation) filter components that attach to an existing listing are in the shared UI library** â€” Archived 2026-09-13 â†’ `context/archive/2026-09-13-filter-ui-components/`. Lesson: â€”.
