@@ -350,11 +350,11 @@ No migration or generated database-type change is expected. The existing `publis
 
 #### Automated
 
-- [x] 3.1 Full unit and component suite passes
-- [x] 3.2 Full local Supabase identity and Storage suite passes
-- [x] 3.3 ESLint passes
-- [x] 3.4 Static Storybook build passes
-- [x] 3.5 Cloudflare Workers production build passes
+- [x] 3.1 Full unit and component suite passes — bcef629
+- [x] 3.2 Full local Supabase identity and Storage suite passes — bcef629
+- [x] 3.3 ESLint passes — bcef629
+- [x] 3.4 Static Storybook build passes — bcef629
+- [x] 3.5 Cloudflare Workers production build passes — bcef629
 
 #### Manual
 
