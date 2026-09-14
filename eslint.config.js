@@ -81,6 +81,7 @@ const nodeScriptConfig = tseslint.config({
   languageOptions: {
     globals: {
       console: "readonly",
+      fetch: "readonly",
       process: "readonly",
     },
   },

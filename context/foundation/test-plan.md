@@ -104,13 +104,20 @@ Test-base profile: **meaningful** — Vitest configured, ~47 test files across u
 |------|-------|-----------|---------|
 | lint + typecheck | local + CI | required | syntactic / type drift |
 | unit + component (`npm test`) | local + CI | required | logic and UI behavior regressions |
-| integration (`npm run test:integration`) | local (merge gate for schema/RLS) | required after §3 Phase 4 | RLS, publication, Storage, migration invariants |
+| integration (`npm run test:integration`) | local (merge gate for schema/RLS) | **required** | RLS, publication, Storage, migration invariants |
+| preview smoke (`npm run preview:smoke`) | local after `npm run preview` | recommended | Worker-shaped SSR redirects and catalog HTML |
 | e2e on critical flows | — | planned — deferred per §7 | — |
 | post-edit hook | — | not planned | — |
 | visual diff | — | not planned | — |
-| pre-prod smoke | after deploy | recommended after §3 Phase 4 | Worker env and session failures |
+| pre-prod smoke | after deploy | recommended | Worker env and session failures |
 
-GitHub Actions currently runs unit/component tests and build; integration tests remain a local merge gate per AGENTS.md CI exception until Phase 4 wires what is feasible.
+**Migration / RLS merge gate:** before merging schema, RLS, or Storage policy changes, run:
+
+```bash
+npx supabase db reset && npm run test:integration
+```
+
+GitHub Actions runs lint, unit/component tests, and build only — integration tests, typegen, and preview smoke remain local merge gates per AGENTS.md CI exception (Docker-in-CI not wired yet).
 
 ## 6. Cookbook Patterns
 
@@ -119,7 +126,13 @@ the relevant rollout phase ships.
 
 ### 6.1 Adding a unit test
 
-- TBD — see §3 Phase 2 for ownership and lifecycle patterns.
+Co-locate `*.test.ts` beside source under `src/`. Vitest uses inline projects in `vitest.config.ts`: Node for `*.test.ts`, jsdom for `*.test.tsx`.
+
+**Pure logic / use-case pattern:** mock ports at the boundary, assert outcomes not internals. Example: `src/modules/builds/application/get-owned-draft.test.ts` with a `FakeBuildStore` — no Supabase.
+
+**Server resolution pattern:** mock the store or `astro:env/server` when testing URL/cursor/filter wiring. Example: `src/modules/catalog/server.test.ts` for pagination URL preservation.
+
+Run a single file: `npm run test -- src/modules/catalog/server.test.ts`.
 
 ### 6.2 Adding an integration test
 
@@ -137,7 +150,13 @@ Run: `npm run test:integration` (or a single file: `npm run test:integration -- 
 
 ### 6.3 Adding an e2e test
 
-- TBD — not in current rollout scope; see §7. Re-evaluate only if integration cannot catch a Worker/browser-only failure.
+Full browser E2E remains deferred per §7 — integration + preview smoke cover behavior invariants first.
+
+**Worker runtime smoke (Risk #7):** after `npm run build && npm run preview`, run `npm run preview:smoke` (or `BASE_URL=http://localhost:4321 node scripts/preview-smoke.mjs`). Asserts `/builds` returns catalog HTML, `/dashboard` redirects unauthenticated users, and `/` redirects to `/builds`.
+
+**Cookie session chain (Risk #4):** with preview running and local Supabase up, `TEST_BASE_URL=http://localhost:4321 npm run test:integration -- auth-session-chain`. Uses `tests/integration/helpers/http-session.ts` — POST `/api/auth/signin` with matching `Origin`, forward cookies, assert dashboard HTML contains the signed-in email. Skips when `TEST_BASE_URL` is unset.
+
+Re-evaluate Playwright-style E2E only if a failure cannot be reproduced at the HTTP integration layer.
 
 ### 6.4 Adding a test for a new Astro Action
 
@@ -153,7 +172,7 @@ Pattern:
 4. **RPC parity** — for save paths, also assert `save_draft_build` returns an error when user B targets author A's id (draft and published).
 5. **Cleanup** — `cleanupBuild(serviceRole, id)` in `afterAll`.
 
-**Deferred (HTTP Action invocation):** Phase 4 adds `tests/integration/helpers/http-session.ts` for cookie-based sign-in. Once that harness exists, add an Action-level test that POSTs the same mutation with session cookies and expects the mapped `NOT_FOUND` / safe success contract — do not duplicate the use-case matrix at the HTTP layer until the harness ships.
+**Deferred (HTTP Action invocation):** `tests/integration/helpers/http-session.ts` provides cookie-based sign-in. Add an Action-level test that POSTs the same mutation with session cookies and expects the mapped `NOT_FOUND` / safe success contract — do not duplicate the use-case matrix at the HTTP layer until that test is needed.
 
 Run: `npm run test:integration -- build-ownership-mutations`.
 

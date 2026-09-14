@@ -58,6 +58,7 @@ npm run dev
 - `npm run format` — Prettier
 - `npm run test` — Vitest unit tests (`src/**`)
 - `npm run test:integration` — RLS and Storage identity-matrix tests (local Docker Supabase required)
+- `npm run preview:smoke` — workerd HTTP smoke against a running preview (`BASE_URL`, default `http://localhost:4321`)
 - `npm run db:types` — regenerate `src/lib/database.types.ts` from local migrations
 - `npm run storybook` — Storybook for `src/components/ui` at [http://localhost:6006](http://localhost:6006)
 - `npm run storybook:build` — static Storybook output (`storybook-static/`, gitignored)
@@ -123,10 +124,34 @@ npm run db:types
 6. Run integration tests before merging schema or RLS changes:
 
 ```bash
-npm run test:integration
+npx supabase db reset && npm run test:integration
 ```
 
 Product tables (`builds`, `build_parts`), enums, RLS policies, and the private `build-images` Storage bucket are defined in `supabase/migrations/`. GitHub Actions runs lint, unit tests, and build only — integration tests and typegen are local merge gates (see `context/foundation/architecture/security.md#ci-verification-exception`).
+
+### HTTP session and preview smoke (Phase 4)
+
+Cookie-based auth and workerd-shaped routes need a running preview server — Vitest does not spawn workerd in-process.
+
+1. Build and start preview in one terminal:
+
+```bash
+npm run build && npm run preview
+```
+
+2. In another terminal, run the auth session chain (requires local Supabase for ephemeral test users):
+
+```bash
+TEST_BASE_URL=http://localhost:4321 npm run test:integration -- auth-session-chain
+```
+
+3. Run preview smoke (no Supabase required):
+
+```bash
+npm run preview:smoke
+```
+
+If preview binds another port, set `TEST_BASE_URL` / `BASE_URL` to match (for example `http://localhost:4322`). When `TEST_BASE_URL` is unset, `auth-session-chain` skips so CI and quick local runs stay green.
 
 ### Inspect the local database
 

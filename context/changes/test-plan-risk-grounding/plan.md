@@ -396,20 +396,20 @@ Close Risks #4, #6, #7. Adds minimal HTTP infrastructure — the only phase that
 
 #### Automated
 
-- [x] 3.1 `npm run test:integration` passes with extended catalog-filters tied-timestamp case
-- [x] 3.2 `npm run test` passes including extended server.test.ts
-- [x] 3.3 `npm run lint` passes
+- [x] 3.1 `npm run test:integration` passes with extended catalog-filters tied-timestamp case — 79d9a7e
+- [x] 3.2 `npm run test` passes including extended server.test.ts — 79d9a7e
+- [x] 3.3 `npm run lint` passes — 79d9a7e
 
 ### Phase 4: Session Chain, Migrations Gate & Workers Smoke
 
 #### Automated
 
-- [ ] 4.1 `tests/integration/helpers/http-session.ts` and `auth-session-chain.test.ts` added
-- [ ] 4.2 `scripts/preview-smoke.mjs` and `preview:smoke` script added
-- [ ] 4.3 `npm run test:integration`, `npm run test`, `npm run lint`, `npm run build` pass
-- [ ] 4.4 `npm run preview:smoke` passes against running preview
+- [x] 4.1 `tests/integration/helpers/http-session.ts` and `auth-session-chain.test.ts` added
+- [x] 4.2 `scripts/preview-smoke.mjs` and `preview:smoke` script added
+- [x] 4.3 `npm run test:integration`, `npm run test`, `npm run lint`, `npm run build` pass
+- [x] 4.4 `npm run preview:smoke` passes against running preview
 
 #### Manual
 
-- [ ] 4.5 Full local chain verified: preview + auth-session-chain + preview:smoke
-- [ ] 4.6 README and test-plan §5/§6 cookbook updates committed
+- [x] 4.5 Full local chain verified: preview + auth-session-chain + preview:smoke
+- [x] 4.6 README and test-plan §5/§6 cookbook updates committed
