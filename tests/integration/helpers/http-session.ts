@@ -1,4 +1,5 @@
-const DEFAULT_BASE_URL = "http://localhost:4321";
+const DEFAULT_BASE_URL = "http://127.0.0.1:4321";
+const FETCH_TIMEOUT_MS = 5_000;
 
 export type CookieJar = Map<string, string>;
 
@@ -37,6 +38,17 @@ export function mergeCookies(jar: CookieJar, response: Response): void {
   }
 }
 
+async function fetchWithTimeout(url: string, init: RequestInit = {}): Promise<Response> {
+  try {
+    return await fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+  } catch (error) {
+    if (error instanceof Error && error.name === "TimeoutError") {
+      throw new Error(`Request timed out after ${FETCH_TIMEOUT_MS}ms — is the server running at ${url}?`);
+    }
+    throw error;
+  }
+}
+
 function cookieHeader(jar: CookieJar): string | undefined {
   if (jar.size === 0) {
     return undefined;
@@ -49,7 +61,7 @@ export async function signIn(baseUrl: string, email: string, password: string): 
   const jar: CookieJar = new Map();
   const body = new URLSearchParams({ email, password, redirect: "/dashboard" });
 
-  const response = await fetch(`${baseUrl}/api/auth/signin`, {
+  const response = await fetchWithTimeout(`${baseUrl}/api/auth/signin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -78,7 +90,7 @@ export async function signIn(baseUrl: string, email: string, password: string): 
 
 export async function signOut(baseUrl: string, jar: CookieJar): Promise<void> {
   const cookies = cookieHeader(jar);
-  const response = await fetch(`${baseUrl}/api/auth/signout`, {
+  const response = await fetchWithTimeout(`${baseUrl}/api/auth/signout`, {
     method: "POST",
     headers: {
       Origin: requestOrigin(baseUrl),
@@ -104,7 +116,7 @@ export async function fetchWithCookies(
     headers.set("Cookie", cookies);
   }
 
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     ...init,
     headers,
     redirect: "manual",

@@ -104,6 +104,24 @@ describe("cross-user build mutation denial matrix", () => {
     });
   });
 
+  it("user B cannot update author A draft via save_draft_build RPC", async () => {
+    const { data, error } = await identities.userB.client.rpc("save_draft_build", {
+      p_id: draftId,
+      p_name: "Hijacked draft",
+    });
+
+    expect(data).toBeNull();
+    expect(error).not.toBeNull();
+
+    const { data: row } = await identities.authorA.client
+      .from("builds")
+      .select("name, status")
+      .eq("id", draftId)
+      .single();
+    expect(row?.name).toBe("Author A draft target");
+    expect(row?.status).toBe("draft");
+  });
+
   it("user B cannot update author A published build via save_draft_build RPC", async () => {
     const { data, error } = await identities.userB.client.rpc("save_draft_build", {
       p_id: publishedId,

@@ -9,6 +9,7 @@ import {
   cleanupBuild,
   clearCatalogDemoData,
   createTestIdentities,
+  seedInconsistentPublishedBuild,
   type TestIdentities,
 } from "./helpers/supabase-identities";
 
@@ -213,6 +214,30 @@ describe("catalog listing empty catalog", () => {
     expect(page.items).toEqual([]);
     expect(page.previousCursor).toBeNull();
     expect(page.nextCursor).toBeNull();
+  });
+});
+
+describe("catalog listing inconsistent published row", () => {
+  let identities: TestIdentities;
+  let buildId: string;
+
+  beforeAll(async () => {
+    identities = await createTestIdentities();
+    await clearCatalogDemoData(identities.serviceRole);
+
+    buildId = seedInconsistentPublishedBuild(identities.authorA.id);
+  });
+
+  afterAll(async () => {
+    await cleanupBuild(identities.serviceRole, buildId);
+  });
+
+  it("never lists a published row with null published_at for any identity", async () => {
+    for (const client of [identities.anon, identities.authorA.client, identities.userB.client]) {
+      const store = createSupabaseCatalogStore(client);
+      const page = await listPublishedBuilds({ direction: "first", boundary: null }, store);
+      expect(page.items.some((item) => item.id === buildId)).toBe(false);
+    }
   });
 });
 

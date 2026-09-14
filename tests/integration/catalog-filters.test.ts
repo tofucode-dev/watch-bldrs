@@ -5,7 +5,12 @@ import type { Database } from "../../src/lib/database.types";
 import { decodeCatalogCursor } from "../../src/modules/catalog/application/catalog-cursor";
 import { listPublishedBuilds } from "../../src/modules/catalog/application/list-published-builds";
 import { createSupabaseCatalogStore } from "../../src/modules/catalog/infrastructure/supabase-catalog-store";
-import { cleanupBuild, createTestIdentities, type TestIdentities } from "./helpers/supabase-identities";
+import {
+  cleanupBuild,
+  clearCatalogDemoData,
+  createTestIdentities,
+  type TestIdentities,
+} from "./helpers/supabase-identities";
 
 type BuildInsert = Database["public"]["Tables"]["builds"]["Insert"];
 
@@ -17,6 +22,7 @@ describe("catalog listing filters", () => {
 
   beforeAll(async () => {
     identities = await createTestIdentities();
+    await clearCatalogDemoData(identities.serviceRole);
 
     const matchingSeeds = Array.from({ length: 13 }, (_, index) => ({
       author_id: index % 2 === 0 ? identities.authorA.id : identities.userB.id,
@@ -232,6 +238,7 @@ describe("catalog tied-timestamp pagination under filters", () => {
 
   beforeAll(async () => {
     identities = await createTestIdentities();
+    await clearCatalogDemoData(identities.serviceRole);
 
     const matchingPublishedSeeds = Array.from({ length: 13 }, (_, index) => ({
       author_id: index % 2 === 0 ? identities.authorA.id : identities.userB.id,

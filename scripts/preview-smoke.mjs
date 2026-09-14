@@ -7,16 +7,28 @@
  */
 import process from "node:process";
 
-const baseUrl = (process.env.BASE_URL ?? "http://localhost:4321").replace(/\/$/, "");
+const baseUrl = (process.env.BASE_URL ?? "http://127.0.0.1:4321").replace(/\/$/, "");
+const FETCH_TIMEOUT_MS = 5_000;
 
 function fail(message) {
   console.error(`preview-smoke: ${message}`);
   process.exitCode = 1;
 }
 
+async function fetchWithTimeout(url, init = {}) {
+  try {
+    return await fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+  } catch (error) {
+    if (error instanceof Error && error.name === "TimeoutError") {
+      throw new Error(`Request timed out after ${FETCH_TIMEOUT_MS}ms — is preview running at ${baseUrl}?`);
+    }
+    throw error;
+  }
+}
+
 async function expectStatus(path, expectedStatus) {
   const url = `${baseUrl}${path}`;
-  const response = await fetch(url, { redirect: "manual" });
+  const response = await fetchWithTimeout(url, { redirect: "manual" });
 
   if (response.status !== expectedStatus) {
     fail(`${path} expected HTTP ${expectedStatus}, got ${response.status}`);

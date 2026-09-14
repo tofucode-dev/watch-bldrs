@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
 import { execSync } from "node:child_process";
 import type { Database } from "../../../src/lib/database.types";
 
@@ -142,6 +143,28 @@ export const CATALOG_DEMO_EMAIL = "catalog-demo@example.com";
 
 export async function cleanupBuild(serviceRole: SupabaseClient<Database>, buildId: string): Promise<void> {
   await serviceRole.from("builds").delete().eq("id", buildId);
+}
+
+/** Seeds status=published with published_at=null; bypasses set_build_published_at for catalog invariant tests. */
+export function seedInconsistentPublishedBuild(authorId: string): string {
+  const buildId = randomUUID();
+  const sql = [
+    "DO $seed$",
+    "BEGIN",
+    "ALTER TABLE public.builds DISABLE TRIGGER builds_set_published_at;",
+    "INSERT INTO public.builds (id, author_id, status, name, published_at, watch_style, movement)",
+    `VALUES ('${buildId}', '${authorId}', 'published', 'Published without timestamp', NULL, 'diver', 'nh35');`,
+    "ALTER TABLE public.builds ENABLE TRIGGER builds_set_published_at;",
+    "END",
+    "$seed$;",
+  ].join(" ");
+
+  execSync(`npx supabase db query --local ${JSON.stringify(sql)}`, {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+  return buildId;
 }
 
 export async function clearCatalogDemoData(serviceRole: SupabaseClient<Database>): Promise<void> {
